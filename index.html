@@ -13,22 +13,25 @@ body {
     padding: 0;
 }
 
-/* Yläotsikko pysyy näkyvissä */
+/* Yläosa kiinteästi näkyvissä */
 .header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     background: #f8f8f8;
-    padding: 15px 20px 10px 20px;
+    padding: 10px 20px 5px 20px;
     z-index: 100;
     border-bottom: 1px solid #ccc;
 }
 
-/* Hakukenttä pysyy näkyvissä */
 .searchbox {
-    position: sticky;
-    top: 60px;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
     background: #f8f8f8;
-    padding: 10px 20px;
+    padding: 5px 20px 10px 20px;
     z-index: 90;
     border-bottom: 1px solid #ccc;
 }
@@ -39,19 +42,25 @@ body {
     font-size: 16px;
 }
 
-/* Taulukon otsikkorivi pysyy näkyvissä */
-thead th {
-    position: sticky;
-    top: 120px;
-    background: #333;
-    color: white;
+/* Taulukon otsikkorivi kiinteästi hakukentän alla */
+thead {
+    position: fixed;
+    top: 100px;
+    left: 0;
+    right: 0;
     z-index: 80;
 }
 
+thead th {
+    background: #333;
+    color: white;
+}
+
+/* Varsinainen taulukko alkaa otsikoiden alapuolelta */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 140px; /* tilaa header + search + thead */
 }
 
 th, td {
@@ -110,7 +119,6 @@ tr.dim { opacity: 0.35; }
 </table>
 
 <script>
-// TOIMIVA CSV-LUKIJA PILKUILLA
 fetch('kappaleet.csv')
   .then(r => r.text())
   .then(csv => {
@@ -121,7 +129,6 @@ fetch('kappaleet.csv')
       if (!row.trim()) return;
 
       const cols = row.split(",");
-
       if (cols.length < 4) return;
 
       const artisti = cols[0].trim();
@@ -130,19 +137,16 @@ fetch('kappaleet.csv')
       const koodi = cols[3].trim();
 
       const tr = document.createElement("tr");
-
       tr.innerHTML = `
         <td>${artisti}</td>
         <td>${kappale}</td>
         <td class="kone-${kone}">${kone}</td>
         <td class="koodi">${koodi}</td>
       `;
-
       tbody.appendChild(tr);
     });
   });
 
-// HAKU
 document.getElementById("search").addEventListener("keyup", function() {
   const term = this.value.toLowerCase();
   const rows = document.querySelectorAll("#karaoketable tbody tr");
