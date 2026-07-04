@@ -1,25 +1,154 @@
-/* Yläotsikko pysyy näkyvissä */
-h1 {
-    position: sticky;
-    top: 0;
-    background: #f8f8f8;
-    padding: 10px 0;
-    z-index: 10;
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karaokelista – Hovi</title>
+
+<style>
+body { 
+    font-family: Arial, sans-serif; 
+    background: #f8f8f8; 
+    margin: 20px; 
 }
 
-/* Hakukenttä pysyy näkyvissä */
-#search {
-    position: sticky;
-    top: 60px;
-    background: white;
-    z-index: 9;
+h1 { text-align: center; }
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    font-size: 16px;
 }
 
-/* Taulukon otsikkorivi pysyy näkyvissä */
-thead th {
-    position: sticky;
-    top: 120px;
-    background: #333;
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: left;
+}
+
+th {
+    background-color: #333;
     color: white;
-    z-index: 8;
 }
+
+tr:nth-child(even) {
+    background-color: #eee;
+}
+
+/* Pienempi fontti Kone ja Koodi sarakkeille — 12px */
+td:nth-child(3),
+td:nth-child(4) {
+    font-size: 12px;
+}
+
+/* Kone-sarakkeen värit */
+td.kone-M { background-color: #deb887; }     /* ruskeahko */
+td.kone-K { background-color: #ffb6c1; }     /* vaaleanpunainen */
+td.kone-C_O { background-color: #ffff99; }   /* keltainen */
+td.kone-C_U { background-color: #ff9999; }   /* punainen */
+td.kone-M_U { background-color: #ff9999; }   /* punainen */
+td.kone-C { background-color: #ffffff; }     /* valkoinen */
+
+/* Koodi-sarake harmaaksi */
+td.koodi { background-color: #f2f2f2; }
+
+/* Haku-korostus */
+tr.highlight { background-color: #ffff99 !important; }
+tr.dim { opacity: 0.35; }
+</style>
+</head>
+
+<body>
+
+<h1>Karaokelista – Hovi</h1>
+
+<input type="text" id="search" placeholder="Hae artistia tai kappaletta...">
+
+<table id="karaoketable">
+<thead>
+<tr>
+<th>Artisti</th>
+<th>Kappale</th>
+<th>Kone</th>
+<th>Koodi</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<script>
+// TOIMIVA CSV-LUKIJA PILKUILLA
+fetch('kappaleet.csv')
+  .then(r => r.text())
+  .then(csv => {
+    const rows = csv.split(/\r?\n/);
+    const tbody = document.querySelector("#karaoketable tbody");
+
+    rows.forEach(row => {
+      if (!row.trim()) return;
+
+      const cols = row.split(",");
+
+      if (cols.length < 4) return;
+
+      const artisti = cols[0].trim();
+      const kappale = cols[1].trim();
+      let kone = cols[2].trim().toUpperCase().replace("-", "_");
+      const koodi = cols[3].trim();
+
+      const tr = document.createElement("tr");
+
+      // Artisti
+      const td1 = document.createElement("td");
+      td1.textContent = artisti;
+      tr.appendChild(td1);
+
+      // Kappale
+      const td2 = document.createElement("td");
+      td2.textContent = kappale;
+      tr.appendChild(td2);
+
+      // Kone
+      const td3 = document.createElement("td");
+      td3.textContent = kone;
+      td3.classList.add("kone-" + kone);
+      tr.appendChild(td3);
+
+      // Koodi
+      const td4 = document.createElement("td");
+      td4.textContent = koodi;
+      td4.classList.add("koodi");
+      tr.appendChild(td4);
+
+      tbody.appendChild(tr);
+    });
+  });
+
+// HAKU
+document.getElementById("search").addEventListener("keyup", function() {
+  const term = this.value.toLowerCase();
+  const rows = document.querySelectorAll("#karaoketable tbody tr");
+
+  rows.forEach(tr => {
+    const match = tr.textContent.toLowerCase().includes(term);
+
+    if (term === "") {
+      tr.style.display = "";
+      tr.classList.remove("highlight", "dim");
+    } else {
+      tr.style.display = match ? "" : "none";
+      tr.classList.toggle("highlight", match);
+      tr.classList.toggle("dim", !match);
+    }
+  });
+});
+</script>
+
+</body>
+</html>
