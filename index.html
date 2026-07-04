@@ -42,22 +42,6 @@ td:nth-child(3),
 td:nth-child(4) {
     font-size: 14px;
 }
-
-/* Kone-sarakkeen värikoodit */
-td.kone-C {
-    background-color: #cce0ff; /* vaaleansininen */
-}
-td.kone-M {
-    background-color: #d6f5d6; /* vaaleanvihreä */
-}
-td.kone-M_U {
-    background-color: #ffe0b3; /* vaaleanoranssi */
-}
-
-/* Koodi-sarake harmaaksi */
-td.koodi {
-    background-color: #f2f2f2;
-}
 </style>
 </head>
 
@@ -89,38 +73,15 @@ fetch('kappaleet.csv')
     const tbody = document.querySelector("#karaoketable tbody");
 
     rows.forEach(row => {
-      const cols = row.split("\t"); // TAB-erotin
+      const cols = row.split("\t"); // <-- TÄRKEÄ MUUTOS
       if (cols.length < 4) return;
 
       const tr = document.createElement("tr");
-
-      // Artisti
-      const td1 = document.createElement("td");
-      td1.textContent = cols[0].trim();
-      tr.appendChild(td1);
-
-      // Kappale
-      const td2 = document.createElement("td");
-      td2.textContent = cols[1].trim();
-      tr.appendChild(td2);
-
-      // Kone (värikoodaus)
-      const td3 = document.createElement("td");
-      const kone = cols[2].trim();
-      td3.textContent = kone;
-
-      if (kone === "C") td3.classList.add("kone-C");
-      if (kone === "M") td3.classList.add("kone-M");
-      if (kone === "M_U") td3.classList.add("kone-M_U");
-
-      tr.appendChild(td3);
-
-      // Koodi (harmaa tausta)
-      const td4 = document.createElement("td");
-      td4.textContent = cols[3].trim();
-      td4.classList.add("koodi");
-      tr.appendChild(td4);
-
+      cols.forEach(col => {
+        const td = document.createElement("td");
+        td.textContent = col.trim();
+        tr.appendChild(td);
+      });
       tbody.appendChild(tr);
     });
   });
