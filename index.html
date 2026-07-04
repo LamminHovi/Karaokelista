@@ -13,47 +13,68 @@ body {
     padding: 0 20px;
 }
 
-/* Yläotsikko sticky */
-h1 {
-    position: sticky;
+/* Yläotsikko kiinteä */
+.header {
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     background: #f8f8f8;
-    padding: 15px 0 10px 0;
-    margin: 0;
-    z-index: 10;
+    padding: 10px 20px 5px 20px;
+    z-index: 100;
     border-bottom: 1px solid #ccc;
+    box-sizing: border-box;
 }
 
-/* Hakukenttä sticky */
+.header h1 {
+    margin: 0;
+}
+
+/* Hakukenttä kiinteä */
+.searchbox {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    right: 0;
+    background: #f8f8f8;
+    padding: 5px 20px 10px 20px;
+    z-index: 90;
+    border-bottom: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
 #search {
-    position: sticky;
-    top: 60px;
-    background: #ffffff;
+    width: 100%;
     padding: 8px;
-    margin: 0 0 10px 0;
     font-size: 16px;
-    z-index: 9;
-    border: 1px solid #ccc;
 }
 
-/* Taulukon otsikkorivi sticky */
-thead th {
-    position: sticky;
-    top: 120px;
+/* Sticky-otsikkotaulukko (kopio theadista) */
+#stickyHeader {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    right: 20px;
+    z-index: 80;
     background: #333;
     color: white;
-    z-index: 8;
+    border-collapse: collapse;
+    display: none;
 }
 
-/* Tämä on kriittinen korjaus: pitää otsikot sarakkeiden kohdalla */
-thead {
-    display: table-header-group;
+#stickyHeader th {
+    border: 1px solid #ccc;
+    padding: 6px;
+    text-align: left;
+    background: #333;
+    color: white;
 }
 
-table {
+/* Varsinainen taulukko alkaa otsikoiden alapuolelta */
+table#karaoketable {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 140px; /* tilaa header + search + stickyHeader */
 }
 
 th, td {
@@ -91,9 +112,25 @@ tr.dim { opacity: 0.35; }
 
 <body>
 
-<h1>Karaokelista – Hovi</h1>
+<div class="header">
+    <h1>Karaokelista – Hovi</h1>
+</div>
 
-<input type="text" id="search" placeholder="Hae artistia tai kappaletta...">
+<div class="searchbox">
+    <input type="text" id="search" placeholder="Hae artistia tai kappaletta...">
+</div>
+
+<!-- Sticky-otsikkotaulukko (täytetään JS:llä) -->
+<table id="stickyHeader">
+    <thead>
+    <tr>
+        <th>Artisti</th>
+        <th>Kappale</th>
+        <th>Kone</th>
+        <th>Koodi</th>
+    </tr>
+    </thead>
+</table>
 
 <table id="karaoketable">
 <thead>
@@ -108,6 +145,7 @@ tr.dim { opacity: 0.35; }
 </table>
 
 <script>
+// CSV-lataus
 fetch('kappaleet.csv')
   .then(r => r.text())
   .then(csv => {
@@ -134,8 +172,12 @@ fetch('kappaleet.csv')
       `;
       tbody.appendChild(tr);
     });
+
+    // Kun data on ladattu, synkataan sticky-otsikon sarakeleveydet
+    syncStickyHeaderWidths();
   });
 
+// Haku
 document.getElementById("search").addEventListener("keyup", function() {
   const term = this.value.toLowerCase();
   const rows = document.querySelectorAll("#karaoketable tbody tr");
@@ -152,6 +194,38 @@ document.getElementById("search").addEventListener("keyup", function() {
       tr.classList.toggle("dim", !match);
     }
   });
+});
+
+// Synkkaa sticky-otsikon sarakeleveydet varsinaisen taulukon kanssa
+function syncStickyHeaderWidths() {
+  const table = document.getElementById("karaoketable");
+  const sticky = document.getElementById("stickyHeader");
+
+  const bodyRow = table.querySelector("tbody tr");
+  if (!bodyRow) return;
+
+  const bodyCells = bodyRow.children;
+  const stickyCells = sticky.querySelectorAll("thead th");
+
+  for (let i = 0; i < stickyCells.length && i < bodyCells.length; i++) {
+    const w = bodyCells[i].getBoundingClientRect().width;
+    stickyCells[i].style.width = w + "px";
+  }
+}
+
+// Näytä/piilota sticky-otsikko rullauksen mukaan
+window.addEventListener("scroll", function() {
+  const table = document.getElementById("karaoketable");
+  const sticky = document.getElementById("stickyHeader");
+
+  const rect = table.getBoundingClientRect();
+
+  // Kun taulukon yläreuna menee headerin alle, näytetään sticky-otsikko
+  if (rect.top < 100) {
+    sticky.style.display = "table";
+  } else {
+    sticky.style.display = "none";
+  }
 });
 </script>
 
