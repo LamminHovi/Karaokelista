@@ -21,31 +21,12 @@ body {
     td:nth-child(3), td:nth-child(4) { font-size: 12px; }
 }
 
-h1 { 
-    text-align: center; 
-}
-input[type="text"] { 
-    width: 100%; 
-    padding: 8px; 
-    margin-bottom: 10px; 
-    font-size: 16px; 
-}
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-}
-th, td { 
-    border: 1px solid #ccc; 
-    padding: 6px; 
-    text-align: left; 
-}
-th { 
-    background-color: #333; 
-    color: white; 
-}
-tr:nth-child(even) { 
-    background-color: #eee; 
-}
+h1 { text-align: center; }
+input[type="text"] { width: 100%; padding: 8px; margin-bottom: 10px; font-size: 16px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+th { background-color: #333; color: white; }
+tr:nth-child(even) { background-color: #eee; }
 
 /* Pienempi fontti Kone ja Koodi sarakkeille */
 td:nth-child(3),
@@ -53,15 +34,24 @@ td:nth-child(4) {
     font-size: 14px;
 }
 
-/* Kone-sarakkeen värikoodit */
-td.kone-C {
-    background-color: #cce0ff; /* vaaleansininen */
-}
+/* Kone-sarakkeen värikoodit (UUSI) */
 td.kone-M {
-    background-color: #d6f5d6; /* vaaleanvihreä */
+    background-color: #deb887; /* ruskeahko */
+}
+td.kone-K {
+    background-color: #ffb6c1; /* vaaleanpunainen */
+}
+td.kone-C_O {
+    background-color: #ffff99; /* keltainen */
+}
+td.kone-C_U {
+    background-color: #ff9999; /* punainen */
 }
 td.kone-M_U {
-    background-color: #ffe0b3; /* vaaleanoranssi */
+    background-color: #ff9999; /* punainen, sama kuin C_U */
+}
+td.kone-C {
+    background-color: #ffffff; /* valkoinen */
 }
 
 /* Koodi-sarake harmaaksi */
@@ -71,7 +61,7 @@ td.koodi {
 
 /* AUTOMAATTINEN KOROSTUS HAKUUN */
 tr.highlight {
-    background-color: #ffff99 !important; /* kirkas keltainen */
+    background-color: #ffff99 !important;
 }
 tr.dim {
     opacity: 0.35;
@@ -127,9 +117,12 @@ fetch('kappaleet.csv')
       const kone = cols[2].trim();
       td3.textContent = kone;
 
-      if (kone === "C") td3.classList.add("kone-C");
       if (kone === "M") td3.classList.add("kone-M");
+      if (kone === "K") td3.classList.add("kone-K");
+      if (kone === "C_O") td3.classList.add("kone-C_O");
+      if (kone === "C_U") td3.classList.add("kone-C_U");
       if (kone === "M_U") td3.classList.add("kone-M_U");
+      if (kone === "C") td3.classList.add("kone-C");
 
       tr.appendChild(td3);
 
