@@ -11,16 +11,6 @@ body {
     background: #f8f8f8; 
     margin: 20px; 
 }
-
-/* MOBIILINÄKYMÄ TIIVIIMMÄKSI */
-@media (max-width: 600px) {
-    body { margin: 5px; }
-    h1 { font-size: 20px; }
-    input[type="text"] { font-size: 14px; padding: 6px; }
-    th, td { padding: 4px; font-size: 14px; }
-    td:nth-child(3), td:nth-child(4) { font-size: 12px; }
-}
-
 h1 { 
     text-align: center; 
 }
@@ -67,14 +57,6 @@ td.kone-M_U {
 /* Koodi-sarake harmaaksi */
 td.koodi {
     background-color: #f2f2f2;
-}
-
-/* AUTOMAATTINEN KOROSTUS HAKUUN */
-tr.highlight {
-    background-color: #ffff99 !important; /* kirkas keltainen */
-}
-tr.dim {
-    opacity: 0.35;
 }
 </style>
 </head>
@@ -143,22 +125,11 @@ fetch('kappaleet.csv')
     });
   });
 
-// HAKU + AUTOMAATTINEN KOROSTUS
+// HAKU
 document.getElementById("search").addEventListener("keyup", function() {
   const term = this.value.toLowerCase();
-  const rows = document.querySelectorAll("#karaoketable tbody tr");
-
-  rows.forEach(tr => {
-    const match = tr.textContent.toLowerCase().includes(term);
-
-    if (term === "") {
-      tr.style.display = "";
-      tr.classList.remove("highlight", "dim");
-    } else {
-      tr.style.display = match ? "" : "none";
-      tr.classList.toggle("highlight", match);
-      tr.classList.toggle("dim", !match);
-    }
+  document.querySelectorAll("#karaoketable tbody tr").forEach(tr => {
+    tr.style.display = tr.textContent.toLowerCase().includes(term) ? "" : "none";
   });
 });
 </script>
