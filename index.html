@@ -10,30 +10,33 @@ body {
     font-family: Arial, sans-serif; 
     background: #f8f8f8; 
     margin: 0;
-    padding: 0 20px;
+    padding: 0;
 }
 
 /* Yläotsikko pysyy näkyvissä */
-h1 {
+.header {
     position: sticky;
     top: 0;
     background: #f8f8f8;
-    padding: 15px 0 10px 0;
-    margin: 0;
-    z-index: 10;
+    padding: 15px 20px 10px 20px;
+    z-index: 100;
     border-bottom: 1px solid #ccc;
 }
 
 /* Hakukenttä pysyy näkyvissä */
-#search {
+.searchbox {
     position: sticky;
     top: 60px;
-    background: #ffffff;
+    background: #f8f8f8;
+    padding: 10px 20px;
+    z-index: 90;
+    border-bottom: 1px solid #ccc;
+}
+
+#search {
+    width: 100%;
     padding: 8px;
-    margin: 0 0 10px 0;
     font-size: 16px;
-    z-index: 9;
-    border: 1px solid #ccc;
 }
 
 /* Taulukon otsikkorivi pysyy näkyvissä */
@@ -42,7 +45,7 @@ thead th {
     top: 120px;
     background: #333;
     color: white;
-    z-index: 8;
+    z-index: 80;
 }
 
 table {
@@ -86,9 +89,13 @@ tr.dim { opacity: 0.35; }
 
 <body>
 
-<h1>Karaokelista – Hovi</h1>
+<div class="header">
+    <h1>Karaokelista – Hovi</h1>
+</div>
 
-<input type="text" id="search" placeholder="Hae artistia tai kappaletta...">
+<div class="searchbox">
+    <input type="text" id="search" placeholder="Hae artistia tai kappaletta...">
+</div>
 
 <table id="karaoketable">
 <thead>
@@ -124,27 +131,12 @@ fetch('kappaleet.csv')
 
       const tr = document.createElement("tr");
 
-      // Artisti
-      const td1 = document.createElement("td");
-      td1.textContent = artisti;
-      tr.appendChild(td1);
-
-      // Kappale
-      const td2 = document.createElement("td");
-      td2.textContent = kappale;
-      tr.appendChild(td2);
-
-      // Kone
-      const td3 = document.createElement("td");
-      td3.textContent = kone;
-      td3.classList.add("kone-" + kone);
-      tr.appendChild(td3);
-
-      // Koodi
-      const td4 = document.createElement("td");
-      td4.textContent = koodi;
-      td4.classList.add("koodi");
-      tr.appendChild(td4);
+      tr.innerHTML = `
+        <td>${artisti}</td>
+        <td>${kappale}</td>
+        <td class="kone-${kone}">${kone}</td>
+        <td class="koodi">${koodi}</td>
+      `;
 
       tbody.appendChild(tr);
     });
