@@ -45,7 +45,11 @@ thead th {
     z-index: 8;
 }
 
-/* Taulukko normaalisti virrassa */
+/* Tämä on kriittinen korjaus: pitää otsikot sarakkeiden kohdalla */
+thead {
+    display: table-header-group;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
