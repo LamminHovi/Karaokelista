@@ -4,51 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Karaokelista – Hovi</title>
-
 <style>
-body { 
-    font-family: Arial, sans-serif; 
-    background: #f8f8f8; 
-    margin: 20px; 
-}
-h1 { 
-    text-align: center; 
-}
-input[type="text"] { 
-    width: 100%; 
-    padding: 8px; 
-    margin-bottom: 10px; 
-    font-size: 16px; 
-}
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-}
-th, td { 
-    border: 1px solid #ccc; 
-    padding: 6px; 
-    text-align: left; 
-}
-th { 
-    background-color: #333; 
-    color: white; 
-}
-tr:nth-child(even) { 
-    background-color: #eee; 
-}
-
-/* Pienempi fontti Kone ja Koodi sarakkeille */
-td:nth-child(3),
-td:nth-child(4) {
-    font-size: 14px;
-}
+body { font-family: Arial, sans-serif; background: #f8f8f8; margin: 20px; }
+h1 { text-align: center; }
+input[type="text"] { width: 100%; padding: 8px; margin-bottom: 10px; font-size: 16px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+th { background-color: #333; color: white; }
+tr:nth-child(even) { background-color: #eee; }
 </style>
 </head>
-
 <body>
 
 <h1>Karaokelista – Hovi</h1>
-
 <input type="text" id="search" placeholder="Hae artistia tai kappaletta...">
 
 <table id="karaoketable">
@@ -86,7 +54,6 @@ fetch('kappaleet.csv')
     });
   });
 
-// HAKU
 document.getElementById("search").addEventListener("keyup", function() {
   const term = this.value.toLowerCase();
   document.querySelectorAll("#karaoketable tbody tr").forEach(tr => {
