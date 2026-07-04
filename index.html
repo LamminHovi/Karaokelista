@@ -9,52 +9,32 @@
 body { 
     font-family: Arial, sans-serif; 
     background: #f8f8f8; 
-    margin: 0;
-    padding: 0 20px;
+    margin: 20px; 
 }
 
-/* Yläotsikko pysyy näkyvissä */
-h1 {
-    position: sticky;
-    top: 0;
-    background: #f8f8f8;
-    padding: 15px 0 10px 0;
-    margin: 0;
-    z-index: 10;
-    border-bottom: 1px solid #ccc;
-}
+h1 { text-align: center; }
 
-/* Hakukenttä pysyy näkyvissä */
-#search {
-    position: sticky;
-    top: 60px;
-    background: #ffffff;
+input[type="text"] {
+    width: 100%;
     padding: 8px;
-    margin: 0 0 10px 0;
+    margin-bottom: 10px;
     font-size: 16px;
-    z-index: 9;
-    border: 1px solid #ccc;
-}
-
-/* Taulukon otsikkorivi pysyy näkyvissä */
-thead th {
-    position: sticky;
-    top: 120px;
-    background: #333;
-    color: white;
-    z-index: 8;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
 }
 
 th, td {
     border: 1px solid #ccc;
     padding: 6px;
     text-align: left;
+}
+
+th {
+    background-color: #333;
+    color: white;
 }
 
 tr:nth-child(even) {
@@ -68,12 +48,12 @@ td:nth-child(4) {
 }
 
 /* Kone-sarakkeen värit */
-td.kone-M { background-color: #deb887; }
-td.kone-K { background-color: #ffb6c1; }
-td.kone-C_O { background-color: #ffff99; }
-td.kone-C_U { background-color: #ff9999; }
-td.kone-M_U { background-color: #ff9999; }
-td.kone-C { background-color: #ffffff; }
+td.kone-M { background-color: #deb887; }     /* ruskeahko */
+td.kone-K { background-color: #ffb6c1; }     /* vaaleanpunainen */
+td.kone-C_O { background-color: #ffff99; }   /* keltainen */
+td.kone-C_U { background-color: #ff9999; }   /* punainen */
+td.kone-M_U { background-color: #ff9999; }   /* punainen */
+td.kone-C { background-color: #ffffff; }     /* valkoinen */
 
 /* Koodi-sarake harmaaksi */
 td.koodi { background-color: #f2f2f2; }
