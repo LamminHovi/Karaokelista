@@ -65,16 +65,16 @@ td:nth-child(4) {
 </table>
 
 <script>
-// LUE CSV-TIEDOSTO ILMAN OTSIKKOA
+// LUE CSV-TIEDOSTO, JOSSA SARAKKEET EROTTUVAT TABILLA
 fetch('kappaleet.csv')
   .then(response => response.text())
   .then(csv => {
-    const rows = csv.trim().split("\n"); // EI slice(1)
+    const rows = csv.trim().split("\n");
     const tbody = document.querySelector("#karaoketable tbody");
 
     rows.forEach(row => {
-      const cols = row.split(",");
-      if (cols.length < 4) return; // ohita virheelliset rivit
+      const cols = row.split("\t"); // <-- TÄRKEÄ MUUTOS
+      if (cols.length < 4) return;
 
       const tr = document.createElement("tr");
       cols.forEach(col => {
