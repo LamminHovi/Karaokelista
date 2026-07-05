@@ -25,7 +25,7 @@ body.night {
     height: 50px;
     background: #444;
     color: white;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: bold;
     padding-left: 20px;
     line-height: 50px;
@@ -40,8 +40,8 @@ body.night {
     background: #777;
     color: white;
     border: none;
-    padding: 8px 14px;
-    font-size: 16px;
+    padding: 6px 12px;
+    font-size: 14px;
     cursor: pointer;
     border-radius: 6px;
     z-index: 1001;
@@ -53,9 +53,9 @@ body.night {
     top: 50px;
     left: 0;
     right: 0;
-    height: 60px;
+    height: 50px;
     background: #333;
-    padding: 10px 20px;
+    padding: 8px 20px;
     z-index: 1000;
 }
 
@@ -65,23 +65,23 @@ body.day #searchContainer {
 
 #searchInput {
     width: 95%;
-    height: 40px;
-    font-size: 20px;
+    height: 35px;
+    font-size: 16px;
 }
 
 /* --- OTSIKKO: Kaikki kappaleet --- */
 #subheader {
     position: fixed;
-    top: 110px;
+    top: 100px;
     left: 0;
     right: 0;
-    height: 40px;
+    height: 35px;
     background: #555;
     color: white;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     text-align: center;
-    line-height: 40px;
+    line-height: 35px;
     z-index: 1000;
 }
 
@@ -94,15 +94,21 @@ body.day #subheader {
 table#karaoketable {
     width: 95%;
     margin: 0 auto;
-    margin-top: 170px;
+    margin-top: 145px;
     border-collapse: collapse;
+    background-image: url('hovi-bg.jpg'); /* muokattu haalea mustavalkoinen logo */
+    background-repeat: repeat-y;
+    background-size: contain;
+    background-position: center top;
+    opacity: 0.9;
 }
 
 table#karaoketable th {
     text-align: left;
-    padding: 8px;
+    padding: 4px;
     border-bottom: 2px solid #666;
     cursor: pointer;
+    font-size: 13px;
 }
 
 body.day table#karaoketable th {
@@ -110,50 +116,50 @@ body.day table#karaoketable th {
 }
 
 table#karaoketable td {
-    padding: 6px;
+    padding: 3px 4px;
     border-bottom: 1px solid #555;
+    font-size: 11px;
+    line-height: 1.2;
 }
 
 body.day table#karaoketable td {
     border-bottom: 1px solid #aaa;
 }
 
-/* --- PIENEMPI FONTTI KONE & KOODI --- */
-td:nth-child(3),
-td:nth-child(4) {
-    font-size: 10px;
+/* --- SARAKKEIDEN LEVEYS --- */
+table#karaoketable th:nth-child(1),
+table#karaoketable td:nth-child(1) { width: 35%; }
+table#karaoketable th:nth-child(2),
+table#karaoketable td:nth-child(2) { width: 35%; }
+table#karaoketable th:nth-child(3),
+table#karaoketable td:nth-child(3) { width: 15%; }
+table#karaoketable th:nth-child(4),
+table#karaoketable td:nth-child(4) { width: 15%; }
+
+/* --- HOVER‑EFEKTI --- */
+table#karaoketable tr:hover {
+    background-color: rgba(180,180,180,0.3);
 }
 
-/* --- KONE‑SARAKKEEN VÄRIT + PIENI FONTTI --- */
-.kone-M {
-    background-color: #8B4513;
-    color: white;
-    font-size: 10px;
-}
+/* --- KONE‑SARAKKEEN VÄRIT --- */
+.kone-M { background-color: #8B4513; color: white; font-size: 10px; }
+.kone-K { background-color: #FFB6C1; color: black; font-size: 10px; }
+.kone-C_O { background-color: #FFD700; color: black; font-size: 10px; }
+.kone-C_U, .kone-M_U { background-color: #FF0000; color: white; font-size: 10px; }
+.kone-C { background-color: #FFFFFF; color: black; font-size: 10px; }
 
-.kone-K {
-    background-color: #FFB6C1;
-    color: black;
-    font-size: 10px;
-}
-
-.kone-C_O {
-    background-color: #FFD700;
-    color: black;
-    font-size: 10px;
-}
-
-.kone-C_U,
-.kone-M_U {
-    background-color: #FF0000;
-    color: white;
-    font-size: 10px;
-}
-
-.kone-C {
-    background-color: #FFFFFF;
-    color: black;
-    font-size: 10px;
+/* --- MOBIILIVERSIO --- */
+@media (max-width: 600px) {
+    #header { font-size: 20px; }
+    #searchInput { font-size: 14px; height: 30px; }
+    #subheader { font-size: 16px; }
+    table#karaoketable th, table#karaoketable td {
+        font-size: 9px;
+        padding: 2px;
+    }
+    table#karaoketable {
+        width: 98%;
+    }
 }
 </style>
 </head>
@@ -161,7 +167,6 @@ td:nth-child(4) {
 <body class="day">
 
 <div id="header">Karaokelista – Hovi</div>
-
 <button id="themeButton">Päivä / Yö</button>
 
 <div id="searchContainer">
@@ -183,7 +188,6 @@ td:nth-child(4) {
 </table>
 
 <script>
-/* --- CSV LATAUS --- */
 async function loadCSV() {
     const response = await fetch("kappaleet.csv");
     const text = await response.text();
@@ -221,7 +225,6 @@ async function loadCSV() {
 document.getElementById("searchInput").addEventListener("input", function() {
     const filter = this.value.toLowerCase();
     const rows = document.querySelectorAll("#tbody tr");
-
     rows.forEach(row => {
         const text = row.innerText.toLowerCase();
         row.style.display = text.includes(filter) ? "" : "none";
@@ -231,48 +234,17 @@ document.getElementById("searchInput").addEventListener("input", function() {
 /* --- TEEMAN VAIHTO --- */
 document.getElementById("themeButton").addEventListener("click", function() {
     const body = document.body;
-
-    if (body.classList.contains("night")) {
-        body.classList.remove("night");
-        body.classList.add("day");
-    } else {
-        body.classList.remove("day");
-        body.classList.add("night");
-    }
+    body.classList.toggle("night");
+    body.classList.toggle("day");
 });
 
 /* --- TAULUKON LAJITTELU --- */
 function sortTable(columnIndex) {
     const tbody = document.getElementById("tbody");
     const rows = Array.from(tbody.querySelectorAll("tr"));
-
     const ascending = tbody.getAttribute("data-sort-" + columnIndex) !== "asc";
 
     rows.sort((a, b) => {
         const aText = a.children[columnIndex].innerText.toLowerCase();
         const bText = b.children[columnIndex].innerText.toLowerCase();
-
-        if (aText < bText) return ascending ? -1 : 1;
-        if (aText > bText) return ascending ? 1 : -1;
-        return 0;
-    });
-
-    tbody.setAttribute("data-sort-" + columnIndex, ascending ? "asc" : "desc");
-
-    rows.forEach(row => tbody.appendChild(row));
-}
-
-/* --- OTSIKKOJEN KLIKKAUS --- */
-document.addEventListener("DOMContentLoaded", () => {
-    const headers = document.querySelectorAll("#karaoketable th");
-
-    headers.forEach((th, index) => {
-        th.addEventListener("click", () => sortTable(index));
-    });
-});
-
-loadCSV();
-</script>
-
-</body>
-</html>
+        if (aText < bText) return ascending ? -1 :
