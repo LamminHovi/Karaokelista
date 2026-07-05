@@ -47,7 +47,7 @@ body.night {
     z-index: 1001;
 }
 
-/* --- HAKUKENTTÄ (nyt pääotsikon alla) --- */
+/* --- HAKUKENTTÄ --- */
 #searchContainer {
     position: fixed;
     top: 50px;
@@ -69,7 +69,7 @@ body.day #searchContainer {
     font-size: 20px;
 }
 
-/* --- TOINEN OTSIKKO (hakukentän alla, koko leveys) --- */
+/* --- TOINEN OTSIKKO (koko leveys) --- */
 #subheader {
     position: fixed;
     top: 110px;
@@ -80,7 +80,7 @@ body.day #searchContainer {
     color: white;
     font-size: 20px;
     font-weight: bold;
-    padding-left: 20px;
+    text-align: center;
     line-height: 40px;
     z-index: 1000;
 }
@@ -116,6 +116,27 @@ table#karaoketable td {
 body.day table#karaoketable td {
     border-bottom: 1px solid #aaa;
 }
+
+/* --- KONE‑SARAKKEEN VÄRIT --- */
+.kone-M {
+    background-color: #8B4513; /* ruskea */
+    color: white;
+}
+
+.kone-K {
+    background-color: #FFB6C1; /* vaaleanpunainen */
+    color: black;
+}
+
+.kone-C_O {
+    background-color: #FFD700; /* keltainen */
+    color: black;
+}
+
+.kone-C_U {
+    background-color: #FF0000; /* punainen */
+    color: white;
+}
 </style>
 </head>
 
@@ -129,7 +150,7 @@ body.day table#karaoketable td {
     <input id="searchInput" type="text" placeholder="Hae artistia tai kappaletta...">
 </div>
 
-<div id="subheader">Karaokelista – Kaikki kappaleet</div>
+<div id="subheader">| Artisti | Kappale | Kone | Koodi |</div>
 
 <table id="karaoketable">
     <thead>
@@ -157,11 +178,19 @@ async function loadCSV() {
         const parts = line.split(",");
         if (parts.length < 4) return;
 
+        const kone = parts[2].trim();
+        let koneClass = "";
+
+        if (kone.startsWith("M")) koneClass = "kone-M";
+        else if (kone.startsWith("K")) koneClass = "kone-K";
+        else if (kone.startsWith("C_O")) koneClass = "kone-C_O";
+        else if (kone.startsWith("C_U")) koneClass = "kone-C_U";
+
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>${parts[0]}</td>
             <td>${parts[1]}</td>
-            <td>${parts[2]}</td>
+            <td class="${koneClass}">${parts[2]}</td>
             <td>${parts[3]}</td>
         `;
         tbody.appendChild(tr);
