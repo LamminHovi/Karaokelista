@@ -2,206 +2,128 @@
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Karaokelista – Hovi</title>
 
 <style>
-body { 
-    font-family: Arial, sans-serif; 
-    background: #f8f8f8; 
+body {
+    background: #222;
+    color: white;
+    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0 20px;
+    padding: 0;
 }
 
-/* Yläotsikko kiinteä */
-.header {
+/* Yläotsikko – pysyy näkyvissä */
+#header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    background: #f8f8f8;
-    padding: 10px 20px 5px 20px;
-    z-index: 100;
-    border-bottom: 1px solid #ccc;
-    box-sizing: border-box;
+    height: 50px;
+    background: #444;
+    color: white;
+    font-size: 26px;
+    font-weight: bold;
+    padding-left: 20px;
+    line-height: 50px;
+    z-index: 1000;
 }
 
-.header h1 {
-    margin: 0;
-}
-
-/* Hakukenttä kiinteä */
-.searchbox {
+/* Hakukenttä – pysyy näkyvissä */
+#searchContainer {
     position: fixed;
     top: 50px;
     left: 0;
     right: 0;
-    background: #f8f8f8;
-    padding: 5px 20px 10px 20px;
-    z-index: 90;
-    border-bottom: 1px solid #ccc;
-    box-sizing: border-box;
-}
-
-#search {
-    width: 100%;
-    padding: 8px;
-    font-size: 16px;
-}
-
-/* Sticky-otsikkotaulukko (kopio theadista) */
-#stickyHeader {
-    position: fixed;
-    top: 120px;
-    left: 20px;
-    right: 20px;
-    z-index: 999;
+    height: 60px;
     background: #333;
-    color: white;
-    border-collapse: collapse;
-}
-/* StickyHeaderin sarakeleveydet */
-#stickyHeader th:nth-child(1) { width: 30%; }
-#stickyHeader th:nth-child(2) { width: 40%; }
-#stickyHeader th:nth-child(3) { width: 10%; }
-#stickyHeader th:nth-child(4) { width: 20%; }
-    
-#stickyHeader th {
-    border: 1px solid #ccc;
-    padding: 6px;
-    text-align: left;
-    background: #333;
-    color: white;
+    padding: 10px 20px;
+    z-index: 1000;
 }
 
-/* Varsinainen taulukko alkaa otsikoiden alapuolelta */
+#searchInput {
+    width: 95%;
+    height: 40px;
+    font-size: 20px;
+}
+
+/* Normaali taulukko – EI kiinnitetty */
 table#karaoketable {
-    width: 100%;
+    width: 95%;
+    margin: 0 auto;
+    margin-top: 130px;   /* tilaa otsikolle + hakukentälle */
     border-collapse: collapse;
-    margin-top: 260px; /* tilaa header + search + stickyHeader */
 }
 
-th, td {
-    border: 1px solid #ccc;
-    padding: 6px;
+table#karaoketable th {
     text-align: left;
+    padding: 8px;
+    border-bottom: 2px solid #666;
 }
 
-tr:nth-child(even) {
-    background-color: #eee;
+table#karaoketable td {
+    padding: 6px;
+    border-bottom: 1px solid #555;
 }
-
-/* Pienempi fontti Kone ja Koodi sarakkeille — 12px */
-td:nth-child(3),
-td:nth-child(4) {
-    font-size: 12px;
-}
-
-/* Kone-sarakkeen värit */
-td.kone-M { background-color: #deb887; }
-td.kone-K { background-color: #ffb6c1; }
-td.kone-C_O { background-color: #ffff99; }
-td.kone-C_U { background-color: #ff9999; }
-td.kone-M_U { background-color: #ff9999; }
-td.kone-C { background-color: #ffffff; }
-
-/* Koodi-sarake harmaaksi */
-td.koodi { background-color: #f2f2f2; }
-
-/* Haku-korostus */
-tr.highlight { background-color: #fffff9 !important; }
-tr.dim { opacity: 0.35; }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-    <h1>Karaokelista – Hovi</h1>
+<div id="header">Karaokelista – Hovi</div>
+
+<div id="searchContainer">
+    <input id="searchInput" type="text" placeholder="Hae artistia tai kappaletta...">
 </div>
 
-<div class="searchbox">
-    <input type="text" id="search" placeholder="Hae artistia tai kappaletta...">
-</div>
-
-<!-- Sticky-otsikkotaulukko (täytetään JS:llä) -->
-<table id="stickyHeader">
-    <thead>
-    <tr>
-        <th>Artisti</th>
-        <th>Kappale</th>
-        <th>Kone</th>
-        <th>Koodi</th>
-    </tr>
-    </thead>
-</table>
-
+<!-- Normaali taulukko -->
 <table id="karaoketable">
-<thead>
-<tr>
-<th>Artisti</th>
-<th>Kappale</th>
-<th>Kone</th>
-<th>Koodi</th>
-</tr>
-</thead>
-<tbody></tbody>
+    <thead>
+        <tr>
+            <th>Artisti</th>
+            <th>Kappale</th>
+            <th>Kone</th>
+            <th>Koodi</th>
+        </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
 </table>
 
 <script>
-// CSV-lataus
-fetch('kappaleet.csv')
-  .then(r => r.text())
-  .then(csv => {
-    const rows = csv.split(/\r?\n/);
-    const tbody = document.querySelector("#karaoketable tbody");
+async function loadCSV() {
+    const response = await fetch("kappaleet.csv");
+    const text = await response.text();
+    const rows = text.trim().split("\n");
+
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = "";
+
+    rows.forEach(line => {
+        const parts = line.split(",");
+        if (parts.length < 4) return;
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${parts[0]}</td>
+            <td>${parts[1]}</td>
+            <td>${parts[2]}</td>
+            <td>${parts[3]}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+document.getElementById("searchInput").addEventListener("input", function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll("#tbody tr");
 
     rows.forEach(row => {
-      if (!row.trim()) return;
-
-      const cols = row.split(",");
-      if (cols.length < 4) return;
-
-      const artisti = cols[0].trim();
-      const kappale = cols[1].trim();
-      let kone = cols[2].trim().toUpperCase().replace("-", "_");
-      const koodi = cols[3].trim();
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${artisti}</td>
-        <td>${kappale}</td>
-        <td class="kone-${kone}">${kone}</td>
-        <td class="koodi">${koodi}</td>
-      `;
-      tbody.appendChild(tr);
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? "" : "none";
     });
-
-    // Kun data on ladattu, synkataan sticky-otsikon sarakeleveydet
-  });
-
-// Haku
-document.getElementById("search").addEventListener("keyup", function() {
-  const term = this.value.toLowerCase();
-  const rows = document.querySelectorAll("#karaoketable tbody tr");
-
-  rows.forEach(tr => {
-    const match = tr.textContent.toLowerCase().includes(term);
-
-    if (term === "") {
-      tr.style.display = "";
-      tr.classList.remove("highlight", "dim");
-    } else {
-      tr.style.display = match ? "" : "none";
-      tr.classList.toggle("highlight", match);
-      tr.classList.toggle("dim", !match);
-    }
-  });
 });
 
- // * Näytä stickyHeader heti sivun latauksessa   
-sticky.style.display = "table";
-  
+loadCSV();
 </script>
 
 </body>
