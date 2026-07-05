@@ -2,8 +2,7 @@
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<title>Karaokelista – Hovi
-Artisti | Kappale | Kone | Koodi </title>
+<title>Karaokelista – Hovi</title>
 <title>  </title>
 <style>
 body {
@@ -29,11 +28,26 @@ body {
     line-height: 50px;
     z-index: 1000;
 }
+<div id="subheader">Artisti Kappale Kone Koodi</div>
+#subheader {
+    position: fixed;
+    top: 50px;        /* heti pääotsikon alapuolelle */
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: #555;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding-left: 20px;
+    line-height: 40px;
+    z-index: 1000;
+}
 
 /* Hakukenttä – pysyy näkyvissä */
 #searchContainer {
     position: fixed;
-    top: 50px;
+    top: 90px;
     left: 0;
     right: 0;
     height: 60px;
@@ -52,7 +66,7 @@ body {
 table#karaoketable {
     width: 95%;
     margin: 0 auto;
-    margin-top: 130px;   /* tilaa otsikolle + hakukentälle */
+    margin-top: 160px;   /* tilaa otsikolle + hakukentälle */
     border-collapse: collapse;
 }
 
