@@ -61,7 +61,12 @@ body {
     border-collapse: collapse;
     display: none;
 }
-
+/* StickyHeaderin sarakeleveydet */
+#stickyHeader th:nth-child(1) { width: 30%; }
+#stickyHeader th:nth-child(2) { width: 40%; }
+#stickyHeader th:nth-child(3) { width: 10%; }
+#stickyHeader th:nth-child(4) { width: 20%; }
+    
 #stickyHeader th {
     border: 1px solid #ccc;
     padding: 6px;
@@ -174,7 +179,6 @@ fetch('kappaleet.csv')
     });
 
     // Kun data on ladattu, synkataan sticky-otsikon sarakeleveydet
-    syncStickyHeaderWidths();
   });
 
 // Haku
