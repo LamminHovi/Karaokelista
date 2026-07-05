@@ -200,6 +200,7 @@ document.getElementById("search").addEventListener("keyup", function() {
 function syncStickyHeaderWidths() {
   const table = document.getElementById("karaoketable");
   const sticky = document.getElementById("stickyHeader");
+console.log("stickyHeader:", sticky);
 
   const bodyRow = table.querySelector("tbody tr");
   if (!bodyRow) return;
