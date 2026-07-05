@@ -29,26 +29,10 @@ body {
     z-index: 1000;
 }
 
-/* 2) Toinen otsikko – pysyy näkyvissä */
-#subheader {
-    position: fixed;
-    top: 50px;
-    left: 0;
-    right: 0;
-    height: 40px;
-    background: #555;
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    padding-left: 20px;
-    line-height: 40px;
-    z-index: 1000;
-}
-
-/* 3) Hakukenttä – pysyy näkyvissä */
+/* 2) Hakukenttä – nyt pääotsikon alla */
 #searchContainer {
     position: fixed;
-    top: 90px;
+    top: 50px;      /* heti pääotsikon alapuolella */
     left: 0;
     right: 0;
     height: 60px;
@@ -63,11 +47,27 @@ body {
     font-size: 20px;
 }
 
+/* 3) Toinen otsikko – hakukentän alla, koko leveys */
+#subheader {
+    position: fixed;
+    top: 110px;     /* hakukentän alapuolella */
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: #555;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding-left: 20px;
+    line-height: 40px;
+    z-index: 1000;
+}
+
 /* 4) Normaali taulukko – EI kiinnitetty */
 table#karaoketable {
     width: 95%;
     margin: 0 auto;
-    margin-top: 160px;   /* tilaa otsikoille + hakukentälle */
+    margin-top: 170px;   /* tilaa otsikoille + hakukentälle */
     border-collapse: collapse;
 }
 
@@ -88,11 +88,11 @@ table#karaoketable td {
 
 <div id="header">Karaokelista – Hovi</div>
 
-<div id="subheader">Karaokelista – Kaikki kappaleet</div>
-
 <div id="searchContainer">
     <input id="searchInput" type="text" placeholder="Hae artistia tai kappaletta...">
 </div>
+
+<div id="subheader">Karaokelista – Kaikki kappaleet</div>
 
 <!-- Normaali taulukko -->
 <table id="karaoketable">
