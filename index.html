@@ -52,7 +52,7 @@ body {
 /* Sticky-otsikkotaulukko (kopio theadista) */
 #stickyHeader {
     position: fixed;
-    top: 120px;
+    top: 150px;
     left: 20px;
     right: 20px;
     z-index: 80;
@@ -74,7 +74,7 @@ body {
 table#karaoketable {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 120px; /* tilaa header + search + stickyHeader */
+    margin-top: 130px; /* tilaa header + search + stickyHeader */
 }
 
 th, td {
@@ -221,7 +221,7 @@ window.addEventListener("scroll", function() {
   const rect = table.getBoundingClientRect();
 
   // Kun taulukon yläreuna menee headerin alle, näytetään sticky-otsikko
-  if (rect.top < 100) {
+  if (rect.top < 140) {
     sticky.style.display = "table";
   } else {
     sticky.style.display = "none";
