@@ -215,17 +215,7 @@ function syncStickyHeaderWidths() {
 
 // Näytä/piilota sticky-otsikko rullauksen mukaan
 window.addEventListener("scroll", function() {
-  const table = document.getElementById("karaoketable");
-  const sticky = document.getElementById("stickyHeader");
-
-  const rect = table.getBoundingClientRect();
-
-  // Kun taulukon yläreuna menee headerin alle, näytetään sticky-otsikko
-  if (rect.top < 150) {
     sticky.style.display = "table";
-  } else {
-    sticky.style.display = "none";
-  }
 });
 </script>
 
