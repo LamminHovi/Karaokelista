@@ -196,24 +196,6 @@ document.getElementById("search").addEventListener("keyup", function() {
   });
 });
 
-// Synkkaa sticky-otsikon sarakeleveydet varsinaisen taulukon kanssa
-function syncStickyHeaderWidths() {
-  const table = document.getElementById("karaoketable");
-  const sticky = document.getElementById("stickyHeader");
-console.log("stickyHeader:", sticky);
-
-  const bodyRow = table.querySelector("tbody tr");
-  if (!bodyRow) return;
-
-  const bodyCells = bodyRow.children;
-  const stickyCells = sticky.querySelectorAll("thead th");
-
-  for (let i = 0; i < stickyCells.length && i < bodyCells.length; i++) {
-    const w = bodyCells[i].getBoundingClientRect().width;
-    stickyCells[i].style.width = w + "px";
-  }
-}
-
 // Näytä/piilota sticky-otsikko rullauksen mukaan
 window.addEventListener("scroll", function() {
     sticky.style.display = "table";
