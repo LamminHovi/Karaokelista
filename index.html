@@ -5,15 +5,18 @@
 <title>Karaokelista – Hovi</title>
 
 <style>
-body {
-    background: #222;
-    color: white;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+/* --- TEEMAT --- */
+body.day {
+    background: #f2f2f2;
+    color: #000;
 }
 
-/* 1) Pääotsikko – pysyy näkyvissä */
+body.night {
+    background: #222;
+    color: #fff;
+}
+
+/* --- PÄÄOTSikko --- */
 #header {
     position: fixed;
     top: 0;
@@ -29,10 +32,25 @@ body {
     z-index: 1000;
 }
 
-/* 2) Hakukenttä – nyt pääotsikon alla */
+/* --- TEEMANAPPI --- */
+#themeButton {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    background: #777;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    z-index: 1001;
+}
+
+/* --- HAKUKENTTÄ --- */
 #searchContainer {
     position: fixed;
-    top: 50px;      /* heti pääotsikon alapuolella */
+    top: 50px;
     left: 0;
     right: 0;
     height: 60px;
@@ -41,16 +59,20 @@ body {
     z-index: 1000;
 }
 
+body.day #searchContainer {
+    background: #ddd;
+}
+
 #searchInput {
     width: 95%;
     height: 40px;
     font-size: 20px;
 }
 
-/* 3) Toinen otsikko – hakukentän alla, koko leveys */
+/* --- TOINEN OTSIKKO --- */
 #subheader {
     position: fixed;
-    top: 110px;     /* hakukentän alapuolella */
+    top: 110px;
     left: 0;
     right: 0;
     height: 40px;
@@ -63,11 +85,16 @@ body {
     z-index: 1000;
 }
 
-/* 4) Normaali taulukko – EI kiinnitetty */
+body.day #subheader {
+    background: #ccc;
+    color: #000;
+}
+
+/* --- TAULUKKO --- */
 table#karaoketable {
     width: 95%;
     margin: 0 auto;
-    margin-top: 170px;   /* tilaa otsikoille + hakukentälle */
+    margin-top: 170px;
     border-collapse: collapse;
 }
 
@@ -77,16 +104,26 @@ table#karaoketable th {
     border-bottom: 2px solid #666;
 }
 
+body.day table#karaoketable th {
+    border-bottom: 2px solid #999;
+}
+
 table#karaoketable td {
     padding: 6px;
     border-bottom: 1px solid #555;
 }
+
+body.day table#karaoketable td {
+    border-bottom: 1px solid #aaa;
+}
 </style>
 </head>
 
-<body>
+<body class="night">
 
 <div id="header">Karaokelista – Hovi</div>
+
+<button id="themeButton">Päivä / Yö</button>
 
 <div id="searchContainer">
     <input id="searchInput" type="text" placeholder="Hae artistia tai kappaletta...">
@@ -94,7 +131,6 @@ table#karaoketable td {
 
 <div id="subheader">Karaokelista – Kaikki kappaleet</div>
 
-<!-- Normaali taulukko -->
 <table id="karaoketable">
     <thead>
         <tr>
@@ -108,6 +144,7 @@ table#karaoketable td {
 </table>
 
 <script>
+/* --- CSV LATAUS --- */
 async function loadCSV() {
     const response = await fetch("kappaleet.csv");
     const text = await response.text();
@@ -131,6 +168,7 @@ async function loadCSV() {
     });
 }
 
+/* --- HAKU --- */
 document.getElementById("searchInput").addEventListener("input", function() {
     const filter = this.value.toLowerCase();
     const rows = document.querySelectorAll("#tbody tr");
@@ -139,6 +177,19 @@ document.getElementById("searchInput").addEventListener("input", function() {
         const text = row.innerText.toLowerCase();
         row.style.display = text.includes(filter) ? "" : "none";
     });
+});
+
+/* --- TEEMAN VAIHTO --- */
+document.getElementById("themeButton").addEventListener("click", function() {
+    const body = document.body;
+
+    if (body.classList.contains("night")) {
+        body.classList.remove("night");
+        body.classList.add("day");
+    } else {
+        body.classList.remove("day");
+        body.classList.add("night");
+    }
 });
 
 loadCSV();
