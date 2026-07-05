@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Karaokelista – Hovi</title>
-<div id="subheader"> | Artisti____________| Kappale ___________________| Kone ___| Koodi__|</div>
-    <title>  </title>
+
 <style>
 body {
     background: #222;
@@ -14,7 +13,7 @@ body {
     padding: 0;
 }
 
-/* Yläotsikko – pysyy näkyvissä */
+/* 1) Pääotsikko – pysyy näkyvissä */
 #header {
     position: fixed;
     top: 0;
@@ -30,9 +29,10 @@ body {
     z-index: 1000;
 }
 
+/* 2) Toinen otsikko – pysyy näkyvissä */
 #subheader {
     position: fixed;
-    top: 50px;        /* heti pääotsikon alapuolelle */
+    top: 50px;
     left: 0;
     right: 0;
     height: 40px;
@@ -45,7 +45,7 @@ body {
     z-index: 1000;
 }
 
-/* Hakukenttä – pysyy näkyvissä */
+/* 3) Hakukenttä – pysyy näkyvissä */
 #searchContainer {
     position: fixed;
     top: 90px;
@@ -63,11 +63,11 @@ body {
     font-size: 20px;
 }
 
-/* Normaali taulukko – EI kiinnitetty */
+/* 4) Normaali taulukko – EI kiinnitetty */
 table#karaoketable {
     width: 95%;
     margin: 0 auto;
-    margin-top: 160px;   /* tilaa otsikolle + hakukentälle */
+    margin-top: 160px;   /* tilaa otsikoille + hakukentälle */
     border-collapse: collapse;
 }
 
@@ -87,6 +87,8 @@ table#karaoketable td {
 <body>
 
 <div id="header">Karaokelista – Hovi</div>
+
+<div id="subheader">Karaokelista – Kaikki kappaleet</div>
 
 <div id="searchContainer">
     <input id="searchInput" type="text" placeholder="Hae artistia tai kappaletta...">
