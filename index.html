@@ -96,11 +96,6 @@ table#karaoketable {
     margin: 0 auto;
     margin-top: 145px;
     border-collapse: collapse;
-    background-image: url('hovi-bg.jpg'); /* muokattu haalea mustavalkoinen logo */
-    background-repeat: repeat-y;
-    background-size: contain;
-    background-position: center top;
-    opacity: 0.9;
 }
 
 table#karaoketable th {
@@ -247,4 +242,25 @@ function sortTable(columnIndex) {
     rows.sort((a, b) => {
         const aText = a.children[columnIndex].innerText.toLowerCase();
         const bText = b.children[columnIndex].innerText.toLowerCase();
-        if (aText < bText) return ascending ? -1 :
+        if (aText < bText) return ascending ? -1 : 1;
+        if (aText > bText) return ascending ? 1 : -1;
+        return 0;
+    });
+
+    tbody.setAttribute("data-sort-" + columnIndex, ascending ? "asc" : "desc");
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+/* --- OTSIKKOJEN KLIKKAUS --- */
+document.addEventListener("DOMContentLoaded", () => {
+    const headers = document.querySelectorAll("#karaoketable th");
+    headers.forEach((th, index) => {
+        th.addEventListener("click", () => sortTable(index));
+    });
+});
+
+loadCSV();
+</script>
+
+</body>
+</html>
