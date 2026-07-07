@@ -28,8 +28,15 @@ body.tumma {
 }
 
 h2 { margin-bottom: 5px; }
-input { padding: 6px; width: 320px; }
-button { padding: 6px 12px; margin-left: 4px; }
+
+input {
+    padding: 10px;
+    width: 90%;
+    max-width: 500px;
+    font-size: 18px;
+}
+
+button { padding: 8px 14px; margin-left: 4px; }
 #tulos { margin-top: 10px; font-weight: bold; }
 
 table { border-collapse: collapse; width: 100%; margin-top: 20px; }
@@ -50,6 +57,12 @@ thead th {
     top: var(--otsikko-top);
     z-index: 10;
 }
+
+mark {
+    background-color: yellow;
+    color: black;
+    font-weight: bold;
+}
 </style>
 </head>
 
@@ -57,9 +70,46 @@ thead th {
 
 <div id="ylapalkki">
     <h2>Karaoke kappale haku HOVI</h2>
-
-    <!-- UUSI HAKUKENTTÄ -->
     <input id="haku" type="search" autocomplete="off" placeholder="Hae kappaletta tai artistia...">
     <button onclick="paivita()">Päivitä lista</button>
     <button onclick="tyhjenna()">Tyhjennä haku</button>
 </div>
+
+<table id="taulukko">
+    <thead>
+        <tr>
+            <th>Artisti</th>
+            <th>Kappale</th>
+            <th>Laite</th>
+            <th>Koodi</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+let lista = [];
+
+async function paivita() {
+    try {
+        const response = await fetch("kappaleet.csv");
+        const data = await response.text();
+        const rivit = data.trim().split("\n").slice(1);
+        lista = rivit.map(r => {
+            const [ARTISTI, KAPPALE, KONE, KOODI] = r.split(",");
+            return { ARTISTI, KAPPALE, KONE, KOODI };
+        });
+        suodata();
+    } catch (err) {
+        console.error("CSV:n lataus epäonnistui:", err);
+    }
+}
+
+function tyhjenna() {
+    document.getElementById("haku").value = "";
+    suodata();
+}
+
+function suodata() {
+    const haku = document.getElementById("haku").value.toUpperCase();
+    const
