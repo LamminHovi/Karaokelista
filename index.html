@@ -51,11 +51,47 @@ thead th {
     z-index: 10;
 }
 
+/* --- MOBIILIVERSIO (B: taulukko säilyy, skaalautuu) --- */
 @media (max-width: 600px) {
-    input { width: 100%; }
-    table { font-size: 14px; }
-    th, td { padding: 4px; }
-    #ylapalkki { padding: 10px; }
+
+    body {
+        margin: 10px;
+    }
+
+    #ylapalkki {
+        padding: 10px 0;
+    }
+
+    input {
+        width: 100%;
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    button {
+        padding: 10px 14px;
+        font-size: 16px;
+        margin-top: 6px;
+    }
+
+    table {
+        width: 100%;
+        font-size: 13px;
+    }
+
+    th, td {
+        padding: 6px;
+        font-size: 13px;
+        word-break: break-word;
+    }
+
+    /* Artistin ja kappaleen sarakkeet leveämmiksi */
+    th:nth-child(1), td:nth-child(1) { width: 45%; }
+    th:nth-child(2), td:nth-child(2) { width: 45%; }
+
+    /* Kone ja koodi kapeiksi */
+    th:nth-child(3), td:nth-child(3) { width: 5%; }
+    th:nth-child(4), td:nth-child(4) { width: 5%; }
 }
 </style>
 
