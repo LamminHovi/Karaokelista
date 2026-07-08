@@ -153,6 +153,7 @@ function paivitaNappi() {
 
 /* --- DEBOUNCE (PUHELIMEN HAKU KORJAUS) --- */
 let debounceTimer = null;
+
 document.getElementById("haku").addEventListener("input", () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
@@ -236,6 +237,7 @@ window.onload = () => {
     }, 200);
 };
 </script>
+
 
 </head>
 
