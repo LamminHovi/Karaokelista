@@ -1,3 +1,4 @@
+/* --- sivu valmis v1.2 --- */
 <!DOCTYPE html>
 <html lang="fi">
 <head>
@@ -101,7 +102,7 @@ function paivitaStickyOtsikko() {
 /* --- CSV LATAUS (fetch) --- */
 async function lataaCsv() {
     try {
-        const response = await fetch("kappaleet.csv");
+        const response = await fetch("kappaleet.csv?nocache=" + Date.now());
         const text = await response.text();
         const rivit = text.trim().split(/\r?\n/).filter(r => r.trim().length > 0);
 
@@ -210,13 +211,17 @@ window.onload = () => {
     <h2>Karaoke kappale haku HOVI</h2>
 
     <h3>Haku</h3>
-    <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
+    <input id="haku" inputmode="search" oninput="paivitaTaulukko()" placeholder="Hae...">
     <button onclick="paivitaNappi()">PÄIVITÄ</button>
     <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
 
     <div id="tulos"></div>
 
     <h3>Koko lista</h3>
+
+    <p>Versio 1.2 — Päivitetty automaattisesti</p>
+
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://lamminhovi.github.io/Karaokelista" alt="QR-koodi">
 </div>
 
 <table id="taulukko">
