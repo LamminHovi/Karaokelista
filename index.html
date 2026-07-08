@@ -6,75 +6,75 @@
 <title>Karaoke kappale haku HOVI</title>
 
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background: #f4f4f4;
-    }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f4f4;
+}
 
-    h1 {
-        text-align: center;
-        margin: 20px 0;
-    }
+h1 {
+    text-align: center;
+    margin: 20px 0;
+}
 
-    #searchBox {
-        width: 90%;
-        margin: 10px auto;
-        padding: 12px;
-        font-size: 18px;
-        border-radius: 8px;
-        border: 1px solid #aaa;
+#searchBox {
+    width: 90%;
+    margin: 10px auto;
+    padding: 12px;
+    font-size: 18px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    display: block;
+}
+
+/* Desktop table */
+table {
+    width: 95%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    display: table;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+}
+
+th {
+    background: #333;
+    color: white;
+}
+
+/* Mobile card layout */
+.card {
+    display: none;
+    background: white;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.card div {
+    margin: 5px 0;
+    font-size: 18px;
+}
+
+.label {
+    font-weight: bold;
+    color: #444;
+}
+
+/* Switch to card mode under 900px */
+@media (max-width: 900px) {
+    table {
+        display: none;
+    }
+    .card {
         display: block;
     }
-
-    /* Desktop table */
-    table {
-        width: 95%;
-        margin: 20px auto;
-        border-collapse: collapse;
-        display: table;
-    }
-
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #ccc;
-        text-align: left;
-    }
-
-    th {
-        background: #333;
-        color: white;
-    }
-
-    /* Mobile card layout */
-    .card {
-        display: none;
-        background: white;
-        margin: 10px;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    .card div {
-        margin: 5px 0;
-        font-size: 18px;
-    }
-
-    .label {
-        font-weight: bold;
-        color: #444;
-    }
-
-    /* Switch to card mode under 900px */
-    @media (max-width: 900px) {
-        table {
-            display: none;
-        }
-        .card {
-            display: block;
-        }
-    }
+}
 </style>
 </head>
 
@@ -93,55 +93,62 @@
             <th>KOODI</th>
         </tr>
     </thead>
-    <tbody id="songBody">
-    </tbody>
+    <tbody id="songBody"></tbody>
 </table>
 
 <div id="cardContainer"></div>
 
 <script>
-const data = [
-    { artist: "3 DOORS DOWN", song: "HERE WITHOUT YOU", machine: "C", code: "MICRPOY2" },
-    { artist: "3 DOORS DOWN", song: "KRYPTONITE", machine: "C", code: "MICRPOY2" },
-    { artist: "ABBA", song: "DANCING QUEEN", machine: "C", code: "MICRPOY2" },
-    { artist: "ABBA", song: "MAMMA MIA", machine: "C", code: "MICRPOY2" },
-    { artist: "ACDC", song: "BACK IN BLACK", machine: "C", code: "MICRPOY2" },
-    { artist: "ACDC", song: "THUNDERSTRUCK", machine: "C", code: "MICRPOY2" },
-    { artist: "ADELE", song: "HELLO", machine: "C", code: "MICRPOY2" },
-    { artist: "ADELE", song: "SOMEONE LIKE YOU", machine: "C", code: "MICRPOY2" }
-];
+let data = [];
+
+async function loadCSV() {
+    const response = await fetch("kappaleet.csv");
+    const text = await response.text();
+
+    const rows = text.trim().split("\n").slice(1);
+
+    data = rows.map(r => {
+        const [artist, song, machine, code] = r.split(",");
+        return { artist, song, machine, code };
+    });
+
+    renderTable();
+    renderCards();
+}
 
 function renderTable() {
     const body = document.getElementById("songBody");
     body.innerHTML = "";
+
     data.forEach(item => {
-        const row = `<tr>
-            <td>${item.artist}</td>
-            <td>${item.song}</td>
-            <td>${item.machine}</td>
-            <td>${item.code}</td>
-        </tr>`;
-        body.innerHTML += row;
+        body.innerHTML += `
+            <tr>
+                <td>${item.artist}</td>
+                <td>${item.song}</td>
+                <td>${item.machine}</td>
+                <td>${item.code}</td>
+            </tr>`;
     });
 }
 
 function renderCards() {
     const container = document.getElementById("cardContainer");
     container.innerHTML = "";
+
     data.forEach(item => {
-        const card = `
+        container.innerHTML += `
             <div class="card">
                 <div><span class="label">ARTISTI:</span> ${item.artist}</div>
                 <div><span class="label">KAPPALE:</span> ${item.song}</div>
                 <div><span class="label">KONE:</span> ${item.machine}</div>
                 <div><span class="label">KOODI:</span> ${item.code}</div>
             </div>`;
-        container.innerHTML += card;
     });
 }
 
 function filterList() {
     const q = document.getElementById("searchBox").value.toLowerCase();
+
     const filtered = data.filter(item =>
         item.artist.toLowerCase().includes(q) ||
         item.song.toLowerCase().includes(q) ||
@@ -174,8 +181,7 @@ function filterList() {
     });
 }
 
-renderTable();
-renderCards();
+loadCSV();
 </script>
 
 </body>
