@@ -122,7 +122,7 @@ async function lataaCsv() {
             return { ARTISTI, KAPPALE, KONE, KOODI };
         });
 
-        paivitaTaulukko();
+        paivitaTaulukko();   // ⭐ Taulukko piirretään vasta kun CSV on ladattu
     } catch (err) {
         console.error("CSV:n lataus epäonnistui:", err);
     }
@@ -130,17 +130,7 @@ async function lataaCsv() {
 
 /* --- PÄIVITYS --- */
 function paivitaKaikki() {
-    lataaCsv();
-
-    const d = document.getElementById("tulos");
-    const nyt = new Date();
-    const pvm = nyt.toLocaleDateString("fi-FI");
-    const aika = nyt.toLocaleTimeString("fi-FI", {
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-
-    d.textContent = "Tiedot päivitetty: " + pvm + " " + aika;
+    lataaCsv();             // ⭐ Lataa CSV ensin
     paivitaStickyOtsikko();
 }
 
@@ -148,7 +138,6 @@ function paivitaKaikki() {
 function paivitaNappi() {
     document.getElementById("haku").value = "";
     paivitaKaikki();
-    paivitaTaulukko();
 }
 
 /* --- DEBOUNCE (PUHELIMEN HAKU KORJAUS) --- */
@@ -231,7 +220,7 @@ function vaihdaTeema() {
 
 /* --- KÄYNNISTYS (KORJATTU) --- */
 window.onload = () => {
-    paivitaKaikki();   // Lataa CSV heti
+    paivitaKaikki();   // ⭐ Lataa CSV heti → taulukko näkyy heti
 };
 </script>
 
