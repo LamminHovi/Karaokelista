@@ -1,64 +1,3 @@
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-<meta charset="UTF-8">
-<title>Karaoke kappale haku HOVI</title>
-
-<style>
-body.vaalea {
-    background: #ffffff;
-    color: #000000;
-    font-family: Arial;
-    margin: 20px;
-}
-
-body.tumma {
-    background: #121212;
-    color: #e0e0e0;
-    font-family: Arial;
-    margin: 20px;
-}
-
-#ylapalkki {
-    position: sticky;
-    top: 0;
-    background: inherit;
-    padding-bottom: 10px;
-    z-index: 20;
-}
-
-h2 { margin-bottom: 5px; }
-input { padding: 6px; width: 320px; }
-button { padding: 6px 12px; margin-left: 4px; }
-#tulos { margin-top: 10px; font-weight: bold; }
-
-table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-th, td { border: 1px solid #999; padding: 6px 8px; }
-
-body.vaalea thead th {
-    background: #eee;
-    color: #000;
-}
-
-body.tumma thead th {
-    background: #1f1f1f;
-    color: #fff;
-}
-
-thead th {
-    position: sticky;
-    top: var(--otsikko-top);
-    z-index: 10;
-}
-
-@media (max-width: 600px) {
-    input { width: 100%; }
-    table { font-size: 14px; }
-    th, td { padding: 4px; }
-    #ylapalkki { padding: 10px; }
-}
-</style>
-
 <script>
 let lista = [];
 
@@ -111,125 +50,61 @@ async function lataaCsv() {
         });
 
         paivitaTaulukko();
-    } catch (err) {
-        console.error("CSV:n lataus epäonnistui:", err);
+    } catch (e) {
+        console.error("CSV latausvirhe:", e);
     }
 }
 
-/* --- PÄIVITYS --- */
-function paivitaKaikki() {
-    lataaCsv();
+/* --- HAKU + DEBOUNCE (PUHELIMEN KORJAUS) --- */
+let timer = null;
 
-    const d = document.getElementById("tulos");
-    const nyt = new Date();
-    const pvm = nyt.toLocaleDateString("fi-FI");
-    const aika = nyt.toLocaleTimeString("fi-FI", {
-        hour: "2-digit",
-        minute: "2-digit"
-    });
+document.getElementById("haku").addEventListener("input", () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+        hae();
+    }, 150);   // 150 ms debounce – korjaa puhelimen viiveen ja tuplakirjaimet
+});
 
-    d.textContent = "Tiedot päivitetty: " + pvm + " " + aika;
-    paivitaStickyOtsikko();
-}
+/* --- HAKUFUNKTIO --- */
+function hae() {
+    const hakusana = document.getElementById("haku").value.trim().toUpperCase();
 
-/* --- PÄIVITÄ-NAPPI --- */
-function paivitaNappi() {
-    document.getElementById("haku").value = "";
-    paivitaKaikki();
-    paivitaTaulukko();
-}
-
-/* --- TAULUKKO --- */
-function paivitaTaulukko() {
-    const tbody = document.querySelector("#taulukko tbody");
-    tbody.innerHTML = "";
-
-    let kopio = [...lista];
-
-    const haku = document.getElementById("haku").value.toUpperCase();
-    if (haku.length > 0) {
-        kopio = kopio.filter(r =>
-            r.ARTISTI.includes(haku) ||
-            r.KAPPALE.includes(haku) ||
-            r.KONE.includes(haku) ||
-            r.KOODI.includes(haku)
-        );
+    if (hakusana.length === 0) {
+        paivitaTaulukko(lista);
+        return;
     }
 
-    kopio.sort((a, b) =>
-        a.ARTISTI.localeCompare(b.ARTISTI) ||
-        a.KAPPALE.localeCompare(b.KAPPALE)
+    const suodatettu = lista.filter(r =>
+        r.ARTISTI.includes(hakusana) ||
+        r.KAPPALE.includes(hakusana)
     );
 
-    kopio.forEach(r => {
-        const tr = document.createElement("tr");
+    paivitaTaulukko(suodatettu);
+}
 
-        ["ARTISTI", "KAPPALE", "KONE", "KOODI"].forEach(k => {
-            const td = document.createElement("td");
-            td.textContent = r[k];
-            if (k === "KONE") td.style.backgroundColor = koneVari(r[k]);
-            tr.appendChild(td);
-        });
+/* --- TAULUKON PÄIVITYS --- */
+function paivitaTaulukko(data = lista) {
+    const tbody = document.getElementById("tbody");
+    tbody.innerHTML = "";
+
+    data.forEach(r => {
+        const tr = document.createElement("tr");
+        tr.style.backgroundColor = koneVari(r.KONE);
+
+        tr.innerHTML = `
+            <td>${r.ARTISTI}</td>
+            <td>${r.KAPPALE}</td>
+            <td>${r.KONE}</td>
+            <td>${r.KOODI}</td>
+        `;
 
         tbody.appendChild(tr);
     });
 }
 
-/* --- TEEMAN VAIHTO --- */
-function vaihdaTeema() {
-    const body = document.body;
-    const nappi = document.getElementById("teemanappi");
-
-    if (body.classList.contains("tumma")) {
-        body.classList.remove("tumma");
-        body.classList.add("vaalea");
-        nappi.textContent = "Tumma teema";
-    } else {
-        body.classList.remove("vaalea");
-        body.classList.add("tumma");
-        nappi.textContent = "Vaalea teema";
-    }
-
-    paivitaStickyOtsikko();
-    paivitaTaulukko();
-}
-
 /* --- KÄYNNISTYS --- */
 window.onload = () => {
-    setTimeout(() => {
-        paivitaKaikki();
-        setInterval(paivitaKaikki, 3600000);
-    }, 200);
+    paivitaStickyOtsikko();
+    lataaCsv();
 };
 </script>
-</head>
-
-<body class="vaalea">
-
-<div id="ylapalkki">
-    <h2>Karaoke kappale haku HOVI</h2>
-
-    <h3>Haku</h3>
-    <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
-    <button onclick="paivitaNappi()">PÄIVITÄ</button>
-    <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
-
-    <div id="tulos"></div>
-
-    <h3>Koko lista</h3>
-</div>
-
-<table id="taulukko">
-    <thead>
-        <tr>
-            <th>ARTISTI</th>
-            <th>KAPPALE</th>
-            <th>KONE</th>
-            <th>KOODI</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
-</body>
-</html>
