@@ -158,7 +158,7 @@ document.getElementById("haku").addEventListener("input", () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => {
         paivitaTaulukko();
-    }, 120);   // 120 ms = nopea ja sulava puhelimessa
+    }, 120);
 });
 
 /* --- TAULUKKO + EI LÖYTYNYT + KOROSTUS --- */
@@ -229,15 +229,11 @@ function vaihdaTeema() {
     paivitaTaulukko();
 }
 
-/* --- KÄYNNISTYS --- */
+/* --- KÄYNNISTYS (KORJATTU) --- */
 window.onload = () => {
-    setTimeout(() => {
-        paivitaKaikki();
-        setInterval(paivitaKaikki, 3600000);
-    }, 200);
+    paivitaKaikki();   // Lataa CSV heti
 };
 </script>
-
 
 </head>
 
