@@ -151,6 +151,15 @@ function paivitaNappi() {
     paivitaTaulukko();
 }
 
+/* --- DEBOUNCE (PUHELIMEN HAKU KORJAUS) --- */
+let debounceTimer = null;
+document.getElementById("haku").addEventListener("input", () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        paivitaTaulukko();
+    }, 120);   // 120 ms = nopea ja sulava puhelimessa
+});
+
 /* --- TAULUKKO + EI LÖYTYNYT + KOROSTUS --- */
 function paivitaTaulukko() {
     const tbody = document.querySelector("#taulukko tbody");
@@ -170,11 +179,7 @@ function paivitaTaulukko() {
         );
     }
 
-    if (kopio.length === 0) {
-        ei.style.display = "block";
-    } else {
-        ei.style.display = "none";
-    }
+    ei.style.display = kopio.length === 0 ? "block" : "none";
 
     kopio.sort((a, b) =>
         a.ARTISTI.localeCompare(b.ARTISTI) ||
@@ -231,6 +236,7 @@ window.onload = () => {
     }, 200);
 };
 </script>
+
 </head>
 
 <body class="vaalea">
