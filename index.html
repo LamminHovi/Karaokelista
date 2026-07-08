@@ -2,89 +2,224 @@
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Karaoke kappale haku HOVI</title>
 
 <style>
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #f4f4f4;
+body.vaalea {
+    background: #ffffff;
+    color: #000000;
+    font-family: Arial;
+    margin: 20px;
 }
 
-h1 {
-    text-align: center;
-    margin: 20px 0;
+body.tumma {
+    background: #121212;
+    color: #e0e0e0;
+    font-family: Arial;
+    margin: 20px;
 }
 
-#searchBox {
-    width: 90%;
-    margin: 10px auto;
-    padding: 12px;
-    font-size: 18px;
-    border-radius: 8px;
-    border: 1px solid #aaa;
-    display: block;
+#ylapalkki {
+    position: sticky;
+    top: 0;
+    background: inherit;
+    padding-bottom: 10px;
+    z-index: 20;
 }
 
-/* Desktop table */
-table {
-    width: 95%;
-    margin: 20px auto;
-    border-collapse: collapse;
-    display: table;
+h2 { margin-bottom: 5px; }
+input { padding: 6px; width: 320px; }
+button { padding: 6px 12px; margin-left: 4px; }
+#tulos { margin-top: 10px; font-weight: bold; }
+
+table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+th, td { border: 1px solid #999; padding: 6px 8px; }
+
+body.vaalea thead th {
+    background: #eee;
+    color: #000;
 }
 
-th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    text-align: left;
+body.tumma thead th {
+    background: #1f1f1f;
+    color: #fff;
 }
 
-th {
-    background: #333;
-    color: white;
+thead th {
+    position: sticky;
+    top: var(--otsikko-top);
+    z-index: 10;
 }
 
-/* Mobile card layout */
-.card {
-    display: none;
-    background: white;
-    margin: 10px;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-.card div {
-    margin: 5px 0;
-    font-size: 18px;
-}
-
-.label {
-    font-weight: bold;
-    color: #444;
-}
-
-/* Switch to card mode under 900px */
-@media (max-width: 900px) {
-    table {
-        display: none;
-    }
-    .card {
-        display: block;
-    }
+@media (max-width: 600px) {
+    input { width: 100%; }
+    table { font-size: 14px; }
+    th, td { padding: 4px; }
+    #ylapalkki { padding: 10px; }
 }
 </style>
+
+<script>
+let lista = [];
+
+/* --- KONEVÄRIT: vaalea + tumma teema --- */
+function koneVari(kone) {
+    const tumma = document.body.classList.contains("tumma");
+
+    if (!tumma) {
+        switch (kone) {
+            case "C": return "white";
+            case "C_O": return "yellow";
+            case "C_O_U": return "red";
+            case "C_U": return "red";
+            case "K": return "#ffb6c1";
+            case "M": return "#deb887";
+            case "M_U": return "red";
+            default: return "white";
+        }
+    } else {
+        switch (kone) {
+            case "C": return "#3a3a3a";
+            case "C_O": return "#c8a400";
+            case "C_O_U": return "#d4b000";
+            case "C_U": return "#b22222";
+            case "K": return "#8b008b";
+            case "M": return "#8b4513";
+            case "M_U": return "#ff4500";
+            default: return "#3a3a3a";
+        }
+    }
+}
+
+/* --- Sticky otsikon automaattinen korkeus --- */
+function paivitaStickyOtsikko() {
+    const ylapalkki = document.getElementById("ylapalkki");
+    const korkeus = ylapalkki.offsetHeight;
+    document.documentElement.style.setProperty("--otsikko-top", korkeus + "px");
+}
+
+/* --- CSV LATAUS (fetch) --- */
+async function lataaCsv() {
+    try {
+        const response = await fetch("kappaleet.csv");
+        const text = await response.text();
+        const rivit = text.trim().split(/\r?\n/).filter(r => r.trim().length > 0);
+
+        lista = rivit.map(r => {
+            const [ARTISTI, KAPPALE, KONE, KOODI] = r.split(",").map(x => x.trim().toUpperCase());
+            return { ARTISTI, KAPPALE, KONE, KOODI };
+        });
+
+        paivitaTaulukko();
+    } catch (err) {
+        console.error("CSV:n lataus epäonnistui:", err);
+    }
+}
+
+/* --- PÄIVITYS --- */
+function paivitaKaikki() {
+    lataaCsv();
+
+    const d = document.getElementById("tulos");
+    const nyt = new Date();
+    const pvm = nyt.toLocaleDateString("fi-FI");
+    const aika = nyt.toLocaleTimeString("fi-FI", {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+    d.textContent = "Tiedot päivitetty: " + pvm + " " + aika;
+    paivitaStickyOtsikko();
+}
+
+/* --- PÄIVITÄ-NAPPI --- */
+function paivitaNappi() {
+    document.getElementById("haku").value = "";
+    paivitaKaikki();
+    paivitaTaulukko();
+}
+
+/* --- TAULUKKO --- */
+function paivitaTaulukko() {
+    const tbody = document.querySelector("#taulukko tbody");
+    tbody.innerHTML = "";
+
+    let kopio = [...lista];
+
+    const haku = document.getElementById("haku").value.toUpperCase();
+    if (haku.length > 0) {
+        kopio = kopio.filter(r =>
+            r.ARTISTI.includes(haku) ||
+            r.KAPPALE.includes(haku) ||
+            r.KONE.includes(haku) ||
+            r.KOODI.includes(haku)
+        );
+    }
+
+    kopio.sort((a, b) =>
+        a.ARTISTI.localeCompare(b.ARTISTI) ||
+        a.KAPPALE.localeCompare(b.KAPPALE)
+    );
+
+    kopio.forEach(r => {
+        const tr = document.createElement("tr");
+
+        ["ARTISTI", "KAPPALE", "KONE", "KOODI"].forEach(k => {
+            const td = document.createElement("td");
+            td.textContent = r[k];
+            if (k === "KONE") td.style.backgroundColor = koneVari(r[k]);
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+}
+
+/* --- TEEMAN VAIHTO --- */
+function vaihdaTeema() {
+    const body = document.body;
+    const nappi = document.getElementById("teemanappi");
+
+    if (body.classList.contains("tumma")) {
+        body.classList.remove("tumma");
+        body.classList.add("vaalea");
+        nappi.textContent = "Tumma teema";
+    } else {
+        body.classList.remove("vaalea");
+        body.classList.add("tumma");
+        nappi.textContent = "Vaalea teema";
+    }
+
+    paivitaStickyOtsikko();
+    paivitaTaulukko();
+}
+
+/* --- KÄYNNISTYS --- */
+window.onload = () => {
+    setTimeout(() => {
+        paivitaKaikki();
+        setInterval(paivitaKaikki, 3600000);
+    }, 200);
+};
+</script>
 </head>
 
-<body>
+<body class="vaalea">
 
-<h1>Karaoke kappale haku HOVI</h1>
+<div id="ylapalkki">
+    <h2>Karaoke kappale haku HOVI</h2>
 
-<input type="text" id="searchBox" placeholder="Hae artistia, kappaletta, konetta tai koodia..." onkeyup="filterList()">
+    <h3>Haku</h3>
+    <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
+    <button onclick="paivitaNappi()">PÄIVITÄ</button>
+    <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
 
-<table id="songTable">
+    <div id="tulos"></div>
+
+    <h3>Koko lista</h3>
+</div>
+
+<table id="taulukko">
     <thead>
         <tr>
             <th>ARTISTI</th>
@@ -93,96 +228,8 @@ th {
             <th>KOODI</th>
         </tr>
     </thead>
-    <tbody id="songBody"></tbody>
+    <tbody></tbody>
 </table>
-
-<div id="cardContainer"></div>
-
-<script>
-let data = [];
-
-async function loadCSV() {
-    const response = await fetch("kappaleet.csv");
-    const text = await response.text();
-
-    const rows = text.trim().split("\n").slice(1);
-
-    data = rows.map(r => {
-        const [artist, song, machine, code] = r.split(",");
-        return { artist, song, machine, code };
-    });
-
-    renderTable();
-    renderCards();
-}
-
-function renderTable() {
-    const body = document.getElementById("songBody");
-    body.innerHTML = "";
-
-    data.forEach(item => {
-        body.innerHTML += `
-            <tr>
-                <td>${item.artist}</td>
-                <td>${item.song}</td>
-                <td>${item.machine}</td>
-                <td>${item.code}</td>
-            </tr>`;
-    });
-}
-
-function renderCards() {
-    const container = document.getElementById("cardContainer");
-    container.innerHTML = "";
-
-    data.forEach(item => {
-        container.innerHTML += `
-            <div class="card">
-                <div><span class="label">ARTISTI:</span> ${item.artist}</div>
-                <div><span class="label">KAPPALE:</span> ${item.song}</div>
-                <div><span class="label">KONE:</span> ${item.machine}</div>
-                <div><span class="label">KOODI:</span> ${item.code}</div>
-            </div>`;
-    });
-}
-
-function filterList() {
-    const q = document.getElementById("searchBox").value.toLowerCase();
-
-    const filtered = data.filter(item =>
-        item.artist.toLowerCase().includes(q) ||
-        item.song.toLowerCase().includes(q) ||
-        item.machine.toLowerCase().includes(q) ||
-        item.code.toLowerCase().includes(q)
-    );
-
-    const body = document.getElementById("songBody");
-    const container = document.getElementById("cardContainer");
-
-    body.innerHTML = "";
-    container.innerHTML = "";
-
-    filtered.forEach(item => {
-        body.innerHTML += `
-            <tr>
-                <td>${item.artist}</td>
-                <td>${item.song}</td>
-                <td>${item.machine}</td>
-                <td>${item.code}</td>
-            </tr>`;
-
-        container.innerHTML += `
-            <div class="card">
-                <div><span class="label">ARTISTI:</span> ${item.artist}</div>
-                <div><span class="label">KAPPALE:</span> ${item.song}</div>
-                <div><span class="label">KONE:</span> ${item.machine}</div>
-                <div><span class="label">KOODI:</span> ${item.code}</div>
-            </div>`;
-    });
-}
-
-loadCSV();
-</script>
 
 </body>
 </html>
