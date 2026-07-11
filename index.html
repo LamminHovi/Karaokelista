@@ -28,11 +28,8 @@ body.tumma {
 }
 
 h2 { margin-bottom: 5px; }
-h3 { margin-bottom: 5px; }
-
 input { padding: 10px; width: 350px; font-size: 18px; }
 button { padding: 6px 12px; margin-left: 4px; }
-
 #tulos { margin-top: 10px; font-weight: bold; }
 
 table { border-collapse: collapse; width: 100%; margin-top: 20px; }
@@ -65,75 +62,127 @@ thead th {
     color: red;
     display: none;
 }
+
+@media (max-width: 600px) {
+    input { width: 100%; font-size: 20px; padding: 14px; }
+    table { font-size: 14px; }
+    th, td { padding: 4px; }
+    #ylapalkki { padding: 10px; }
+}
 </style>
-</head>
-
-<body class="vaalea">
-
-<div id="ylapalkki">
-    <h2>Karaoke kappale haku HOVI</h2>
-    <h3>Haku</h3>
-
-    <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
-    <button onclick="paivitaNappi()">PÄIVITÄ</button>
-    <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
-
-    <p id="paivitysaika" style="font-size:16px; font-weight:bold; margin-top:8px;">
-        Päivitetään...
-    </p>
-
-    <div id="tulos"></div>
-    <div id="eiLoytynyt">Ei löytynyt</div>
-
-    <h3>Koko lista</h3>
-</div>
-
-<table id="taulukko">
-<thead>
-<tr>
-    <th>ARTISTI</th>
-    <th>KAPPALE</th>
-    <th>KONE</th>
-    <th>KOODI</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
 
 <script>
+let lista = [];
+
+/* --- KONEVÄRIT --- */
 function koneVari(kone) {
-    if (kone === "C") return "#d0f0ff";
-    if (kone === "M") return "#e8ffd0";
-    if (kone === "K") return "#ffe8d0";
-    return "";
+    const tumma = document.body.classList.contains("tumma");
+
+    if (!tumma) {
+        switch (kone) {
+            case "C": return "white";
+            case "C_O": return "yellow";
+            case "C_O_U": return "red";
+            case "C_U": return "red";
+            case "K": return "#ffb6c1";
+            case "M": return "#deb887";
+            case "M_U": return "red";
+            default: return "white";
+        }
+    } else {
+        switch (kone) {
+            case "C": return "#3a3a3a";
+            case "C_O": return "#c8a400";
+            case "C_O_U": return "#d4b000";
+            case "C_U": return "#b22222";
+            case "K": return "#8b008b";
+            case "M": return "#8b4513";
+            case "M_U": return "#ff4500";
+            default: return "#3a3a3a";
+        }
+    }
 }
 
-let data = [];
-document.documentElement.style.setProperty("--otsikko-top", "110px");
-
-async function lataaCSV() {
-    const url = "https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/kappaleet.csv";
-    const res = await fetch(url);
-    const txt = await res.text();
-    data = txt.split("\n").map(r => r.split(","));
+/* --- Sticky otsikon korkeus --- */
+function paivitaStickyOtsikko() {
+    const ylapalkki = document.getElementById("ylapalkki");
+    const korkeus = ylapalkki.offsetHeight;
+    document.documentElement.style.setProperty("--otsikko-top", korkeus + "px");
 }
 
+/* --- CSV LATAUS --- */
+async function lataaCsv() {
+    try {
+        const response = await fetch("kappaleet.csv");
+        const text = await response.text();
+        const rivit = text.trim().split(/\r?\n/).filter(r => r.trim().length > 0);
+
+        lista = rivit.map(r => {
+            const [ARTISTI, KAPPALE, KONE, KOODI] = r.split(",").map(x => x.trim().toUpperCase());
+            return { ARTISTI, KAPPALE, KONE, KOODI };
+        });
+
+        paivitaTaulukko();   // ⭐ Taulukko piirretään vasta kun CSV on ladattu
+    } catch (err) {
+        console.error("CSV:n lataus epäonnistui:", err);
+    }
+}
+
+/* --- PÄIVITYS --- */
+function paivitaKaikki() {
+    lataaCsv();             // ⭐ Lataa CSV ensin
+    paivitaStickyOtsikko();
+}
+
+/* --- PÄIVITÄ-NAPPI --- */
+function paivitaNappi() {
+    document.getElementById("haku").value = "";
+    paivitaKaikki();
+}
+
+/* --- DEBOUNCE (PUHELIMEN HAKU KORJAUS) --- */
+let debounceTimer = null;
+
+document.getElementById("haku").addEventListener("input", () => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        paivitaTaulukko();
+    }, 120);
+});
+
+/* --- TAULUKKO + EI LÖYTYNYT + KOROSTUS --- */
 function paivitaTaulukko() {
-    const haku = document.getElementById("haku").value.toUpperCase();
     const tbody = document.querySelector("#taulukko tbody");
+    const ei = document.getElementById("eiLoytynyt");
     tbody.innerHTML = "";
 
-    let loytyi = false;
+    let kopio = [...lista];
 
-    data.slice(1).forEach(r => {   // OHITETAAN OTSIKKORIVI
-        if (r.length < 4) return;
+    const haku = document.getElementById("haku").value.toUpperCase();
 
+    if (haku.length > 0) {
+        kopio = kopio.filter(r =>
+            r.ARTISTI.includes(haku) ||
+            r.KAPPALE.includes(haku) ||
+            r.KONE.includes(haku) ||
+            r.KOODI.includes(haku)
+        );
+    }
+
+    ei.style.display = kopio.length === 0 ? "block" : "none";
+
+    kopio.sort((a, b) =>
+        a.ARTISTI.localeCompare(b.ARTISTI) ||
+        a.KAPPALE.localeCompare(b.KAPPALE)
+    );
+
+    kopio.forEach(r => {
         const tr = document.createElement("tr");
 
-        ["ARTISTI", "KAPPALE", "KONE", "KOODI"].forEach((k, i) => {
+        ["ARTISTI", "KAPPALE", "KONE", "KOODI"].forEach(k => {
             const td = document.createElement("td");
-            let teksti = r[i];
 
+            let teksti = r[k];
             if (haku && teksti.toUpperCase().includes(haku)) {
                 const regex = new RegExp(haku, "gi");
                 teksti = teksti.replace(regex, m => `<mark>${m}</mark>`);
@@ -141,22 +190,16 @@ function paivitaTaulukko() {
 
             td.innerHTML = teksti;
 
-            if (k === "KONE") td.style.backgroundColor = koneVari(r[i]);
+            if (k === "KONE") td.style.backgroundColor = koneVari(r[k]);
 
             tr.appendChild(td);
         });
 
         tbody.appendChild(tr);
-        loytyi = true;
     });
-
-    document.getElementById("eiLoytynyt").style.display = loytyi ? "none" : "block";
 }
 
-function paivitaNappi() {
-    paivitaTaulukko();
-}
-
+/* --- TEEMAN VAIHTO --- */
 function vaihdaTeema() {
     const body = document.body;
     const nappi = document.getElementById("teemanappi");
@@ -171,43 +214,46 @@ function vaihdaTeema() {
         nappi.textContent = "Vaalea teema";
     }
 
+    paivitaStickyOtsikko();
     paivitaTaulukko();
 }
 
+/* --- KÄYNNISTYS (KORJATTU) --- */
 window.onload = () => {
-    lataaCSV().then(paivitaTaulukko);
-    haePaivitysaika();
+    paivitaKaikki();   // ⭐ Lataa CSV heti → taulukko näkyy heti
 };
-
-async function haePaivitysaika() {
-    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/commits?path=kappaleet.csv";
-
-    try {
-        const res = await fetch(apiUrl);
-        const data = await res.json();
-
-        if (!data || !data[0]) {
-            document.getElementById("paivitysaika").innerText = "Ei tietoa päivitysajasta";
-            return;
-        }
-
-        const pvm = new Date(data[0].commit.author.date);
-
-        const paiva = pvm.getDate();
-        const kk = pvm.getMonth() + 1;
-        const vuosi = pvm.getFullYear();
-
-        const tunnit = pvm.getHours().toString().padStart(2, "0");
-        const minuutit = pvm.getMinutes().toString().padStart(2, "0");
-
-        document.getElementById("paivitysaika").innerText =
-            `Viimeksi päivitetty: ${paiva}.${kk}.${vuosi} klo ${tunnit}:${minuutit}`;
-
-    } catch (e) {
-        document.getElementById("paivitysaika").innerText = "Virhe päivitysajan haussa";
-    }
-}
 </script>
+
+</head>
+
+<body class="vaalea">
+
+<div id="ylapalkki">
+    <h2>Karaoke kappale haku HOVI</h2>
+
+    <h3>Haku</h3>
+    <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
+    <button onclick="paivitaNappi()">PÄIVITÄ</button>
+    <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
+
+    <div id="tulos"></div>
+
+    <div id="eiLoytynyt">Ei löytynyt</div>
+
+    <h3>Koko lista</h3>
+</div>
+
+<table id="taulukko">
+    <thead>
+        <tr>
+            <th>ARTISTI</th>
+            <th>KAPPALE</th>
+            <th>KONE</th>
+            <th>KOODI</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
 </body>
 </html>
