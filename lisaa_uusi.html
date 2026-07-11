@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<title>Lisää kappale CSV:hen</title>
+<style>
+body { font-family: Arial; max-width: 600px; margin: 30px auto; }
+label { display: block; margin-top: 15px; font-weight: bold; }
+input { width: 100%; padding: 8px; font-size: 16px; }
+button { margin-top: 20px; padding: 12px; font-size: 18px; width: 100%; }
+</style>
+</head>
+<body>
+
+<h2>Lisää kappale CSV-tiedostoon</h2>
+
+<label>GitHub Token (tallennetaan vain selaimeesi)</label>
+<input id="token" type="password" placeholder="Syötä token kerran">
+
+<button onclick="saveToken()">Tallenna token</button>
+
+<hr>
+
+<label>Artisti</label>
+<input id="artisti">
+
+<label>Kappale</label>
+<input id="kappale">
+
+<label>Laite (C / M / K / YouTube)</label>
+<input id="laite">
+
+<label>Koodi</label>
+<input id="koodi">
+
+<button onclick="lisaaKappale()">Lisää CSV:hen</button>
+
+<p id="status"></p>
+
+<script>
+function saveToken() {
+    const t = document.getElementById("token").value.trim();
+    if (!t) { alert("Syötä token"); return; }
+    localStorage.setItem("karaoke_token", t);
+    alert("Token tallennettu selaimeen!");
+}
+
+async function lisaaKappale() {
+    const token = localStorage.getItem("karaoke_token");
+    if (!token) { alert("Token puuttuu!"); return; }
+
+    const artisti = document.getElementById("artisti").value.trim();
+    const kappale = document.getElementById("kappale").value.trim();
+    const laite = document.getElementById("laite").value.trim();
+    const koodi = document.getElementById("koodi").value.trim();
+
+    if (!artisti || !kappale) {
+        alert("Artisti ja kappale ovat pakollisia.");
+        return;
+    }
+
+    document.getElementById("status").innerText = "Ladataan CSV...";
+
+    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/kappaleet.csv";
+
+    // 1) Lataa nykyinen CSV
+    const response = await fetch(apiUrl, {
+        headers: { "Authorization": "Bearer " + token }
+    });
+
+    const data = await response.json();
+    const content = atob(data.content);
+
+    // 2) Muodosta uusi rivi
+    const uusiRivi = `${artisti},${kappale},${laite},${koodi}`;
+
+    // 3) Lisää rivi ja aakkosta
+    let rivit = content.split("\n").filter(r => r.trim() !== "");
+    rivit.push(uusiRivi);
+
+    rivit.sort((a, b) => {
+        const [aArt, aKap] = a.split(",");
+        const [bArt, bKap] = b.split(",");
+        const aa = aArt.toLowerCase();
+        const bb = bArt.toLowerCase();
+        if (aa < bb) return -1;
+        if (aa > bb) return 1;
+        return aKap.toLowerCase().localeCompare(bKap.toLowerCase());
+    });
+
+    const uusiCSV = rivit.join("\n");
+
+    // 4) Päivitä GitHubiin
+    const update = await fetch(apiUrl, {
+        method: "PUT",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: "Lisätty kappale",
+            content: btoa(uusiCSV),
+            sha: data.sha
+        })
+    });
+
+    if (update.ok) {
+        document.getElementById("status").innerText = "Kappale lisätty ja CSV aakkostettu!";
+    } else {
+        document.getElementById("status").innerText = "Virhe päivityksessä.";
+    }
+}
+</script>
+
+</body>
+</html>
