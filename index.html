@@ -125,7 +125,7 @@ function paivitaTaulukko() {
 
     let loytyi = false;
 
-    data.forEach(r => {
+   data.slice(1).forEach(r => {
         if (r.length < 4) return;
 
         const tr = document.createElement("tr");
