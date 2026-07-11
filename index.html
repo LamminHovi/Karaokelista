@@ -68,13 +68,12 @@ thead th {
 <body class="vaalea">
 
 <div id="ylapalkki">
-    <h2>Karaoke kappalehaku</h2>
+    <h2>Karaoke kappale haku HOVI</h2>
 
     <input id="hakusana" placeholder="Hae kappaletta tai artistia..." onkeyup="hae()">
-
     <button onclick="vaihdaTeema()">Vaihda teema</button>
 
-    <p id="paivitysaika" style="font-size:18px; font-weight:bold; margin-top:10px;">
+    <p id="paivitysaika" style="font-size:16px; font-weight:bold; margin-top:8px;">
         Päivitetään...
     </p>
 
@@ -97,7 +96,7 @@ thead th {
 
 <script>
 let data = [];
-document.documentElement.style.setProperty("--otsikko-top", "180px");
+document.documentElement.style.setProperty("--otsikko-top", "110px");
 
 async function lataaCSV() {
     const url = "https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/kappaleet.csv";
@@ -145,7 +144,7 @@ function vaihdaTeema() {
     body.className = body.className === "vaalea" ? "tumma" : "vaalea";
 }
 
-/* --- UUSI OMINAISUUS: Viimeksi päivitetty aika --- */
+/* Viimeksi päivitetty - vain lisäys, ei muuta hakua */
 async function haePaivitysaika() {
     const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/commits?path=kappaleet.csv";
 
