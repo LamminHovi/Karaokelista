@@ -28,8 +28,11 @@ body.tumma {
 }
 
 h2 { margin-bottom: 5px; }
+h3 { margin-bottom: 5px; }
+
 input { padding: 10px; width: 350px; font-size: 18px; }
 button { padding: 6px 12px; margin-left: 4px; }
+
 #tulos { margin-top: 10px; font-weight: bold; }
 
 table { border-collapse: collapse; width: 100%; margin-top: 20px; }
@@ -75,7 +78,6 @@ thead th {
     <button onclick="paivitaNappi()">PÄIVITÄ</button>
     <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
 
-    <!-- ⭐ UUSI: Päivitysaika -->
     <p id="paivitysaika" style="font-size:16px; font-weight:bold; margin-top:8px;">
         Päivitetään...
     </p>
@@ -99,8 +101,6 @@ thead th {
 </table>
 
 <script>
-/* --- KOKO SINUN TOIMIVA JAVASCRIPT SÄILYI --- */
-
 function koneVari(kone) {
     if (kone === "C") return "#d0f0ff";
     if (kone === "M") return "#e8ffd0";
@@ -125,7 +125,7 @@ function paivitaTaulukko() {
 
     let loytyi = false;
 
-   data.slice(1).forEach(r => {
+    data.slice(1).forEach(r => {   // OHITETAAN OTSIKKORIVI
         if (r.length < 4) return;
 
         const tr = document.createElement("tr");
@@ -176,10 +176,9 @@ function vaihdaTeema() {
 
 window.onload = () => {
     lataaCSV().then(paivitaTaulukko);
-    haePaivitysaika();   // ⭐ UUSI
+    haePaivitysaika();
 };
 
-/* ⭐ UUSI: Päivitysajan haku GitHubista */
 async function haePaivitysaika() {
     const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/commits?path=kappaleet.csv";
 
