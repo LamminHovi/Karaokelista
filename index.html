@@ -5,8 +5,8 @@
 <title>Karaoke kappale haku HOVI</title>
 
 <style>
-body.vaalea { background:#ffffff; color:#000; font-family:Arial; margin:20px; }
-body.tumma { background:#121212; color:#e0e0e0; font-family:Arial; margin:20px; }
+body.vaalea { background:#ffffff; color:#000; font-family:Arial, sans-serif; margin:20px; }
+body.tumma  { background:#121212; color:#e0e0e0; font-family:Arial, sans-serif; margin:20px; }
 
 #ylapalkki {
     position: sticky;
@@ -18,18 +18,59 @@ body.tumma { background:#121212; color:#e0e0e0; font-family:Arial; margin:20px; 
 
 h2, h3 { margin-bottom: 5px; }
 
-input { padding: 10px; width: 350px; font-size: 18px; }
-button { padding: 6px 12px; margin-left: 4px; }
+input {
+    padding: 10px;
+    width: 350px;
+    max-width: 100%;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+button {
+    padding: 6px 12px;
+    margin: 4px 4px 0 0;
+    font-size: 14px;
+    cursor: pointer;
+}
 
-table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-th, td { border: 1px solid #999; padding: 6px 8px; }
+#aznav {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+#aznav button {
+    padding: 4px 8px;
+    font-size: 13px;
+}
+
+.table-wrapper {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 480px;
+}
+th, td {
+    border: 1px solid #999;
+    padding: 6px 8px;
+    font-size: 14px;
+}
 
 tbody tr:hover { background: rgba(255,255,0,0.25); }
 
 body.vaalea thead th { background:#eee; color:#000; }
-body.tumma thead th { background:#1f1f1f; color:#fff; }
+body.tumma  thead th { background:#1f1f1f; color:#fff; }
 
-thead th { position: sticky; top:110px; z-index:10; }
+thead th {
+    position: sticky;
+    top: 110px;
+    z-index: 10;
+    cursor: pointer;
+}
+
+th.sort-asc::after  { content: " ▲"; font-size: 11px; }
+th.sort-desc::after { content: " ▼"; font-size: 11px; }
 
 #eiLoytynyt {
     margin-top: 15px;
@@ -37,6 +78,25 @@ thead th { position: sticky; top:110px; z-index:10; }
     font-weight: bold;
     color: red;
     display: none;
+}
+
+/* Mobiilioptimointi */
+@media (max-width: 600px) {
+    body.vaalea, body.tumma {
+        margin: 10px;
+        font-size: 14px;
+    }
+    input {
+        width: 100%;
+        font-size: 16px;
+    }
+    button {
+        font-size: 13px;
+    }
+    th, td {
+        font-size: 13px;
+        padding: 4px 6px;
+    }
 }
 </style>
 </head>
@@ -48,28 +108,60 @@ thead th { position: sticky; top:110px; z-index:10; }
 
     <h3>Haku</h3>
     <input id="haku" placeholder="Hae..." oninput="paivitaTaulukko()">
-
     <button onclick="paivitaNappi()">PÄIVITÄ</button>
     <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
 
     <p id="paivitysaika" style="font-size:16px; font-weight:bold; margin-top:8px;">Päivitetään...</p>
+
+    <div id="aznav">
+        <!-- Artistin A–Ö pikavalinta -->
+        <button onclick="valitseKirjain('')">Kaikki</button>
+        <button onclick="valitseKirjain('A')">A</button>
+        <button onclick="valitseKirjain('B')">B</button>
+        <button onclick="valitseKirjain('C')">C</button>
+        <button onclick="valitseKirjain('D')">D</button>
+        <button onclick="valitseKirjain('E')">E</button>
+        <button onclick="valitseKirjain('F')">F</button>
+        <button onclick="valitseKirjain('G')">G</button>
+        <button onclick="valitseKirjain('H')">H</button>
+        <button onclick="valitseKirjain('I')">I</button>
+        <button onclick="valitseKirjain('J')">J</button>
+        <button onclick="valitseKirjain('K')">K</button>
+        <button onclick="valitseKirjain('L')">L</button>
+        <button onclick="valitseKirjain('M')">M</button>
+        <button onclick="valitseKirjain('N')">N</button>
+        <button onclick="valitseKirjain('O')">O</button>
+        <button onclick="valitseKirjain('P')">P</button>
+        <button onclick="valitseKirjain('Q')">Q</button>
+        <button onclick="valitseKirjain('R')">R</button>
+        <button onclick="valitseKirjain('S')">S</button>
+        <button onclick="valitseKirjain('T')">T</button>
+        <button onclick="valitseKirjain('U')">U</button>
+        <button onclick="valitseKirjain('V')">V</button>
+        <button onclick="valitseKirjain('W')">W</button>
+        <button onclick="valitseKirjain('X')">X</button>
+        <button onclick="valitseKirjain('Y')">Y</button>
+        <button onclick="valitseKirjain('Z')">Z</button>
+    </div>
 
     <div id="eiLoytynyt">Ei löytynyt</div>
 
     <h3>Koko lista</h3>
 </div>
 
+<div class="table-wrapper">
 <table id="taulukko">
 <thead>
 <tr>
-    <th>ARTISTI</th>
-    <th>KAPPALE</th>
-    <th>KONE</th>
-    <th>KOODI</th>
+    <th onclick="jarjesta('ARTISTI')" id="th-artisti">ARTISTI</th>
+    <th onclick="jarjesta('KAPPALE')" id="th-kappale">KAPPALE</th>
+    <th onclick="jarjesta('KONE')"    id="th-kone">KONE</th>
+    <th onclick="jarjesta('KOODI')"   id="th-koodi">KOODI</th>
 </tr>
 </thead>
 <tbody></tbody>
 </table>
+</div>
 
 <script>
 function koneVari(kone) {
@@ -79,44 +171,81 @@ function koneVari(kone) {
     return "";
 }
 
-let data = [];
+let data = [];          // alkuperäinen data
+let currentLetter = ""; // A–Z suodatin
+let sortKey = "ARTISTI";
+let sortDir = "asc";
 
 async function lataaCSV() {
     const url = "https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/kappaleet.csv";
     const res = await fetch(url);
     const txt = await res.text();
 
-    // 🔥 TÄRKEÄ KORJAUS: Poistetaan tyhjät rivit
-    data = txt
+    // Optimoitu: parsitaan ja esikäsitellään
+    const rows = txt
         .trim()
         .split("\n")
         .map(r => r.split(","))
         .filter(r => r.length >= 4);
 
+    // Muutetaan objektimuotoon nopeaa hakua varten
+    data = rows.map((r, idx) => ({
+        ARTISTI: r[0],
+        KAPPALE: r[1],
+        KONE:    r[2],
+        KOODI:   r[3],
+        artistUpper: r[0].toUpperCase(),
+        kappaleUpper: r[1].toUpperCase(),
+        index: idx
+    }));
+
+    paivitaTaulukko();
+}
+
+function haeTeksti() {
+    return document.getElementById("haku").value.toUpperCase();
+}
+
+function valitseKirjain(kirjain) {
+    currentLetter = kirjain;
     paivitaTaulukko();
 }
 
 function paivitaTaulukko() {
-    const haku = document.getElementById("haku").value.toUpperCase();
+    const haku = haeTeksti();
     const tbody = document.querySelector("#taulukko tbody");
     tbody.innerHTML = "";
 
+    // Suodatus: supernopea, ei regexiä joka solulle
+    let rivit = data.filter(r => {
+        if (currentLetter && !r.artistUpper.startsWith(currentLetter)) {
+            return false;
+        }
+        if (haku) {
+            return r.artistUpper.includes(haku) || r.kappaleUpper.includes(haku);
+        }
+        return true;
+    });
+
+    // Lajittelu
+    rivit.sort((a, b) => {
+        let va = a[sortKey] || "";
+        let vb = b[sortKey] || "";
+        va = va.toUpperCase();
+        vb = vb.toUpperCase();
+        if (va < vb) return sortDir === "asc" ? -1 : 1;
+        if (va > vb) return sortDir === "asc" ? 1 : -1;
+        return 0;
+    });
+
     let loytyi = false;
 
-    data.slice(1).forEach(r => {
-        const artisti = r[0].toUpperCase();
-        const kappale = r[1].toUpperCase();
-
-        // 🔥 TÄRKEÄ KORJAUS: Suodatus toimii nyt
-        if (haku && !artisti.includes(haku) && !kappale.includes(haku)) {
-            return;
-        }
-
+    rivit.forEach(r => {
         const tr = document.createElement("tr");
 
-        ["ARTISTI","KAPPALE","KONE","KOODI"].forEach((k, i) => {
+        ["ARTISTI","KAPPALE","KONE","KOODI"].forEach(k => {
             const td = document.createElement("td");
-            let teksti = r[i];
+            let teksti = r[k];
 
             if (haku && teksti.toUpperCase().includes(haku)) {
                 const regex = new RegExp(haku, "gi");
@@ -125,7 +254,7 @@ function paivitaTaulukko() {
 
             td.innerHTML = teksti;
 
-            if (k === "KONE") td.style.backgroundColor = koneVari(r[i]);
+            if (k === "KONE") td.style.backgroundColor = koneVari(r.KONE);
 
             tr.appendChild(td);
         });
@@ -135,10 +264,12 @@ function paivitaTaulukko() {
     });
 
     document.getElementById("eiLoytynyt").style.display = loytyi ? "none" : "block";
+    paivitaSortOtsikot();
 }
 
 function paivitaNappi() {
     document.getElementById("haku").value = "";
+    currentLetter = "";
     paivitaTaulukko();
 }
 
@@ -155,6 +286,32 @@ function vaihdaTeema() {
         body.classList.add("tumma");
         nappi.textContent = "Vaalea teema";
     }
+}
+
+function jarjesta(uusiKey) {
+    if (sortKey === uusiKey) {
+        sortDir = sortDir === "asc" ? "desc" : "asc";
+    } else {
+        sortKey = uusiKey;
+        sortDir = "asc";
+    }
+    paivitaTaulukko();
+}
+
+function paivitaSortOtsikot() {
+    const keys = ["ARTISTI","KAPPALE","KONE","KOODI"];
+    keys.forEach(k => {
+        const th = document.getElementById(
+            k === "ARTISTI" ? "th-artisti" :
+            k === "KAPPALE" ? "th-kappale" :
+            k === "KONE"    ? "th-kone"    :
+                              "th-koodi"
+        );
+        th.classList.remove("sort-asc","sort-desc");
+        if (k === sortKey) {
+            th.classList.add(sortDir === "asc" ? "sort-asc" : "sort-desc");
+        }
+    });
 }
 
 async function haePaivitysaika() {
