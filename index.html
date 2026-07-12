@@ -33,24 +33,13 @@ h3 { margin-bottom: 5px; }
 input { padding: 10px; width: 350px; font-size: 18px; }
 button { padding: 6px 12px; margin-left: 4px; }
 
-#tulos { margin-top: 10px; font-weight: bold; }
-
 table { border-collapse: collapse; width: 100%; margin-top: 20px; }
 th, td { border: 1px solid #999; padding: 6px 8px; }
 
-tbody tr:hover {
-    background: rgba(255, 255, 0, 0.25);
-}
+tbody tr:hover { background: rgba(255, 255, 0, 0.25); }
 
-body.vaalea thead th {
-    background: #eee;
-    color: #000;
-}
-
-body.tumma thead th {
-    background: #1f1f1f;
-    color: #fff;
-}
+body.vaalea thead th { background:#eee; color:#000; }
+body.tumma thead th { background:#1f1f1f; color:#fff; }
 
 thead th {
     position: sticky;
@@ -75,6 +64,10 @@ thead th {
 
     <h3>Haku</h3>
     <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
+
+    <!-- LISÄTTY PÄIVITÄ-NAPPULA -->
+    <button onclick="paivitaNappi()">PÄIVITÄ</button>
+
     <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
 
     <p id="paivitysaika" style="font-size:16px; font-weight:bold; margin-top:8px;">
@@ -182,7 +175,7 @@ async function haePaivitysaika() {
 
         const paiva = pvm.getDate();
         const kk = pvm.getMonth() + 1;
-        const vuosi = pvm.getFullYear();
+        the vuosi = pvm.getFullYear();
 
         const tunnit = pvm.getHours().toString().padStart(2, "0");
         const minuutit = pvm.getMinutes().toString().padStart(2, "0");
@@ -193,6 +186,11 @@ async function haePaivitysaika() {
     } catch (e) {
         document.getElementById("paivitysaika").innerText = "Virhe päivitysajan haussa";
     }
+}
+
+function paivitaNappi() {
+    lataaCSV();
+    haePaivitysaika();
 }
 
 window.onload = () => {
