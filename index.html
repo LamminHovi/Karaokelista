@@ -5,19 +5,8 @@
 <title>Karaoke kappale haku HOVI</title>
 
 <style>
-body.vaalea {
-    background: #ffffff;
-    color: #000000;
-    font-family: Arial;
-    margin: 20px;
-}
-
-body.tumma {
-    background: #121212;
-    color: #e0e0e0;
-    font-family: Arial;
-    margin: 20px;
-}
+body.vaalea { background:#ffffff; color:#000; font-family:Arial; margin:20px; }
+body.tumma { background:#121212; color:#e0e0e0; font-family:Arial; margin:20px; }
 
 #ylapalkki {
     position: sticky;
@@ -27,8 +16,7 @@ body.tumma {
     z-index: 20;
 }
 
-h2 { margin-bottom: 5px; }
-h3 { margin-bottom: 5px; }
+h2, h3 { margin-bottom: 5px; }
 
 input { padding: 10px; width: 350px; font-size: 18px; }
 button { padding: 6px 12px; margin-left: 4px; }
@@ -36,16 +24,12 @@ button { padding: 6px 12px; margin-left: 4px; }
 table { border-collapse: collapse; width: 100%; margin-top: 20px; }
 th, td { border: 1px solid #999; padding: 6px 8px; }
 
-tbody tr:hover { background: rgba(255, 255, 0, 0.25); }
+tbody tr:hover { background: rgba(255,255,0,0.25); }
 
 body.vaalea thead th { background:#eee; color:#000; }
 body.tumma thead th { background:#1f1f1f; color:#fff; }
 
-thead th {
-    position: sticky;
-    top: 110px;
-    z-index: 10;
-}
+thead th { position: sticky; top:110px; z-index:10; }
 
 #eiLoytynyt {
     margin-top: 15px;
@@ -65,14 +49,10 @@ thead th {
     <h3>Haku</h3>
     <input id="haku" placeholder="Hae..." oninput="paivitaTaulukko()">
 
-    <!-- PÄIVITÄ-nappi ensimmäisestä scriptistä -->
     <button onclick="paivitaNappi()">PÄIVITÄ</button>
-
     <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
 
-    <p id="paivitysaika" style="font-size:16px; font-weight:bold; margin-top:8px;">
-        Päivitetään...
-    </p>
+    <p id="paivitysaika" style="font-size:16px; font-weight:bold; margin-top:8px;">Päivitetään...</p>
 
     <div id="eiLoytynyt">Ei löytynyt</div>
 
@@ -105,7 +85,14 @@ async function lataaCSV() {
     const url = "https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/kappaleet.csv";
     const res = await fetch(url);
     const txt = await res.text();
-    data = txt.split("\n").map(r => r.split(","));
+
+    // 🔥 TÄRKEÄ KORJAUS: Poistetaan tyhjät rivit
+    data = txt
+        .trim()
+        .split("\n")
+        .map(r => r.split(","))
+        .filter(r => r.length >= 4);
+
     paivitaTaulukko();
 }
 
@@ -117,7 +104,13 @@ function paivitaTaulukko() {
     let loytyi = false;
 
     data.slice(1).forEach(r => {
-        if (r.length < 4) return;
+        const artisti = r[0].toUpperCase();
+        const kappale = r[1].toUpperCase();
+
+        // 🔥 TÄRKEÄ KORJAUS: Suodatus toimii nyt
+        if (haku && !artisti.includes(haku) && !kappale.includes(haku)) {
+            return;
+        }
 
         const tr = document.createElement("tr");
 
@@ -145,8 +138,8 @@ function paivitaTaulukko() {
 }
 
 function paivitaNappi() {
-    document.getElementById("haku").value = "";  // tyhjennä hakukenttä
-    paivitaTaulukko();                           // päivitä taulukko
+    document.getElementById("haku").value = "";
+    paivitaTaulukko();
 }
 
 function vaihdaTeema() {
@@ -171,17 +164,11 @@ async function haePaivitysaika() {
         const res = await fetch(apiUrl);
         const data = await res.json();
 
-        if (!data || !data[0]) {
-            document.getElementById("paivitysaika").innerText = "Ei tietoa päivitysajasta";
-            return;
-        }
-
         const pvm = new Date(data[0].commit.author.date);
 
         const paiva = pvm.getDate();
         const kk = pvm.getMonth() + 1;
         const vuosi = pvm.getFullYear();
-
         const tunnit = pvm.getHours().toString().padStart(2, "0");
         const minuutit = pvm.getMinutes().toString().padStart(2, "0");
 
