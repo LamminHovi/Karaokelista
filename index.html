@@ -63,9 +63,9 @@ thead th {
     <h2>Karaoke kappale haku HOVI</h2>
 
     <h3>Haku</h3>
-    <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
+    <input id="haku" placeholder="Hae..." oninput="paivitaTaulukko()">
 
-    <!-- LISÄTTY PÄIVITÄ-NAPPULA -->
+    <!-- PÄIVITÄ-nappi ensimmäisestä scriptistä -->
     <button onclick="paivitaNappi()">PÄIVITÄ</button>
 
     <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
@@ -144,6 +144,11 @@ function paivitaTaulukko() {
     document.getElementById("eiLoytynyt").style.display = loytyi ? "none" : "block";
 }
 
+function paivitaNappi() {
+    document.getElementById("haku").value = "";  // tyhjennä hakukenttä
+    paivitaTaulukko();                           // päivitä taulukko
+}
+
 function vaihdaTeema() {
     const body = document.body;
     const nappi = document.getElementById("teemanappi");
@@ -175,7 +180,7 @@ async function haePaivitysaika() {
 
         const paiva = pvm.getDate();
         const kk = pvm.getMonth() + 1;
-        the vuosi = pvm.getFullYear();
+        const vuosi = pvm.getFullYear();
 
         const tunnit = pvm.getHours().toString().padStart(2, "0");
         const minuutit = pvm.getMinutes().toString().padStart(2, "0");
@@ -186,11 +191,6 @@ async function haePaivitysaika() {
     } catch (e) {
         document.getElementById("paivitysaika").innerText = "Virhe päivitysajan haussa";
     }
-}
-
-function paivitaNappi() {
-    lataaCSV();
-    haePaivitysaika();
 }
 
 window.onload = () => {
