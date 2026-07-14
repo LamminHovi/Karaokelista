@@ -6,7 +6,7 @@
 <style>
 body { font-family: Arial; max-width: 600px; margin: 30px auto; }
 label { display: block; margin-top: 15px; font-weight: bold; }
-input { width: 100%; padding: 8px; font-size: 16px; }
+input, select { width: 100%; padding: 8px; font-size: 16px; }
 button { margin-top: 20px; padding: 12px; font-size: 18px; width: 100%; }
 #tokenArea { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; }
 </style>
@@ -24,11 +24,20 @@ button { margin-top: 20px; padding: 12px; font-size: 18px; width: 100%; }
 <label>Artisti</label>
 <input id="artisti">
 
-<label>Kappale</label>
+<label>Kappale (ISOILLA KIRJAIMILLA)</label>
 <input id="kappale">
 
-<label>Laite (C / M / K / YouTube)</label>
-<input id="laite">
+<label>Kone</label>
+<select id="kone">
+    <option value="C">C – Card (valkoinen)</option>
+    <option value="C_O">C_O – Card Oma (keltainen)</option>
+    <option value="C_O_U">C_O_U – Card Oma Ulkolainen (punainen)</option>
+    <option value="C_U">C_U – Card Ulkolainen (punainen)</option>
+    <option value="K">K – Kone (PC) (vaalean punainen)</option>
+    <option value="K_U">K_U – KonePC Ulkolainen (violetti)</option>
+    <option value="M">M – MadBoy (vaalean ruskea)</option>
+    <option value="M_U">M_U – MadBoy Ulkolainen (punainen)</option>
+</select>
 
 <label>Koodi</label>
 <input id="koodi">
@@ -72,7 +81,7 @@ async function lisaaKappale() {
 
     const artisti = document.getElementById("artisti").value.trim();
     let kappale = document.getElementById("kappale").value.trim();
-    const laite = document.getElementById("laite").value.trim();
+    const kone = document.getElementById("kone").value;
     const koodi = document.getElementById("koodi").value.trim();
 
     if (!artisti || !kappale) {
@@ -99,8 +108,8 @@ async function lisaaKappale() {
     const data = await response.json();
     const content = b64_to_utf8(data.content);
 
-    // Uusi rivi (kappale ISOILLA)
-    const uusiRivi = `${artisti},${kappale},${laite},${koodi}`;
+    // Uusi rivi
+    const uusiRivi = `${artisti},${kappale},${kone},${koodi}`;
 
     // Lisää ja aakkosta
     let rivit = content.split("\n").filter(r => r.trim() !== "");
@@ -133,7 +142,8 @@ async function lisaaKappale() {
     });
 
     if (update.ok) {
-        document.getElementById("status").innerText = "Kappale lisätty (ISOILLA) ja ääkköset toimivat!";
+        document.getElementById("status").innerText =
+            "Kappale lisätty (ISOILLA) ja CSV aakkostettu!";
     } else {
         document.getElementById("status").innerText = "Virhe päivityksessä.";
     }
