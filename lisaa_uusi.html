@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Lisää / Muuta / Poista kappale CSV:stä</title>
-
 <style>
 body { font-family: Arial; max-width: 700px; margin: 30px auto; }
 label { display: block; margin-top: 15px; font-weight: bold; }
@@ -12,19 +11,8 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 #tokenArea { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; }
 #results div { padding: 8px; border-bottom: 1px solid #ddd; cursor: pointer; }
 #results div:hover { background: #f0f0f0; }
-
-/* KONE-valikon taustavärit */
-.kone-C     { background:#ffffff; }
-.kone-C_O   { background:#fff7a0; }
-.kone-C_O_U { background:#ffb0b0; }
-.kone-C_U   { background:#ffb0b0; }
-.kone-K     { background:#ffb6c1; }
-.kone-K_U   { background:#d28cff; }
-.kone-M     { background:#deb887; }
-.kone-M_U   { background:#ff4500; }
 </style>
 </head>
-
 <body>
 
 <h2>Kappaleiden hallinta (Lisää / Muuta / Poista)</h2>
@@ -52,7 +40,7 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 <input id="kappale">
 
 <label>Kone</label>
-<select id="kone" onchange="paivitaKoneVari()">
+<select id="kone">
     <option value="C">C – Card (valkoinen)</option>
     <option value="C_O">C_O – Card Oma (keltainen)</option>
     <option value="C_O_U">C_O_U – Card Oma Ulkolainen (punainen)</option>
@@ -76,13 +64,6 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 // UTF-8 Base64
 function utf8_to_b64(str) { return btoa(unescape(encodeURIComponent(str))); }
 function b64_to_utf8(str) { return decodeURIComponent(escape(atob(str))); }
-
-// KONE-valikon taustaväri
-function paivitaKoneVari() {
-    const select = document.getElementById("kone");
-    select.className = "";
-    select.classList.add("kone-" + select.value);
-}
 
 // TOKEN
 window.onload = () => {
@@ -146,7 +127,6 @@ function valitseRivi(index, art, kap, kon, kod) {
     document.getElementById("kappale").value = kap;
     document.getElementById("kone").value = kon;
     document.getElementById("koodi").value = kod;
-    paivitaKoneVari();
 }
 
 // LISÄÄ
@@ -188,4 +168,76 @@ async function lisaaKappale() {
 
 // MUUTA
 async function muutaKappale() {
-    if (valittuRivi === null) return alert
+    if (valittuRivi === null) return alert("Valitse ensin kappale haulla.");
+
+    const token = localStorage.getItem("karaoke_token");
+    if (!token) return alert("Token puuttuu!");
+
+    let artisti = document.getElementById("artisti").value.trim();
+    let kappale = document.getElementById("kappale").value.trim();
+    const kone = document.getElementById("kone").value;
+    const koodi = document.getElementById("koodi").value.trim();
+
+    if (kappale !== kappale.toUpperCase()) {
+        if (!confirm("Kappale ei ole ISOILLA.\nMuunnetaan automaattisesti?")) return;
+        kappale = kappale.toUpperCase();
+    }
+
+    if (koodi.length > 15) return alert("Koodi saa olla max 15 merkkiä.");
+
+    const { rows, sha } = await loadCSV();
+
+    rows[valittuRivi] = `${artisti},${kappale},${kone},${koodi}`;
+
+    rows.sort((a, b) => {
+        const [aArt, aKap] = a.split(",");
+        const [bArt, bKap] = b.split(",");
+        const aa = aArt.toLowerCase();
+        const bb = bArt.toLowerCase();
+        if (aa < bb) return -1;
+        if (aa > bb) return 1;
+        return aKap.toLowerCase().localeCompare(bKap.toLowerCase());
+    });
+
+    await paivitaCSV(rows, sha);
+    document.getElementById("status").innerText = "Muutettu!";
+}
+
+// POISTA
+async function poistaKappale() {
+    if (valittuRivi === null) return alert("Valitse ensin kappale haulla.");
+
+    if (!confirm("Poistetaanko kappale?")) return;
+
+    const { rows, sha } = await loadCSV();
+
+    rows.splice(valittuRivi, 1);
+
+    await paivitaCSV(rows, sha);
+    document.getElementById("status").innerText = "Poistettu!";
+}
+
+// CSV PÄIVITYS
+async function paivitaCSV(rows, sha) {
+    const token = localStorage.getItem("karaoke_token");
+    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/kappaleet.csv";
+
+    const uusiCSV = rows.join("\n");
+
+    await fetch(apiUrl, {
+        method: "PUT",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            message: "Päivitetty kappale",
+            content: utf8_to_b64(uusiCSV),
+            sha: sha
+        })
+    });
+}
+</script>
+
+</body>
+</html>
