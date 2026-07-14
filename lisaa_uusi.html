@@ -8,18 +8,19 @@ body { font-family: Arial; max-width: 600px; margin: 30px auto; }
 label { display: block; margin-top: 15px; font-weight: bold; }
 input { width: 100%; padding: 8px; font-size: 16px; }
 button { margin-top: 20px; padding: 12px; font-size: 18px; width: 100%; }
+#tokenArea { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; }
 </style>
 </head>
 <body>
 
 <h2>Lisää kappale CSV-tiedostoon</h2>
 
-<label>GitHub Token (tallennetaan vain selaimeesi)</label>
-<input id="token" type="password" placeholder="Syötä token kerran">
-
-<button onclick="saveToken()">Tallenna token</button>
-
-<hr>
+<!-- TOKEN-ALUE PIILOTETAAN AUTOMAATTISESTI -->
+<div id="tokenArea">
+    <label>GitHub Token (tallennetaan vain selaimeesi)</label>
+    <input id="token" type="password" placeholder="Syötä token kerran">
+    <button onclick="saveToken()">Tallenna token</button>
+</div>
 
 <label>Artisti</label>
 <input id="artisti">
@@ -38,16 +39,29 @@ button { margin-top: 20px; padding: 12px; font-size: 18px; width: 100%; }
 <p id="status"></p>
 
 <script>
+// PIILOTA TOKEN-KENTTÄ JOS TOKEN ON JO TALLENNETTU
+window.onload = () => {
+    const token = localStorage.getItem("karaoke_token");
+    if (token) {
+        document.getElementById("tokenArea").style.display = "none";
+    }
+};
+
 function saveToken() {
     const t = document.getElementById("token").value.trim();
     if (!t) { alert("Syötä token"); return; }
     localStorage.setItem("karaoke_token", t);
     alert("Token tallennettu selaimeen!");
+    document.getElementById("tokenArea").style.display = "none";
 }
 
 async function lisaaKappale() {
     const token = localStorage.getItem("karaoke_token");
-    if (!token) { alert("Token puuttuu!"); return; }
+    if (!token) {
+        alert("Token puuttuu! Syötä se kerran.");
+        document.getElementById("tokenArea").style.display = "block";
+        return;
+    }
 
     const artisti = document.getElementById("artisti").value.trim();
     const kappale = document.getElementById("kappale").value.trim();
