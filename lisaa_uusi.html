@@ -71,13 +71,20 @@ async function lisaaKappale() {
     }
 
     const artisti = document.getElementById("artisti").value.trim();
-    const kappale = document.getElementById("kappale").value.trim();
+    let kappale = document.getElementById("kappale").value.trim();
     const laite = document.getElementById("laite").value.trim();
     const koodi = document.getElementById("koodi").value.trim();
 
     if (!artisti || !kappale) {
         alert("Artisti ja kappale ovat pakollisia.");
         return;
+    }
+
+    // 🔥 VAROITUS: jos kappale ei ole ISOILLA
+    if (kappale !== kappale.toUpperCase()) {
+        const ok = confirm("Kappale ei ole ISOILLA kirjaimilla.\nMuunnetaan automaattisesti ISOIKSI?");
+        if (!ok) return;
+        kappale = kappale.toUpperCase();
     }
 
     document.getElementById("status").innerText = "Ladataan CSV...";
@@ -92,7 +99,7 @@ async function lisaaKappale() {
     const data = await response.json();
     const content = b64_to_utf8(data.content);
 
-    // Uusi rivi
+    // Uusi rivi (kappale ISOILLA)
     const uusiRivi = `${artisti},${kappale},${laite},${koodi}`;
 
     // Lisää ja aakkosta
@@ -126,7 +133,7 @@ async function lisaaKappale() {
     });
 
     if (update.ok) {
-        document.getElementById("status").innerText = "Kappale lisätty ja ääkköset toimivat!";
+        document.getElementById("status").innerText = "Kappale lisätty (ISOILLA) ja ääkköset toimivat!";
     } else {
         document.getElementById("status").innerText = "Virhe päivityksessä.";
     }
