@@ -27,7 +27,6 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 <!-- HAE -->
 <label>Hae kappaletta</label>
 <input id="haku" placeholder="Hae..." oninput="haeKappale()">
-
 <div id="results"></div>
 
 <hr>
@@ -54,7 +53,6 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 
 <label>Koodi (max 15 merkkiä)</label>
 <select id="koodi"></select>
-<input id="koodi_manual" placeholder="Tai syötä manuaalisesti (max 15 merkkiä)" oninput="syncKoodiManual()">
 
 <button onclick="lisaaKappale()">Lisää uutena</button>
 <button onclick="muutaKappale()">Muuta valittua</button>
@@ -71,7 +69,6 @@ function b64_to_utf8(str) { return decodeURIComponent(escape(atob(str))); }
 window.onload = () => {
     const token = localStorage.getItem("karaoke_token");
     if (token) document.getElementById("tokenArea").style.display = "none";
-
     lataaArtistit();
     lataaKoodit();
 };
@@ -82,65 +79,56 @@ function saveToken() {
     localStorage.setItem("karaoke_token", t);
     alert("Token tallennettu!");
     document.getElementById("tokenArea").style.display = "none";
+    lataaArtistit();
+    lataaKoodit();
 }
 
 // CSV LATAUS
 async function loadCSV() {
     const token = localStorage.getItem("karaoke_token");
     const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/kappaleet.csv";
-
-    const response = await fetch(apiUrl, {
-        headers: { "Authorization": "Bearer " + token }
-    });
-
+    const response = await fetch(apiUrl, { headers: { "Authorization": "Bearer " + token } });
     const data = await response.json();
     const content = b64_to_utf8(data.content);
-
     return { rows: content.split("\n").filter(r => r.trim() !== ""), sha: data.sha };
 }
 
-// LATAA ARTISTI.CSV
+// LATAA ARTISTI.CSV → alasvetovalikko
 async function lataaArtistit() {
-    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/artisti.csv";
-    const response = await fetch(apiUrl);
+    const token = localStorage.getItem("karaoke_token");
+    if (!token) return;
+
+    const url = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/artisti.csv";
+    const response = await fetch(url, { headers: { "Authorization": "Bearer " + token } });
     const data = await response.json();
     const content = b64_to_utf8(data.content);
 
     const lista = content.split("\n").filter(r => r.trim() !== "");
     const select = document.getElementById("artisti");
 
+    select.innerHTML = `<option value="">(kirjoita itse)</option>`;
     lista.forEach(a => {
-        const opt = document.createElement("option");
-        opt.value = a;
-        opt.textContent = a;
-        select.appendChild(opt);
+        select.innerHTML += `<option value="${a}">${a}</option>`;
     });
 }
 
-// LATAA KOODI.CSV
+// LATAA KOODI.CSV → alasvetovalikko
 async function lataaKoodit() {
-    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/koodi.csv";
-    const response = await fetch(apiUrl);
+    const token = localStorage.getItem("karaoke_token");
+    if (!token) return;
+
+    const url = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/koodi.csv";
+    const response = await fetch(url, { headers: { "Authorization": "Bearer " + token } });
     const data = await response.json();
     const content = b64_to_utf8(data.content);
 
     const lista = content.split("\n").filter(r => r.trim() !== "");
     const select = document.getElementById("koodi");
 
+    select.innerHTML = `<option value="">(kirjoita itse)</option>`;
     lista.forEach(k => {
-        const opt = document.createElement("option");
-        opt.value = k;
-        opt.textContent = k;
-        select.appendChild(opt);
+        select.innerHTML += `<option value="${k}">${k}</option>`;
     });
-}
-
-// Synkronoi manuaalinen koodi
-function syncKoodiManual() {
-    const val = document.getElementById("koodi_manual").value.trim();
-    if (val.length <= 15) {
-        document.getElementById("koodi").value = val;
-    }
 }
 
 // HAE
@@ -149,13 +137,11 @@ let valittuRivi = null;
 async function haeKappale() {
     const haku = document.getElementById("haku").value.toUpperCase();
     const { rows } = await loadCSV();
-
     const results = document.getElementById("results");
     results.innerHTML = "";
 
     rows.forEach((r, index) => {
         const [art, kap, kon, kod] = r.split(",");
-
         if (
             art.toUpperCase().includes(haku) ||
             kap.toUpperCase().includes(haku) ||
@@ -176,7 +162,6 @@ function valitseRivi(index, art, kap, kon, kod) {
     document.getElementById("kappale").value = kap;
     document.getElementById("kone").value = kon;
     document.getElementById("koodi").value = kod;
-    document.getElementById("koodi_manual").value = kod;
 }
 
 // LISÄÄ
@@ -187,7 +172,7 @@ async function lisaaKappale() {
     let artisti = document.getElementById("artisti").value.trim();
     let kappale = document.getElementById("kappale").value.trim();
     const kone = document.getElementById("kone").value;
-    const koodi = document.getElementById("koodi").value.trim();
+    let koodi = document.getElementById("koodi").value.trim();
 
     if (!artisti || !kappale) return alert("Artisti ja kappale pakollisia.");
 
@@ -199,7 +184,6 @@ async function lisaaKappale() {
     if (koodi.length > 15) return alert("Koodi saa olla max 15 merkkiä.");
 
     const { rows, sha } = await loadCSV();
-
     rows.push(`${artisti},${kappale},${kone},${koodi}`);
 
     rows.sort((a, b) => {
@@ -226,7 +210,7 @@ async function muutaKappale() {
     let artisti = document.getElementById("artisti").value.trim();
     let kappale = document.getElementById("kappale").value.trim();
     const kone = document.getElementById("kone").value;
-    const koodi = document.getElementById("koodi").value.trim();
+    let koodi = document.getElementById("koodi").value.trim();
 
     if (kappale !== kappale.toUpperCase()) {
         if (!confirm("Kappale ei ole ISOILLA.\nMuunnetaan automaattisesti?")) return;
@@ -236,7 +220,6 @@ async function muutaKappale() {
     if (koodi.length > 15) return alert("Koodi saa olla max 15 merkkiä.");
 
     const { rows, sha } = await loadCSV();
-
     rows[valittuRivi] = `${artisti},${kappale},${kone},${koodi}`;
 
     rows.sort((a, b) => {
@@ -256,11 +239,9 @@ async function muutaKappale() {
 // POISTA
 async function poistaKappale() {
     if (valittuRivi === null) return alert("Valitse ensin kappale haulla.");
-
     if (!confirm("Poistetaanko kappale?")) return;
 
     const { rows, sha } = await loadCSV();
-
     rows.splice(valittuRivi, 1);
 
     await paivitaCSV(rows, sha);
@@ -271,7 +252,6 @@ async function poistaKappale() {
 async function paivitaCSV(rows, sha) {
     const token = localStorage.getItem("karaoke_token");
     const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/kappaleet.csv";
-
     const uusiCSV = rows.join("\n");
 
     await fetch(apiUrl, {
