@@ -33,8 +33,9 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 <hr>
 
 <!-- MUOKKAUS / LISÄYS -->
+
 <label>Artisti</label>
-<input id="artisti">
+<select id="artisti"></select>
 
 <label>Kappale (ISOILLA)</label>
 <input id="kappale">
@@ -52,7 +53,8 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 </select>
 
 <label>Koodi (max 15 merkkiä)</label>
-<input id="koodi">
+<select id="koodi"></select>
+<input id="koodi_manual" placeholder="Tai syötä manuaalisesti (max 15 merkkiä)" oninput="syncKoodiManual()">
 
 <button onclick="lisaaKappale()">Lisää uutena</button>
 <button onclick="muutaKappale()">Muuta valittua</button>
@@ -69,6 +71,9 @@ function b64_to_utf8(str) { return decodeURIComponent(escape(atob(str))); }
 window.onload = () => {
     const token = localStorage.getItem("karaoke_token");
     if (token) document.getElementById("tokenArea").style.display = "none";
+
+    lataaArtistit();
+    lataaKoodit();
 };
 
 function saveToken() {
@@ -92,6 +97,50 @@ async function loadCSV() {
     const content = b64_to_utf8(data.content);
 
     return { rows: content.split("\n").filter(r => r.trim() !== ""), sha: data.sha };
+}
+
+// LATAA ARTISTI.CSV
+async function lataaArtistit() {
+    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/artisti.csv";
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    const content = b64_to_utf8(data.content);
+
+    const lista = content.split("\n").filter(r => r.trim() !== "");
+    const select = document.getElementById("artisti");
+
+    lista.forEach(a => {
+        const opt = document.createElement("option");
+        opt.value = a;
+        opt.textContent = a;
+        select.appendChild(opt);
+    });
+}
+
+// LATAA KOODI.CSV
+async function lataaKoodit() {
+    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/koodi.csv";
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    const content = b64_to_utf8(data.content);
+
+    const lista = content.split("\n").filter(r => r.trim() !== "");
+    const select = document.getElementById("koodi");
+
+    lista.forEach(k => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = k;
+        select.appendChild(opt);
+    });
+}
+
+// Synkronoi manuaalinen koodi
+function syncKoodiManual() {
+    const val = document.getElementById("koodi_manual").value.trim();
+    if (val.length <= 15) {
+        document.getElementById("koodi").value = val;
+    }
 }
 
 // HAE
@@ -127,6 +176,7 @@ function valitseRivi(index, art, kap, kon, kod) {
     document.getElementById("kappale").value = kap;
     document.getElementById("kone").value = kon;
     document.getElementById("koodi").value = kod;
+    document.getElementById("koodi_manual").value = kod;
 }
 
 // LISÄÄ
