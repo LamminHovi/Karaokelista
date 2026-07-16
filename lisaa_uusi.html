@@ -7,9 +7,19 @@
 body { font-family: Arial; max-width: 700px; margin: 30px auto; }
 label { display: block; margin-top: 15px; font-weight: bold; }
 input, select { width: 100%; padding: 8px; font-size: 16px; }
-button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
+button { padding: 12px; font-size: 18px; }
 #results div { padding: 8px; border-bottom: 1px solid #ddd; cursor: pointer; }
 #results div:hover { background: #f0f0f0; }
+
+/* NAPIT VIEREKKÄIN */
+#btnRow {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+#btnRow button {
+    flex: 1;
+}
 </style>
 </head>
 <body>
@@ -38,15 +48,19 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 <label>Koodi (max 15 merkkiä)</label>
 <input id="koodi">
 
-<button onclick="lisaaKappale()">Lisää uutena</button>
-<button onclick="muutaKappale()">Muuta valittua</button>
-<button onclick="poistaKappale()">Poista valittu</button>
+<!-- NAPIT VIEREKKÄIN -->
+<div id="btnRow">
+    <button onclick="lisaaKappale()">Lisää uutena</button>
+    <button onclick="muutaKappale()">Muuta valittua</button>
+    <button onclick="poistaKappale()">Poista valittu</button>
+    <button onclick="tyhjenna()">Tyhjennä</button>
+</div>
 
 <p id="status"></p>
 
 <hr>
 
-<!-- HAE (SIIRRETTY ALAS) -->
+<!-- HAE (ALHAALLA) -->
 <label>Hae kappaletta</label>
 <input id="haku" placeholder="Hae..." oninput="haeKappale()">
 
@@ -101,6 +115,18 @@ function valitseRivi(index, art, kap, kon, kod) {
     document.getElementById("kappale").value = kap;
     document.getElementById("kone").value = kon;
     document.getElementById("koodi").value = kod;
+}
+
+// TYHJENNÄ
+function tyhjenna() {
+    valittuRivi = null;
+    document.getElementById("artisti").value = "";
+    document.getElementById("kappale").value = "";
+    document.getElementById("kone").value = "C";
+    document.getElementById("koodi").value = "";
+    document.getElementById("status").innerText = "";
+    document.getElementById("haku").value = "";
+    document.getElementById("results").innerHTML = "";
 }
 
 // LISÄÄ
