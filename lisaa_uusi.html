@@ -16,14 +16,6 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 
 <h2>Kappaleiden hallinta (Lisää / Muuta / Poista)</h2>
 
-<!-- HAE -->
-<label>Hae kappaletta</label>
-<input id="haku" placeholder="Hae..." oninput="haeKappale()">
-
-<div id="results"></div>
-
-<hr>
-
 <!-- MUOKKAUS / LISÄYS -->
 <label>Artisti</label>
 <input id="artisti">
@@ -51,6 +43,14 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 <button onclick="poistaKappale()">Poista valittu</button>
 
 <p id="status"></p>
+
+<hr>
+
+<!-- HAE (SIIRRETTY ALAS) -->
+<label>Hae kappaletta</label>
+<input id="haku" placeholder="Hae..." oninput="haeKappale()">
+
+<div id="results"></div>
 
 <script>
 // UTF-8 Base64
