@@ -27,14 +27,14 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 <!-- HAE -->
 <label>Hae kappaletta</label>
 <input id="haku" placeholder="Hae..." oninput="haeKappale()">
+
 <div id="results"></div>
 
 <hr>
 
 <!-- MUOKKAUS / LISÄYS -->
-
 <label>Artisti</label>
-<select id="artisti"></select>
+<input id="artisti">
 
 <label>Kappale (ISOILLA)</label>
 <input id="kappale">
@@ -52,7 +52,7 @@ button { margin-top: 15px; padding: 12px; font-size: 18px; width: 100%; }
 </select>
 
 <label>Koodi (max 15 merkkiä)</label>
-<select id="koodi"></select>
+<input id="koodi">
 
 <button onclick="lisaaKappale()">Lisää uutena</button>
 <button onclick="muutaKappale()">Muuta valittua</button>
@@ -69,9 +69,6 @@ function b64_to_utf8(str) { return decodeURIComponent(escape(atob(str))); }
 window.onload = () => {
     const token = localStorage.getItem("karaoke_token");
     if (token) document.getElementById("tokenArea").style.display = "none";
-
-    lataaArtistit();
-    lataaKoodit();
 };
 
 function saveToken() {
@@ -82,7 +79,7 @@ function saveToken() {
     document.getElementById("tokenArea").style.display = "none";
 }
 
-// CSV LATAUS (kappaleet.csv)
+// CSV LATAUS
 async function loadCSV() {
     const token = localStorage.getItem("karaoke_token");
     const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/kappaleet.csv";
@@ -95,36 +92,6 @@ async function loadCSV() {
     const content = b64_to_utf8(data.content);
 
     return { rows: content.split("\n").filter(r => r.trim() !== ""), sha: data.sha };
-}
-
-// LATAA ARTISTI.CSV → alasvetovalikko
-async function lataaArtistit() {
-    const url = "https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/artisti.csv";
-    const response = await fetch(url);
-    const text = await response.text();
-
-    const lista = text.split("\n").filter(r => r.trim() !== "");
-    const select = document.getElementById("artisti");
-
-    select.innerHTML = "";
-    lista.forEach(a => {
-        select.innerHTML += `<option value="${a}">${a}</option>`;
-    });
-}
-
-// LATAA KOODI.CSV → alasvetovalikko
-async function lataaKoodit() {
-    const url = "https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/koodi.csv";
-    const response = await fetch(url);
-    const text = await response.text();
-
-    const lista = text.split("\n").filter(r => r.trim() !== "");
-    const select = document.getElementById("koodi");
-
-    select.innerHTML = "";
-    lista.forEach(k => {
-        select.innerHTML += `<option value="${k}">${k}</option>`;
-    });
 }
 
 // HAE
@@ -239,9 +206,11 @@ async function muutaKappale() {
 // POISTA
 async function poistaKappale() {
     if (valittuRivi === null) return alert("Valitse ensin kappale haulla.");
+
     if (!confirm("Poistetaanko kappale?")) return;
 
     const { rows, sha } = await loadCSV();
+
     rows.splice(valittuRivi, 1);
 
     await paivitaCSV(rows, sha);
