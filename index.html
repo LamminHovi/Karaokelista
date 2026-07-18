@@ -325,7 +325,7 @@ async function haePaivitysaika() {
         const minuutit = pvm.getMinutes().toString().padStart(2, "0");
 
         document.getElementById("paivitysaika").innerText =
-            `Viimeksi päivitetty: ${paiva}.${kk}.${vuosi} klo ${tunnit}:${minuutit}`;
+            `Viimeksi päivitetty -> poy: ${paiva}.${kk}.${vuosi} klo ${tunnit}:${minuutit}`;
 
     } catch (e) {
         document.getElementById("paivitysaika").innerText = "Virhe päivitysajan haussa";
