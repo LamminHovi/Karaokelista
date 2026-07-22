@@ -62,7 +62,6 @@ tbody tr:hover { background: rgba(255,255,0,0.25); }
 body.vaalea thead th { background:#eee; color:#000; }
 body.tumma  thead th { background:#1f1f1f; color:#fff; }
 
-/* KORJAUS: otsikko ei enää "valu" liian alas */
 thead th {
     position: sticky;
     top: 0;
@@ -80,73 +79,22 @@ th.sort-desc::after { content: " ▼"; font-size: 11px; }
     color: red;
     display: none;
 }
-
-/* Mobiilioptimointi */
-@media (max-width: 600px) {
-    body.vaalea, body.tumma {
-        margin: 10px;
-        font-size: 14px;
-    }
-    input {
-        width: 100%;
-        font-size: 16px;
-    }
-    button {
-        font-size: 13px;
-    }
-    th, td {
-        font-size: 13px;
-        padding: 4px 6px;
-    }
-}
 </style>
-</head>
 
+</head>
 <body class="vaalea">
 
 <div id="ylapalkki">
     <h2>Karaoke kappale haku HOVI</h2>
 
     <h3>Haku</h3>
-    <input id="haku" placeholder="Hae..." oninput="paivitaTaulukko()">
+    <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
     <button onclick="paivitaNappi()">PÄIVITÄ</button>
     <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
 
-    <p id="paivitysaika" style="font-size:16px; font-weight:bold; margin-top:8px;">Päivitetään...</p>
+    <div id="paivitysaika"></div>
 
-    <div id="aznav">
-        <button onclick="valitseKirjain('')">Kaikki</button>
-        <button onclick="valitseKirjain('A')">A</button>
-        <button onclick="valitseKirjain('B')">B</button>
-        <button onclick="valitseKirjain('C')">C</button>
-        <button onclick="valitseKirjain('D')">D</button>
-        <button onclick="valitseKirjain('E')">E</button>
-        <button onclick="valitseKirjain('F')">F</button>
-        <button onclick="valitseKirjain('G')">G</button>
-        <button onclick="valitseKirjain('H')">H</button>
-        <button onclick="valitseKirjain('I')">I</button>
-        <button onclick="valitseKirjain('J')">J</button>
-        <button onclick="valitseKirjain('K')">K</button>
-        <button onclick="valitseKirjain('L')">L</button>
-        <button onclick="valitseKirjain('M')">M</button>
-        <button onclick="valitseKirjain('N')">N</button>
-        <button onclick="valitseKirjain('O')">O</button>
-        <button onclick="valitseKirjain('P')">P</button>
-        <button onclick="valitseKirjain('Q')">Q</button>
-        <button onclick="valitseKirjain('R')">R</button>
-        <button onclick="valitseKirjain('S')">S</button>
-        <button onclick="valitseKirjain('T')">T</button>
-        <button onclick="valitseKirjain('U')">U</button>
-        <button onclick="valitseKirjain('V')">V</button>
-        <button onclick="valitseKirjain('W')">W</button>
-        <button onclick="valitseKirjain('X')">X</button>
-        <button onclick="valitseKirjain('Y')">Y</button>
-        <button onclick="valitseKirjain('Z')">Z</button>
-    </div>
-
-    <div id="eiLoytynyt">Ei löytynyt</div>
-
-    <h3>Koko lista</h3>
+    <h3>Koko lista <span id="kokolistaMaara"></span></h3>
 </div>
 
 <div class="table-wrapper">
@@ -163,12 +111,14 @@ th.sort-desc::after { content: " ▼"; font-size: 11px; }
 </table>
 </div>
 
+<div id="eiLoytynyt">Ei löytynyt</div>
+
 <script>
 function koneVari(kone) {
     if (kone === "C") return "#d0f0ff";
     if (kone === "M") return "#e8ffd0";
     if (kone === "K") return "#ffe8d0";
-    if (kone === "C_O") return "#fff7b3";  // uusi vaalea keltainen
+    if (kone === "C_O") return "#fff7b3";
     return "";
 }
 
@@ -177,16 +127,16 @@ let currentLetter = "";
 let sortKey = "ARTISTI";
 let sortDir = "asc";
 
+function paivitaKokoListaMaara(maara) {
+    document.getElementById("kokolistaMaara").innerText = maara + " kpl";
+}
+
 async function lataaCSV() {
     const url = "https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/kappaleet.csv";
     const res = await fetch(url);
     const txt = await res.text();
 
-    const rows = txt
-        .trim()
-        .split("\n")
-        .map(r => r.split(","))
-        .filter(r => r.length >= 4);
+    const rows = txt.trim().split("\n").map(r => r.split(",")).filter(r => r.length >= 4);
 
     data = rows.map((r, idx) => ({
         ARTISTI: r[0],
@@ -199,6 +149,7 @@ async function lataaCSV() {
     }));
 
     paivitaTaulukko();
+    paivitaKokoListaMaara(data.length);
 }
 
 function haeTeksti() {
@@ -216,12 +167,8 @@ function paivitaTaulukko() {
     tbody.innerHTML = "";
 
     let rivit = data.filter(r => {
-        if (currentLetter && !r.artistUpper.startsWith(currentLetter)) {
-            return false;
-        }
-        if (haku) {
-            return r.artistUpper.includes(haku) || r.kappaleUpper.includes(haku);
-        }
+        if (currentLetter && !r.artistUpper.startsWith(currentLetter)) return false;
+        if (haku) return r.artistUpper.includes(haku) || r.kappaleUpper.includes(haku);
         return true;
     });
 
@@ -260,13 +207,16 @@ function paivitaTaulukko() {
     });
 
     document.getElementById("eiLoytynyt").style.display = loytyi ? "none" : "block";
+
     paivitaSortOtsikot();
+    paivitaKokoListaMaara(rivit.length);
 }
 
 function paivitaNappi() {
     document.getElementById("haku").value = "";
     currentLetter = "";
     paivitaTaulukko();
+    paivitaKokoListaMaara(data.length);
 }
 
 function vaihdaTeema() {
