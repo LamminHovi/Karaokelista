@@ -97,7 +97,7 @@ th.sort-desc::after { content: " ▼"; font-size: 11px; }
 
     <h3>Koko lista <span id="kokolistaMaara"></span></h3>
 
-    <!-- ⭐ AAKKOSFILTTERI A–Z + Å + Ä + Ö -->
+    <!-- AAKKOSFILTTERI -->
     <div id="aznav"></div>
 </div>
 
@@ -149,6 +149,8 @@ async function lataaCSV() {
         KOODI:   r[3],
         artistUpper: r[0].toUpperCase(),
         kappaleUpper: r[1].toUpperCase(),
+        koneUpper: (r[2] || "").toUpperCase(),
+        koodiUpper: (r[3] || "").toUpperCase(),
         index: idx
     }));
 
@@ -157,7 +159,7 @@ async function lataaCSV() {
 }
 
 function haeTeksti() {
-    return document.getElementById("haku").value.toUpperCase();
+    return document.getElementById("haku").value.toUpperCase().trim();
 }
 
 function valitseKirjain(kirjain) {
@@ -167,12 +169,24 @@ function valitseKirjain(kirjain) {
 
 function paivitaTaulukko() {
     const haku = haeTeksti();
+    const sanat = haku.split(" ").filter(s => s.length > 0);
+
     const tbody = document.querySelector("#taulukko tbody");
     tbody.innerHTML = "";
 
     let rivit = data.filter(r => {
+
         if (currentLetter && !r.artistUpper.startsWith(currentLetter)) return false;
-        if (haku) return r.artistUpper.includes(haku) || r.kappaleUpper.includes(haku);
+
+        if (sanat.length > 0) {
+            return sanat.every(s =>
+                r.artistUpper.includes(s) ||
+                r.kappaleUpper.includes(s) ||
+                r.koneUpper.includes(s) ||
+                r.koodiUpper.includes(s)
+            );
+        }
+
         return true;
     });
 
@@ -193,11 +207,10 @@ function paivitaTaulukko() {
             const td = document.createElement("td");
             let teksti = r[k];
 
-            const hakuLocal = haeTeksti();
-            if (hakuLocal && teksti.toUpperCase().includes(hakuLocal)) {
-                const regex = new RegExp(hakuLocal, "gi");
+            sanat.forEach(s => {
+                const regex = new RegExp(s, "gi");
                 teksti = teksti.replace(regex, m => `<mark>${m}</mark>`);
-            }
+            });
 
             td.innerHTML = teksti;
 
