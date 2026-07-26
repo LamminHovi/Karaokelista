@@ -208,6 +208,7 @@ function paivitaTaulukko() {
             let teksti = r[k];
 
             sanat.forEach(s => {
+                if (s.length < 2) return; // korostusbugi korjattu
                 const regex = new RegExp(s, "gi");
                 teksti = teksti.replace(regex, m => `<mark>${m}</mark>`);
             });
