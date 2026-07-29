@@ -17,6 +17,27 @@ MITÄ SIVUT SISÄLTÄÄ:
 Tämä on Lamminhovin karaokekappaleiden haku- ja selausjärjestelmä.
 Sivulla voi hakea artisteja, kappaleita, koneita ja koodeja.
 - - - - - - - - - -
+
+### Ohjeita scriptin sisällä: html
+Jos haluat blokata rivin, alkuun <!-- ja loppuun <--
+<!-- ölskfaljsk koodi föasfö --> tämän rivi koodia ei suoriteta
+eli vielä:
+<!-- <h2>📄 Näkymän sisältö</h2> -->
+
+useampi rivi pois:
+<!--
+<h2>📄 Näkymän sisältö</h2>
+<p>Tämä teksti ei näy sivulla.</p>
+-->
+
+iso osa:
+<!--
+<div class="section">
+    <h2>📄 Näkymän sisältö</h2>
+    <p>...</p>
+</div>
+-->
+
 ## Tiedostot
 - help.docx - alkuperäinen help tiedosto
 
