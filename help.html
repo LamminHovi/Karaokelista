@@ -11,7 +11,7 @@ body {
     line-height: 1.6;
     background: #f7f7f7;
     color: #222;
-    transition: background 0.3s, color 0.3s;
+    transition: background-color 0.35s ease, color 0.35s ease;
 }
 h1 {
     font-size: 28px;
@@ -22,6 +22,7 @@ h2 {
     font-size: 22px;
     border-left: 6px solid #0077cc;
     padding-left: 10px;
+    transition: border-left-color 0.35s ease;
 }
 h3 {
     margin-top: 20px;
@@ -33,7 +34,7 @@ h3 {
     border-radius: 8px;
     margin-top: 15px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: background 0.3s, color 0.3s;
+    transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
 }
 .note {
     background: #fff8c6;
@@ -41,12 +42,14 @@ h3 {
     border-left: 5px solid #e6c200;
     margin-top: 10px;
     border-radius: 6px;
+    transition: background-color 0.35s ease, color 0.35s ease;
 }
 .code {
     background: #eee;
     padding: 6px 10px;
     border-radius: 4px;
     font-family: Consolas, monospace;
+    transition: background-color 0.35s ease, color 0.35s ease;
 }
 ul {
     margin-top: 10px;
@@ -59,6 +62,7 @@ ul {
     color: #fff;
     border-radius: 6px;
     text-decoration: none;
+    transition: background-color 0.35s ease;
 }
 .back:hover {
     background: #005fa3;
@@ -74,6 +78,7 @@ ul {
     text-decoration: none;
     font-size: 18px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: background-color 0.35s ease, box-shadow 0.35s ease;
 }
 .float-top:hover {
     background: #005fa3;
@@ -93,6 +98,7 @@ ul {
 .dark .section {
     background: #2b2b2b;
     color: #e6e6e6;
+    box-shadow: 0 2px 6px rgba(255,255,255,0.08);
 }
 .dark .note {
     background: #4a3f00;
@@ -113,6 +119,7 @@ ul {
 }
 .dark .float-top {
     background: #3399ff;
+    box-shadow: 0 2px 6px rgba(255,255,255,0.2);
 }
 .dark .float-top:hover {
     background: #1a7fd1;
@@ -127,16 +134,34 @@ ul {
     border-radius: 6px;
     text-decoration: none;
     cursor: pointer;
+    transition: background-color 0.35s ease;
 }
 .theme-toggle:hover {
     background: #005fa3;
 }
+.dark .theme-toggle {
+    background: #3399ff;
+}
+.dark .theme-toggle:hover {
+    background: #1a7fd1;
+}
 </style>
 
 <script>
+function applySavedTheme() {
+    const saved = localStorage.getItem("helpTheme");
+    if (saved === "dark") {
+        document.documentElement.classList.add("dark");
+    }
+}
+
 function toggleTheme() {
     document.documentElement.classList.toggle("dark");
+    const isDark = document.documentElement.classList.contains("dark");
+    localStorage.setItem("helpTheme", isDark ? "dark" : "light");
 }
+
+applySavedTheme();
 </script>
 
 </head>
@@ -285,7 +310,7 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 <div class="section">
 <h3>📝 Ohjetta päivitetty</h3>
 <p>Su 26.7.2026 n. klo 16:45 (poy)</p>
-<p>Ke 29.7.2026 n. klo 18:02 (poy)</p>
+<p>Ke 29.7.2026 n. klo 08:17 (poy)</p>
 </div>
 
 <a href="#top" class="float-top">↑ Ylös</a>    
@@ -293,4 +318,3 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 
 </body>
 </html>
-
