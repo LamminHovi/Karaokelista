@@ -80,8 +80,8 @@ iso osa:
 <title>Help – Karaoke kappale haku HOVI</title>
 
 <style>
-    <a class="back" href="index.html">← Takaisin hakuun</a>
-body {
+<!--<a class="back" href="index.html">← Takaisin hakuun</a> -->
+    body {
     font-family: Arial, sans-serif;
     margin: 20px;
     line-height: 1.6;
@@ -157,7 +157,7 @@ ul {
 
 <body>
 <a id="top"></a>
-
+     <a class="back" href="index.html">← Takaisin hakuun</a>
 <h1>📘 Karaoke kappale haku HOVI – Ohje</h1>
 <div class="section">
 <h2>🔗 Sivun avaaminen</h2>
@@ -173,13 +173,15 @@ ul {
 <p>Sivulle avautuu oletuksena <b>kaikki Hovin karaokekappaleet</b>.</p>
 <p>Yläpuolella näkyy:</p>
 <ul>
-<li><b>Koko lista xxxxx kpl</b> – rivien määrä</li>
+<li>Koko lista xxxxx kpl – rivien määrä</li>
 <li>Hakukenttä</li>
 <li>NOLLAUS -nappi</li>
 <li>Aakkosnapit A–Ö</li>
 <li>Teeman vaihto (vaalea / tumma)</li>
 <li>Help -nappi</li>
-<li>Viimeksi päivitetty ‑aikaleima</li>
+<li>Viimeksi päivitetty ‑aikaleima</li>.</p>
+<p>Alapuolella näkyy:</p>
+    <p>Listaus karaokekappaleista, oletuksena (kaikki) haku lyhentää listaa...</p>
 </ul>
 </div>
 
@@ -187,30 +189,30 @@ ul {
 <h2>🔍 Haku</h2>
 <p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b>
 <ul>
-<li><b>ARTISTI</b> Etsittävän artistin nimi tai osa jostain kohtaa nimeä</li>
-<li><b>KAPPALE</b> Etsittävän kappaleen nimi tai osa kappaleen nimestä</li>
-<li><b>KONE</b>Missä kappaleen tiedosto on (PC on "K", MadBoy on "M", MicroCard on "C")</li>
-<li><b>KOODI</b>ns. Tuottajan koodi tai nimi eism. FinnKaraoke on "FIN...", MelPlay on "MEL..." )</li>
+<li><b>ARTISTI</b> Etsittävän artistin nimi tai osa jostain kohtaa nimeä.</li>
+<li><b>KAPPALE</b> Etsittävän kappaleen nimi tai osa kappaleen nimestä.</li>
+<li><b>KONE</b> Missä kappaleen tiedosto on: PC="K", MadBoy="M", MicroCard="C".</li>
+<li><b>KOODI</b> ns. Tuottajan koodi tai nimi esim:FinnKaraoke="FIN...", MelPlay="MEL...", Power="POW..." jne.</li>
 </ul>
 </div>
 
 <div class="section">
 <h2>🔠 Aakkosnapit</h2>
 <p>Aakkosnapit A–Ö lyhentävät listaa <b>ARTISTI</b>‑sarakkeen mukaan.</p>
-<p>Napista ei voi kirjoittaa, se vain suodattaa listaa.</p>
+<p>(Napeista ei voi kirjoittaa, se vain suodattaa listaa).</p>
 </div>
 
 <div class="section">
 <h2>🧹 Hakukentän tyhjentäminen</h2>
 
-<h3>jos selaat Puhelimella</h3>
+<h3>jos selaat -puhelimella</h3>
 <ul>
 <li>NOLLAUS ‑napilla</li>
 <li>Näppäimistön "<--" ‑painikkeella</li>
 <li>Maalaamalla tekstin ja kirjoittamalla päälle</li>
 </ul>
 
-<h3>selaus PC:llä, läppärillä, tabletilla...</h3>
+<h3>selaus -PC:llä, -läppärillä, -tabletilla...</h3>
 <ul>
 <li>NOLLAUS‑napilla</li>
 <li>Backspace</li>
@@ -229,8 +231,8 @@ ul {
 </div>
 
 <div class="section">
-<h2>⏱ Viimeksi päivitetty</h2>
-<p>Teksti kertoo, milloin kappalelistaan on viimeksi:</p>
+<h2><b>⏱ Viimeksi päivitetty: -> kuka: pp.kk.vvvv klo hh:mm<b></h2>
+<p>Kertoo, milloin kappalelistaan on viimeksi:</p>
 <ul>
 <li>lisätty -karaokekappale</li>
 <li>muutettu -karaokekappaletta</li>
@@ -240,7 +242,16 @@ ul {
 <p>(HUOM! Karaokekappaleiden selaus -näytöllä ei pysty
 poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 </div>
-<h3>Perushaku</h3>
+<div class="section">
+<h2>↕ Sarakkeiden lajittelu</h2>
+<p>Kaikki sarakkeet voi lajitella A–Ö tai Ö–A.</p>
+<p>Napsauttamalla jotain Saraketta (ARTISTI, KAPPALE, KONE, KOODI) Sarakkeen nimen perään ilmestyy pieni kolmio:</p>
+<ul>
+<li>▲ = nouseva järjestys</li>
+<li>▼ = laskeva järjestys</li>
+</ul>
+</div>
+<h3>Perushaku ja esimerkkejä:</h3>
 <p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b>.</p>
 
 <p>Haku löytää osumat <b>kaikista sarakkeista</b>.
@@ -278,19 +289,9 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 </div>
 
 <div class="section">
-<h2>↕ Sarakkeiden lajittelu</h2>
-<p>Kaikki sarakkeet voi lajitella A–Ö tai Ö–A.</p>
-<p>Napsauttamalla jotain Saraketta (ARTISTI, KAPPALE, KONE, KOODI) Sarakkeen nimen perään ilmestyy pieni kolmio:</p>
-<ul>
-<li>▲ = nouseva järjestys</li>
-<li>▼ = laskeva järjestys</li>
-</ul>
-</div>
-
-<div class="section">
 <h3>📝 Ohjetta päivitetty</h3>
 <p>Su 26.7.2026 n. klo 16:45 (poy)</p>
-<p>Ke 29.7.2026 n. klo 05:35 (poy)</p>
+<p>Ke 29.7.2026 n. klo 08:17 (poy)</p>
 </div>
 
 <a href="#top" class="float-top">↑ Ylös</a>    
