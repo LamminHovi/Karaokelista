@@ -66,6 +66,8 @@ iso osa:
 - Päivitysaika GitHubista
 
 ![QR-koodi]QR-koodi Hovin Karaokekappaleet.pdf
+![Karaokelista](kuvat/QR-koodi Hovin Karaokekappaleet.pdf)
+
 
 
 ### Päivityksiä / muutoksia / yms.
