@@ -81,44 +81,23 @@ th.sort-desc::after { content: " ▼"; font-size: 11px; }
     display: none;
 }
 </style>
+
 </head>
-
 <body class="vaalea">
-
-<!-- ANKKURIT HELP-LINKKEJÄ VARTEN -->
-<a id="kokolista"></a>
-<a id="haku"></a>
-<a id="nollaus"></a>
-<a id="aakkoset"></a>
-<a id="teema"></a>
-<a id="helpnappi"></a>
-<a id="paivitys"></a>
 
 <div id="ylapalkki">
     <h2>Karaoke kappale haku HOVI</h2>
 
-    <!-- Palaa Ohjeeseen / Jatka tästä -->
-    <div id="palaaOhjeeseen" style="display:none; margin-top:10px;">
-        <button onclick="window.location.href='help.html'">← Palaa Ohjeeseen</button>
-    </div>
-
-    <div id="jatkaTasta" style="display:none; margin-top:10px;">
-        <button onclick="window.location.hash=''; document.getElementById('jatkaTasta').style.display='none';">
-            Jatka tästä
-        </button>
-    </div>
-
     <h3>Haku</h3>
     <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
-    <button onclick="paivitaNappi()">NOLLAUS</button>
+    <button onclick="paivitaNappi()">PÄIVITÄ</button>
     <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
-    <button onclick="window.location.href='help.html'" id="helpnappi">Help</button>
 
-    <div id="paivitys"></div>
+    <div id="paivitysaika"></div>
 
     <h3>Koko lista <span id="kokolistaMaara"></span></h3>
 
-    <!-- AAKKOSNAPIT -->
+    <!-- AAKKOSFILTTERI -->
     <div id="aznav"></div>
 </div>
 
@@ -229,7 +208,7 @@ function paivitaTaulukko() {
             let teksti = r[k];
 
             sanat.forEach(s => {
-                if (s.length < 2) return;
+                if (s.length < 2) return; // korostusbugi korjattu
                 const regex = new RegExp(s, "gi");
                 teksti = teksti.replace(regex, m => `<mark>${m}</mark>`);
             });
@@ -314,11 +293,11 @@ async function haePaivitysaika() {
         const tunnit = pvm.getHours().toString().padStart(2, "0");
         const minuutit = pvm.getMinutes().toString().padStart(2, "0");
 
-        document.getElementById("paivitys").innerText =
-            `Viimeksi päivitetty: ${paiva}.${kk}.${vuosi} klo ${tunnit}:${minuutit}`;
+        document.getElementById("paivitysaika").innerText =
+            `Viimeksi päivitetty -> poy: ${paiva}.${kk}.${vuosi} klo ${tunnit}:${minuutit}`;
 
     } catch (e) {
-        document.getElementById("paivitys").innerText = "Virhe päivitysajan haussa";
+        document.getElementById("paivitysaika").innerText = "Virhe päivitysajan haussa";
     }
 }
 
@@ -344,11 +323,6 @@ window.onload = () => {
     rakennaAakkosNapit();
     lataaCSV();
     haePaivitysaika();
-
-    if (window.location.hash) {
-        document.getElementById("palaaOhjeeseen").style.display = "block";
-        document.getElementById("jatkaTasta").style.display = "block";
-    }
 };
 </script>
 
