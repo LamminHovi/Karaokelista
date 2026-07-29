@@ -65,7 +65,8 @@ iso osa:
 - Lajittelu sarakkeittain
 - Päivitysaika GitHubista
 
-![Karaokelista](kuvat/karaokelista.png)
+![QR-koodi]C:\KappAppNetQR-koodi Hovin Karaokekappaleet.pdf
+
 ### Päivityksiä / muutoksia / yms.
     
 
