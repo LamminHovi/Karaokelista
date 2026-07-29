@@ -80,13 +80,13 @@ iso osa:
 <title>Help – Karaoke kappale haku HOVI</title>
 
 <style>
-<!--<a class="back" href="index.html">← Takaisin hakuun</a> -->
-    body {
+body {
     font-family: Arial, sans-serif;
     margin: 20px;
     line-height: 1.6;
     background: #f7f7f7;
     color: #222;
+    transition: background-color 0.35s ease, color 0.35s ease;
 }
 h1 {
     font-size: 28px;
@@ -97,6 +97,7 @@ h2 {
     font-size: 22px;
     border-left: 6px solid #0077cc;
     padding-left: 10px;
+    transition: border-left-color 0.35s ease;
 }
 h3 {
     margin-top: 20px;
@@ -108,6 +109,7 @@ h3 {
     border-radius: 8px;
     margin-top: 15px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
 }
 .note {
     background: #fff8c6;
@@ -115,12 +117,14 @@ h3 {
     border-left: 5px solid #e6c200;
     margin-top: 10px;
     border-radius: 6px;
+    transition: background-color 0.35s ease, color 0.35s ease;
 }
 .code {
     background: #eee;
     padding: 6px 10px;
     border-radius: 4px;
     font-family: Consolas, monospace;
+    transition: background-color 0.35s ease, color 0.35s ease;
 }
 ul {
     margin-top: 10px;
@@ -133,6 +137,7 @@ ul {
     color: #fff;
     border-radius: 6px;
     text-decoration: none;
+    transition: background-color 0.35s ease;
 }
 .back:hover {
     background: #005fa3;
@@ -148,17 +153,104 @@ ul {
     text-decoration: none;
     font-size: 18px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: background-color 0.35s ease, box-shadow 0.35s ease;
 }
 .float-top:hover {
     background: #005fa3;
 }
+
+/* 🔴 Punainen “Ei löytynyt” */
+.ei-loytynyt {
+    color: red;
+    font-weight: bold;
+}
+
+/* 🌙 Tumma teema */
+.dark body {
+    background: #1e1e1e;
+    color: #e6e6e6;
+}
+.dark .section {
+    background: #2b2b2b;
+    color: #e6e6e6;
+    box-shadow: 0 2px 6px rgba(255,255,255,0.08);
+}
+.dark .note {
+    background: #4a3f00;
+    color: #fff;
+}
+.dark .code {
+    background: #444;
+    color: #fff;
+}
+.dark h2 {
+    border-left-color: #66aaff;
+}
+.dark .back {
+    background: #3399ff;
+}
+.dark .back:hover {
+    background: #1a7fd1;
+}
+.dark .float-top {
+    background: #3399ff;
+    box-shadow: 0 2px 6px rgba(255,255,255,0.2);
+}
+.dark .float-top:hover {
+    background: #1a7fd1;
+}
+
+/* Teeman vaihtonappi */
+.theme-toggle {
+    float: right;
+    padding: 8px 14px;
+    background: #0077cc;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.35s ease;
+}
+.theme-toggle:hover {
+    background: #005fa3;
+}
+.dark .theme-toggle {
+    background: #3399ff;
+}
+.dark .theme-toggle:hover {
+    background: #1a7fd1;
+}
 </style>
+
+<script>
+function applySavedTheme() {
+    const saved = localStorage.getItem("helpTheme");
+    if (saved === "dark") {
+        document.documentElement.classList.add("dark");
+    }
+}
+
+function toggleTheme() {
+    document.documentElement.classList.toggle("dark");
+    const isDark = document.documentElement.classList.contains("dark");
+    localStorage.setItem("helpTheme", isDark ? "dark" : "light");
+}
+
+applySavedTheme();
+</script>
+
 </head>
 
 <body>
 <a id="top"></a>
-     <a class="back" href="index.html">← Takaisin hakuun</a>
+
+<!-- Teeman vaihto -->
+<a class="theme-toggle" onclick="toggleTheme()">Teema: Vaalea / Tumma</a>
+
+<a class="back" href="index.html">← Takaisin hakuun</a>
+
 <h1>📘 Karaoke kappale haku HOVI – Ohje</h1>
+
 <div class="section">
 <h2>🔗 Sivun avaaminen</h2>
 <p>Voit avata sivun QR‑koodista tai kirjoittamalla selaimeen osoitteen:</p>
@@ -179,15 +271,15 @@ ul {
 <li>Aakkosnapit A–Ö</li>
 <li>Teeman vaihto (vaalea / tumma)</li>
 <li>Help -nappi</li>
-<li>Viimeksi päivitetty ‑aikaleima</li>.</p>
-<p>Alapuolella näkyy:</p>
-    <p>Listaus karaokekappaleista, oletuksena (kaikki) haku lyhentää listaa...</p>
+<li>Viimeksi päivitetty ‑aikaleima</li>
 </ul>
+<p>Alapuolella näkyy:</p>
+<p>Listaus karaokekappaleista, oletuksena (kaikki) haku lyhentää listaa...</p>
 </div>
 
 <div class="section">
 <h2>🔍 Haku</h2>
-<p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b>
+<p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b></p>
 <ul>
 <li><b>ARTISTI</b> Etsittävän artistin nimi tai osa jostain kohtaa nimeä.</li>
 <li><b>KAPPALE</b> Etsittävän kappaleen nimi tai osa kappaleen nimestä.</li>
@@ -221,7 +313,7 @@ ul {
 <li>Maalaamalla teksti ja kirjoittamalla päälle</li>
 </ul>
 
-<div class="note">NOLLAUS nappi varmin --> uusi haku.</div>
+<div class="note">NOLLAUS nappi varmin → uusi haku.</div>
 </div>
 
 <div class="section">
@@ -231,7 +323,7 @@ ul {
 </div>
 
 <div class="section">
-<h2><b>⏱ Viimeksi päivitetty: -> kuka: pp.kk.vvvv klo hh:mm<b></h2>
+<h2><b>⏱ Viimeksi päivitetty</b></h2>
 <p>Kertoo, milloin kappalelistaan on viimeksi:</p>
 <ul>
 <li>lisätty -karaokekappale</li>
@@ -242,6 +334,7 @@ ul {
 <p>(HUOM! Karaokekappaleiden selaus -näytöllä ei pysty
 poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 </div>
+
 <div class="section">
 <h2>↕ Sarakkeiden lajittelu</h2>
 <p>Kaikki sarakkeet voi lajitella A–Ö tai Ö–A.</p>
@@ -251,11 +344,11 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 <li>▼ = laskeva järjestys</li>
 </ul>
 </div>
+
 <h3>Perushaku ja esimerkkejä:</h3>
 <p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b>.</p>
 
-<p>Haku löytää osumat <b>kaikista sarakkeista</b>.
-    Esimerkki:</p>
+<p>Haku löytää osumat <b>kaikista sarakkeista</b>.</p>
 
 <div class="code">yöli</div>
 
@@ -278,9 +371,10 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 <p>Jos haku ei löydä mitään:</p>
 <ul>
 <li>Koko lista 0 kpl</li>
-<li>Ei löytynyt</li>
+<li class="ei-loytynyt">Ei löytynyt</li>
 </ul>
 </div>
+
 <div class="section">
 <h2>📊 Rivimäärä</h2>
 <p>“Koko lista x kpl” kertoo montako riviä = kappaletta listalla.</p>
@@ -291,7 +385,7 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 <div class="section">
 <h3>📝 Ohjetta päivitetty</h3>
 <p>Su 26.7.2026 n. klo 16:45 (poy)</p>
-<p>Ke 29.7.2026 n. klo 08:17 (poy)</p>
+<p>Ke 29.7.2026 n. klo 18:15 (poy)</p>
 </div>
 
 <a href="#top" class="float-top">↑ Ylös</a>    
