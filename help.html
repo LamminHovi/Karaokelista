@@ -65,26 +65,10 @@ ul {
 .back:hover {
     background: #005fa3;
 }
-.float-top {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #0077cc;
-    color: #fff;
-    padding: 12px 16px;
-    border-radius: 50%;
-    text-decoration: none;
-    font-size: 18px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-}
-.float-top:hover {
-    background: #005fa3;
-}
 </style>
 </head>
 
 <body>
-<a id="top"></a>
 
 <h1>📘 Karaoke kappale haku HOVI – Ohje</h1>
 
@@ -104,10 +88,8 @@ ul {
 <ul>
 <li><b>Koko lista xxxxx kpl</b> – rivien määrä</li>
 <li>Hakukenttä</li>
-<li>NOLLAUS -nappi</li>
 <li>Aakkosnapit A–Ö</li>
 <li>Teeman vaihto (vaalea / tumma)</li>
-<li>Help -nappi</li>
 <li>Viimeksi päivitetty ‑aikaleima</li>
 </ul>
 </div>
@@ -116,26 +98,26 @@ ul {
 <h2>🔍 Haku</h2>
 
 <h3>Perushaku</h3>
-<p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b>.</p>
+<p>Kirjoita hakukenttään <b>ARTISTI</b> tai <b>KAPPALE</b> tai <b>KONE</b> tai <b>KOODI</b>.</p>
 
 <p>Haku löytää osumat <b>kaikista sarakkeista</b>. Esimerkki:</p>
 
-<div class="code">yöli</div>
+<div class="code">YÖLI</div>
 
-<p>Näyttää kaikki rivit, joissa esiintyy sana "yöli" missä tahansa sarakkeessa.</p>
+<p>Näyttää kaikki rivit, joissa esiintyy sana yöli missä tahansa sarakkeessa.</p>
 
 <div class="note">Osumat korostetaan keltaisella.</div>
 
 <h3>Usean sanan haku</h3>
-<p>Voit hakea useita sanoja samaan aikaan Esim:</p>
+<p>Voit hakea useita sanoja samaan aikaan:</p>
 
 <div class="code">k tapio sinut fin</div>
 
-<p>Löytää:</p>
+<p>Löytää esimerkiksi:</p>
 <div class="code">KARI TAPIO / SINUT TULEN AINA MUISTAMAAN / M / FIN</div>
 
 <h3>Kirjainkoko</h3>
-<p>Voit kirjoittaa pienillä tai ISOILLA kirjaimilla – haku ei ole kirjainkokoherkkä.</p>
+<p>Voit kirjoittaa pienillä tai isoilla kirjaimilla – haku ei ole kirjainkokoherkkä.</p>
 
 <h3>Ei löytynyt</h3>
 <p>Jos haku ei löydä mitään:</p>
@@ -144,7 +126,7 @@ ul {
 <li>Ei löytynyt</li>
 </ul>
 </div>
-    
+
 <div class="section">
 <h2>🔠 Aakkosnapit</h2>
 <p>Aakkosnapit A–Ö lyhentävät listaa <b>ARTISTI</b>‑sarakkeen mukaan.</p>
@@ -154,47 +136,46 @@ ul {
 <div class="section">
 <h2>🧹 Hakukentän tyhjentäminen</h2>
 
-<h3>jos selaat Puhelimella</h3>
+<h3>Puhelimessa</h3>
 <ul>
-<li>NOLLAUS ‑napilla</li>
-<li>Näppäimistön "<--" ‑painikkeella</li>
+<li>PÄIVITÄ‑napilla</li>
+<li>Näppäimistön X‑painikkeella</li>
 <li>Maalaamalla tekstin ja kirjoittamalla päälle</li>
 </ul>
 
-<h3>selaus PC:llä, läppärillä, tabletilla...</h3>
+<h3>PC:llä</h3>
 <ul>
-<li>NOLLAUS‑napilla</li>
+<li>PÄIVITÄ‑napilla</li>
 <li>Backspace</li>
 <li>Delete</li>
 <li>Esc</li>
-<li>Maalaamalla teksti ja kirjoittamalla päälle</li>
+<li>Maalaamalla tekstin ja kirjoittamalla päälle</li>
 </ul>
 
-<div class="note">NOLLAUS nappi varmin --> uusi haku.</div>
+<div class="note">PÄIVITÄ ei liity “Viimeksi päivitetty” ‑aikaleimaan.</div>
 </div>
 
 <div class="section">
 <h2>🌙 Teeman vaihto</h2>
 <p>Napauttamalla teemanappia tausta muuttuu mustaksi ja tekstit vaaleiksi.</p>
-<p>Oletuksena käytössä on <b>Vaalea -teema</b>.</p>
+<p>Oletuksena käytössä on <b>vaalea teema</b>.</p>
 </div>
 
 <div class="section">
 <h2>⏱ Viimeksi päivitetty</h2>
-<p>Teksti kertoo, milloin kappalelistaan on viimeksi:</p>
+<p>Teksti kertoo, milloin kappalelista on viimeksi:</p>
 <ul>
-<li>lisätty -karaokekappale</li>
-<li>muutettu -karaokekappaletta</li>
-<li>poistettu -karaokekappale</li>
+<li>lisätty</li>
+<li>muutettu</li>
+<li>poistettu</li>
 </ul>
 
-<p>(HUOM! Karaokekappaleiden selaus -näytöllä ei pysty
-poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
+<p>Aikaleima ei muutu PÄIVITÄ‑napista.</p>
 </div>
 
 <div class="section">
 <h2>📊 Rivimäärä</h2>
-<p>“Koko lista x kpl” kertoo montako riviä = kappaletta listalla.</p>
+<p>“Koko lista x kpl” kertoo montako riviä näkyy.</p>
 <p>Esim. haulla <b>Kari Tapio</b> näkyy:</p>
 <div class="code">Koko lista 157 kpl</div>
 </div>
@@ -202,7 +183,7 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 <div class="section">
 <h2>↕ Sarakkeiden lajittelu</h2>
 <p>Kaikki sarakkeet voi lajitella A–Ö tai Ö–A.</p>
-<p>Napsauttamalla jotain Saraketta (ARTISTI, KAPPALE, KONE, KOODI) Sarakkeen nimen perään ilmestyy pieni kolmio:</p>
+<p>Napauttamalla sarakkeen nimeä näkyy pieni kolmio:</p>
 <ul>
 <li>▲ = nouseva järjestys</li>
 <li>▼ = laskeva järjestys</li>
@@ -210,12 +191,10 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 </div>
 
 <div class="section">
-<h3>📝 Ohjetta päivitetty</h3>
+<h2>📝 Ohjetta päivitetty</h2>
 <p>Su 26.7.2026 n. klo 16:45 (poy)</p>
-<p>Ke 29.7.2026 n. klo 02:52 (poy)</p>
 </div>
 
-<a href="#top" class="float-top">↑ Ylös</a>    
 <a class="back" href="index.html">← Takaisin hakuun</a>
 
 </body>
