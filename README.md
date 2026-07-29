@@ -1,4 +1,4 @@
-# poy / 29.7.2026 n. klo 06:38
+# poy / 29.7.2026 n. klo 18:58
 README.md tämä tdsto 
     Päivitetty:
         
