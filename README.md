@@ -18,9 +18,27 @@ Tämä on Lamminhovin karaokekappaleiden haku- ja selausjärjestelmä.
 Sivulla voi hakea artisteja, kappaleita, koneita ja koodeja.
 - - - - - - - - - -
 ## Tiedostot
-- index.html — varsinainen karaokelista ja hakutoiminnot
-- help.html — ohjesivu
-- artisti.csv    päivittyy erillisellä Kappaleen lisäys näytöltä (jos uusi artisti, eikä löydy artisti.csv tdstosta.
-- kappaleet.csv — karaokekappaleiden lista joka myös päivittyy erillisen Kappale Lisäy -näytön kautta tai muokkaamalla
-  tätä kappaleet.csv tidostoa
+- help.docx - alkuperäinen help tiedosto
 
+- README.md - tämä tdsto.
+
+- artisti.csv    päivittyy erillisellä Kappaleen lisäys näytöltä (jos uusi artisti, eikä löydy artisti.csv tdstosta.
+  Toimii lasvetovalikkona lisaa_uusi_local.html näytölle.
+
+- help.html — ohjesivu index.html varsinaisella kappale selausn näytöllä on nappi Help joka avaa tämän help.html
+
+- index.html — varsinainen karaokelista ja hakutoiminnot
+
+- kappaleet.csv — karaokekappaleiden lista joka myös päivittyy erillisen Kappale Lisäy -näytön kautta tai muokkaamalla
+  tätä kappaleet.csv tidostoa. Toimii lasvetovalikkona lisaa_uusi_local.html näytölle.
+
+- koodi.csv - tiedosto koodeeista, alasvetovalikkona lisaa_uusi_local.html näytölle.
+
+- lisaa_uusi.html - alunperin oli tarkoitus käyttää tätä näyttöä Kappaleiden lisäys, muutos tai poisto työkaluna
+  mutta on päädytty käyttämään paikallista (vaatii TOKEN) lisaa_uusi_local.html tidostoa joka on
+  C:\KappAppNet\lisaa_uusi_local.html
+
+## index.html
+
+  
+  
