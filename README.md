@@ -37,6 +37,16 @@ Sivulla voi hakea artisteja, kappaleita, koneita ja koodeja.
 - lisaa_uusi.html - alunperin oli tarkoitus käyttää tätä näyttöä Kappaleiden lisäys, muutos tai poisto työkaluna
   mutta on päädytty käyttämään paikallista (vaatii TOKEN) lisaa_uusi_local.html tidostoa joka on
   C:\KappAppNet\lisaa_uusi_local.html
+  ## Ominaisuudet
+- Haku kaikista sarakkeista
+- Aakkosnapit A–Ö
+- Tumma / vaalea teema
+- Lajittelu sarakkeittain
+- Päivitysaika GitHubista
+
+![Karaokelista](kuvat/karaokelista.png)
+### Päivityksiä / muutoksia / yms.
+    
 
 ## index.html (ke 29.7.2026 n. klo 07:00 / poy
 <!DOCTYPE html>
@@ -373,4 +383,234 @@ window.onload = () => {
 
 
 ## help.html
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<title>Help – Karaoke kappale haku HOVI</title>
+
+<style>
+    <a class="back" href="index.html">← Takaisin hakuun</a>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    line-height: 1.6;
+    background: #f7f7f7;
+    color: #222;
+}
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+h2 {
+    margin-top: 30px;
+    font-size: 22px;
+    border-left: 6px solid #0077cc;
+    padding-left: 10px;
+}
+h3 {
+    margin-top: 20px;
+    font-size: 18px;
+}
+.section {
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-top: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.note {
+    background: #fff8c6;
+    padding: 10px 15px;
+    border-left: 5px solid #e6c200;
+    margin-top: 10px;
+    border-radius: 6px;
+}
+.code {
+    background: #eee;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+}
+ul {
+    margin-top: 10px;
+}
+.back {
+    margin-top: 30px;
+    display: inline-block;
+    padding: 10px 16px;
+    background: #0077cc;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+}
+.back:hover {
+    background: #005fa3;
+}
+.float-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #0077cc;
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 50%;
+    text-decoration: none;
+    font-size: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.float-top:hover {
+    background: #005fa3;
+}
+</style>
+</head>
+
+<body>
+<a id="top"></a>
+
+<h1>📘 Karaoke kappale haku HOVI – Ohje</h1>
+<div class="section">
+<h2>🔗 Sivun avaaminen</h2>
+<p>Voit avata sivun QR‑koodista tai kirjoittamalla selaimeen osoitteen:</p>
+
+<div class="code">https://lamminhovi.github.io/Karaokelista/</div>
+
+<p><b>Huom:</b> sana <b>Karaokelista</b> pitää olla isolla K‑kirjaimella.</p>
+</div>
+
+<div class="section">
+<h2>📄 Näkymän sisältö</h2>
+<p>Sivulle avautuu oletuksena <b>kaikki Hovin karaokekappaleet</b>.</p>
+<p>Yläpuolella näkyy:</p>
+<ul>
+<li><b>Koko lista xxxxx kpl</b> – rivien määrä</li>
+<li>Hakukenttä</li>
+<li>NOLLAUS -nappi</li>
+<li>Aakkosnapit A–Ö</li>
+<li>Teeman vaihto (vaalea / tumma)</li>
+<li>Help -nappi</li>
+<li>Viimeksi päivitetty ‑aikaleima</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>🔍 Haku</h2>
+<p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b>
+<ul>
+<li><b>ARTISTI</b> Etsittävän artistin nimi tai osa jostain kohtaa nimeä</li>
+<li><b>KAPPALE</b> Etsittävän kappaleen nimi tai osa kappaleen nimestä</li>
+<li><b>KONE</b>Missä kappaleen tiedosto on (PC on "K", MadBoy on "M", MicroCard on "C")</li>
+<li><b>KOODI</b>ns. Tuottajan koodi tai nimi eism. FinnKaraoke on "FIN...", MelPlay on "MEL..." )</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>🔠 Aakkosnapit</h2>
+<p>Aakkosnapit A–Ö lyhentävät listaa <b>ARTISTI</b>‑sarakkeen mukaan.</p>
+<p>Napista ei voi kirjoittaa, se vain suodattaa listaa.</p>
+</div>
+
+<div class="section">
+<h2>🧹 Hakukentän tyhjentäminen</h2>
+
+<h3>jos selaat Puhelimella</h3>
+<ul>
+<li>NOLLAUS ‑napilla</li>
+<li>Näppäimistön "<--" ‑painikkeella</li>
+<li>Maalaamalla tekstin ja kirjoittamalla päälle</li>
+</ul>
+
+<h3>selaus PC:llä, läppärillä, tabletilla...</h3>
+<ul>
+<li>NOLLAUS‑napilla</li>
+<li>Backspace</li>
+<li>Delete</li>
+<li>Esc</li>
+<li>Maalaamalla teksti ja kirjoittamalla päälle</li>
+</ul>
+
+<div class="note">NOLLAUS nappi varmin --> uusi haku.</div>
+</div>
+
+<div class="section">
+<h2>🌙 Teeman vaihto</h2>
+<p>Napauttamalla teemanappia tausta muuttuu mustaksi ja tekstit vaaleiksi.</p>
+<p>Oletuksena käytössä on <b>Vaalea -teema</b>.</p>
+</div>
+
+<div class="section">
+<h2>⏱ Viimeksi päivitetty</h2>
+<p>Teksti kertoo, milloin kappalelistaan on viimeksi:</p>
+<ul>
+<li>lisätty -karaokekappale</li>
+<li>muutettu -karaokekappaletta</li>
+<li>poistettu -karaokekappale</li>
+</ul>
+
+<p>(HUOM! Karaokekappaleiden selaus -näytöllä ei pysty
+poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
+</div>
+<h3>Perushaku</h3>
+<p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b>.</p>
+
+<p>Haku löytää osumat <b>kaikista sarakkeista</b>.
+    Esimerkki:</p>
+
+<div class="code">yöli</div>
+
+<p>Näyttää kaikki rivit, joissa esiintyy sana "yöli" missä tahansa sarakkeessa.</p>
+
+<div class="note">Osumat korostetaan keltaisella.</div>
+
+<h3>Usean sanan haku</h3>
+<p>Voit hakea useita sanoja samaan aikaan Esim:</p>
+
+<div class="code">k tapio sinut fin</div>
+
+<p>Löytää:</p>
+<div class="code">KARI TAPIO / SINUT TULEN AINA MUISTAMAAN / M / FIN</div>
+
+<h3>Kirjainkoko</h3>
+<p>Voit kirjoittaa pienillä tai ISOILLA kirjaimilla – haku ei ole kirjainkokoherkkä.</p>
+
+<h3>Ei löytynyt</h3>
+<p>Jos haku ei löydä mitään:</p>
+<ul>
+<li>Koko lista 0 kpl</li>
+<li>Ei löytynyt</li>
+</ul>
+</div>
+<div class="section">
+<h2>📊 Rivimäärä</h2>
+<p>“Koko lista x kpl” kertoo montako riviä = kappaletta listalla.</p>
+<p>Esim. haulla <b>Kari Tapio</b> näkyy:</p>
+<div class="code">Koko lista 157 kpl</div>
+</div>
+
+<div class="section">
+<h2>↕ Sarakkeiden lajittelu</h2>
+<p>Kaikki sarakkeet voi lajitella A–Ö tai Ö–A.</p>
+<p>Napsauttamalla jotain Saraketta (ARTISTI, KAPPALE, KONE, KOODI) Sarakkeen nimen perään ilmestyy pieni kolmio:</p>
+<ul>
+<li>▲ = nouseva järjestys</li>
+<li>▼ = laskeva järjestys</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>📝 Ohjetta päivitetty</h3>
+<p>Su 26.7.2026 n. klo 16:45 (poy)</p>
+<p>Ke 29.7.2026 n. klo 05:35 (poy)</p>
+</div>
+
+<a href="#top" class="float-top">↑ Ylös</a>    
+<a class="back" href="index.html">← Takaisin hakuun</a>
+
+</body>
+</html>
+
+# loppu
+
+
+
 
