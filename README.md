@@ -300,6 +300,7 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 </body>
 </html>
 
+
 # index.html
 <!DOCTYPE html>
 <html lang="fi">
@@ -633,7 +634,4 @@ window.onload = () => {
 </body>
 </html>
 
-
-
-
-
+# index.html
