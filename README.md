@@ -1,6 +1,7 @@
 # poy / 29.7.2026 n. klo 18:58
 README.md tämä tdsto 
     Päivitetty:
+    # Lisätty hallinta näytölle sarake LISATTY sekä kappale selaus näytölle LISÄTTY PVM johon on tarkoituksena tulla aina pvm milloin kappale on lisätty
         
 # Karaokelista
 Karaokekappale listau HOVI
