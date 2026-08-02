@@ -139,6 +139,15 @@ async function lisaaKappale() {
     const kone = document.getElementById("kone").value;
     const koodi = document.getElementById("koodi").value.trim();
     let pvm = document.getElementById("lisatty").value.trim();
+pvm = korjaaPvmMuoto(pvm);
+
+poistaVirhe("lisatty");
+if (!validoiPvm(pvm)) {
+    merkitseVirhe("lisatty");
+    alert("Päivämäärä väärässä muodossa. Käytä pp.kk.vvvv (esim. 31.07.2026)");
+    return;
+}
+
 
     if (!artisti || !kappale) return alert("Artisti ja kappale pakollisia.");
 
@@ -171,6 +180,15 @@ async function muutaKappale() {
     const kone = document.getElementById("kone").value;
     const koodi = document.getElementById("koodi").value.trim();
     let pvm = document.getElementById("lisatty").value.trim();
+pvm = korjaaPvmMuoto(pvm);
+
+poistaVirhe("lisatty");
+if (!validoiPvm(pvm)) {
+    merkitseVirhe("lisatty");
+    alert("Päivämäärä väärässä muodossa. Käytä pp.kk.vvvv (esim. 31.07.2026)");
+    return;
+}
+
 
     if (kappale !== kappale.toUpperCase()) {
         if (!confirm("Muunnetaan ISOILLA?")) return;
