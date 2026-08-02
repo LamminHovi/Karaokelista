@@ -70,7 +70,7 @@ function utf8_to_b64(str) { return btoa(unescape(encodeURIComponent(str))); }
 function b64_to_utf8(str) { return decodeURIComponent(escape(atob(str))); }
 
 async function loadCSV() {
-    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/kappaleet.csv";
+    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/kappaleet.csv?nocache=" + Date.now();
     const response = await fetch(apiUrl);
     const data = await response.json();
     const content = b64_to_utf8(data.content);
@@ -203,7 +203,7 @@ async function poistaKappale() {
 }
 
 async function paivitaCSV(rows, sha) {
-    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/kappaleet.csv";
+    const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/contents/kappaleet.csv?nocache=" + Date.now();
     const uusiCSV = rows.join("\n");
 
     await fetch(apiUrl, {
