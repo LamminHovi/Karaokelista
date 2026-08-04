@@ -3,33 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <title>Karaoke kappale haku HOVI</title>
-<style>
-body.vaalea { background:#f5f5f5; color:#000; }
-body.tumma  { background:#222; color:#eee; }
-table { border-collapse: collapse; width: 100%; }
-th, td { border:1px solid #ccc; padding:4px 6px; }
-th { cursor:pointer; }
-.sort-asc::after  { content:" ▲"; }
-.sort-desc::after { content:" ▼"; }
-mark { background: yellow; }
-.table-wrapper { max-height: 70vh; overflow:auto; }
-</style>
-</head>
 
+<style>
+body.vaalea { background:#ffffff; color:#000; font-family:Arial, sans-serif; margin:20px; }
+body.tumma  { background:#121212; color:#e0e0e0; font-family:Arial, sans-serif; margin:20px; }
+
+#ylapalkki {
+    position: sticky;
+    top: 0;
+    background: inherit;
+    padding-bottom: 10px;
+    z-index: 20;
+}
+
+h2, h3 { margin-bottom: 5px; }
+
+input {
+    padding: 10px;
+    width: 350px;
+    max-width: 100%;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+button {
+    padding: 6px 12px;
+    margin: 4px 4px 0 0;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#aznav {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+#aznav button {
+    padding: 4px 8px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.table-wrapper {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 480px;
+}
+th, td {
+    border: 1px solid #999;
+    padding: 6px 8px;
+    font-size: 14px;
+}
+
+/* sarakeleveyksien säätö: ARTISTI ja KAPPALE hieman kapeammiksi, tilaa LISÄTTY PVM:lle */
+thead th:nth-child(1) { width: 26%; }  /* ARTISTI */
+thead th:nth-child(2) { width: 34%; }  /* KAPPALE */
+thead th:nth-child(3) { width: 10%; }  /* KONE */
+thead th:nth-child(4) { width: 10%; }  /* KOODI */
+thead th:nth-child(5) { width: 20%; }  /* LISÄTTY PVM */
+
+tbody tr:hover { background: rgba(255,255,0,0.25); }
+
+body.vaalea thead th { background:#eee; color:#000; }
+body.tumma  thead th { background:#1f1f1f; color:#fff; }
+
+thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    cursor: pointer;
+}
+
+th.sort-asc::after  { content: " ▲"; font-size: 11px; }
+th.sort-desc::after { content: " ▼"; font-size: 11px; }
+
+#eiLoytynyt {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+    display: none;
+}
+</style>
+
+</head>
 <body class="vaalea">
 
-<h1>Karaoke kappale haku HOVI</h1>
+<div id="ylapalkki">
+    <h2>Karaoke kappale haku HOVI</h2>
 
-<div id="controls">
-    <input id="haku" type="text" placeholder="Hae..." oninput="paivitaTaulukko()">
-    <button onclick="paivitaNappi()">Tyhjennä</button>
-    <button id="teemanappi" onclick="vaihdaTeema()">Tumma teema</button>
+    <h3>Haku</h3>
+    <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
+    <button onclick="paivitaNappi()">NOLLAUS</button>
+    <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
+    <button onclick="window.location.href='help.html'">Help</button>
+    
+    <div id="paivitysaika"></div>
+
+    <h3>Koko lista <span id="kokolistaMaara"></span></h3>
+
+    <!-- AAKKOSFILTTERI -->
+    <div id="aznav"></div>
 </div>
-
-<div id="aznav"></div>
-
-<p id="kokolistaMaara"></p>
-<p id="paivitysaika"></p>
 
 <div class="table-wrapper">
 <table id="taulukko">
@@ -39,8 +117,6 @@ mark { background: yellow; }
     <th onclick="jarjesta('KAPPALE')" id="th-kappale">KAPPALE</th>
     <th onclick="jarjesta('KONE')"    id="th-kone">KONE</th>
     <th onclick="jarjesta('KOODI')"   id="th-koodi">KOODI</th>
-
-    <!-- ⭐ NÄYTÖLLÄ NIMI = LISÄTTY PVM, AVAIN = LISATTY -->
     <th onclick="jarjesta('LISATTY')" id="th-lisatty">LISÄTTY PVM</th>
 </tr>
 </thead>
@@ -48,7 +124,7 @@ mark { background: yellow; }
 </table>
 </div>
 
-<p id="eiLoytynyt" style="display:none;">Ei löytynyt</p>
+<div id="eiLoytynyt">Ei löytynyt</div>
 
 <script>
 function koneVari(kone) {
@@ -73,7 +149,11 @@ async function lataaCSV() {
     const res = await fetch(url);
     const txt = await res.text();
 
-    const rows = txt.trim().split("\n").map(r => r.split(","));
+    const rows = txt
+        .trim()
+        .split("\n")
+        .map(r => r.split(","))
+        .filter(r => r.length >= 5); // nyt 5 saraketta: ARTISTI,KAPPALE,KONE,KOODI,LISATTY
 
     data = rows.map((r, idx) => ({
         ARTISTI: r[0],
@@ -102,12 +182,20 @@ function valitseKirjain(kirjain) {
     paivitaTaulukko();
 }
 
-/* ⭐ PP.KK.VVVV → YYYYMMDD */
-function pvmKey(pvm) {
-    if (!pvm) return "99999999";
+/* pp.kk.vvvv -> yyyymmdd (string), tyhjät käsitellään erikseen */
+function pvmKey(pvm, asc) {
+    if (!pvm) {
+        // tyhjät loppuun nousevassa, alkuun laskevassa
+        return asc ? "99999999" : "00000000";
+    }
     const m = pvm.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if (!m) return "99999999";
-    return `${m[3]}${m[2].padStart(2,"0")}${m[1].padStart(2,"0")}`;
+    if (!m) {
+        return asc ? "99999999" : "00000000";
+    }
+    const dd = m[1].padStart(2, "0");
+    const mm = m[2].padStart(2, "0");
+    const yyyy = m[3];
+    return `${yyyy}${mm}${dd}`;
 }
 
 function paivitaTaulukko() {
@@ -138,8 +226,9 @@ function paivitaTaulukko() {
         let va, vb;
 
         if (sortKey === "LISATTY") {
-            va = pvmKey(a.LISATTY);
-            vb = pvmKey(b.LISATTY);
+            const asc = (sortDir === "asc");
+            va = pvmKey(a.LISATTY, asc);
+            vb = pvmKey(b.LISATTY, asc);
         } else {
             va = (a[sortKey] || "").toUpperCase();
             vb = (b[sortKey] || "").toUpperCase();
