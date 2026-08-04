@@ -218,6 +218,9 @@ function paivitaTaulukko() {
     rivit.sort((a, b) => {
     let va, vb;
 
+    rivit.sort((a, b) => {
+    let va, vb;
+
     if (sortKey === "LISATTY") {
         va = pvmKey(a.LISATTY);
         vb = pvmKey(b.LISATTY);
@@ -230,7 +233,6 @@ function paivitaTaulukko() {
     if (va > vb) return sortDir === "asc" ? 1 : -1;
     return 0;
 });
-
 
     let loytyi = false;
 
