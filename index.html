@@ -216,21 +216,21 @@ function paivitaTaulukko() {
     });
 
     rivit.sort((a, b) => {
-        let va, vb;
+    let va, vb;
 
-        if (sortKey === "LISATTY") {
-    va = pvmKey(a.LISATTY);
-    vb = pvmKey(b.LISATTY);
-}
+    if (sortKey === "LISATTY") {
+        va = pvmKey(a.LISATTY);
+        vb = pvmKey(b.LISATTY);
+    } else {
+        va = (a[sortKey] || "").toUpperCase();
+        vb = (b[sortKey] || "").toUpperCase();
+    }
 
-            va = (a[sortKey] || "").toUpperCase();
-            vb = (b[sortKey] || "").toUpperCase();
-        }
+    if (va < vb) return sortDir === "asc" ? -1 : 1;
+    if (va > vb) return sortDir === "asc" ? 1 : -1;
+    return 0;
+});
 
-        if (va < vb) return sortDir === "asc" ? -1 : 1;
-        if (va > vb) return sortDir === "asc" ? 1 : -1;
-        return 0;
-    });
 
     let loytyi = false;
 
