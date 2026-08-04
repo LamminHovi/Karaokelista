@@ -211,11 +211,9 @@ function paivitaTaulukko() {
                 r.lisattyUpper.includes(s)
             );
         }
-
-        return true;
-    });
-
-   rivit.sort((a, b) => {
+return true;
+});
+rivit.sort((a, b) => {
     let va, vb;
 
     if (sortKey === "LISATTY") {
@@ -230,8 +228,7 @@ function paivitaTaulukko() {
     if (va > vb) return sortDir === "asc" ? 1 : -1;
     return 0;
 });
-
-    let loytyi = false;
+let loytyi = false;
 
     rivit.forEach(r => {
         const tr = document.createElement("tr");
