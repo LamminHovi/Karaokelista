@@ -3,7 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>Karaoke kappale haku HOVI</title>
-<link rel="stylesheet" href="style.css">
+<style>
+body.vaalea { background:#f5f5f5; color:#000; }
+body.tumma  { background:#222; color:#eee; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border:1px solid #ccc; padding:4px 6px; }
+th { cursor:pointer; }
+.sort-asc::after  { content:" ▲"; }
+.sort-desc::after { content:" ▼"; }
+mark { background: yellow; }
+.table-wrapper { max-height: 70vh; overflow:auto; }
+</style>
 </head>
 
 <body class="vaalea">
@@ -29,6 +39,8 @@
     <th onclick="jarjesta('KAPPALE')" id="th-kappale">KAPPALE</th>
     <th onclick="jarjesta('KONE')"    id="th-kone">KONE</th>
     <th onclick="jarjesta('KOODI')"   id="th-koodi">KOODI</th>
+
+    <!-- ⭐ NÄYTÖLLÄ NIMI = LISÄTTY PVM, AVAIN = LISATTY -->
     <th onclick="jarjesta('LISATTY')" id="th-lisatty">LISÄTTY PVM</th>
 </tr>
 </thead>
@@ -61,11 +73,7 @@ async function lataaCSV() {
     const res = await fetch(url);
     const txt = await res.text();
 
-    const rows = txt
-        .trim()
-        .split("\n")
-        .map(r => r.split(","))
-        .filter(r => r.length >= 5);
+    const rows = txt.trim().split("\n").map(r => r.split(","));
 
     data = rows.map((r, idx) => ({
         ARTISTI: r[0],
@@ -94,15 +102,12 @@ function valitseKirjain(kirjain) {
     paivitaTaulukko();
 }
 
-/* pp.kk.vvvv -> yyyymmdd */
-function pvmKey(pvm, asc) {
-    if (!pvm) return asc ? "99999999" : "00000000";
+/* ⭐ PP.KK.VVVV → YYYYMMDD */
+function pvmKey(pvm) {
+    if (!pvm) return "99999999";
     const m = pvm.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if (!m) return asc ? "99999999" : "00000000";
-    const dd = m[1].padStart(2, "0");
-    const mm = m[2].padStart(2, "0");
-    const yyyy = m[3];
-    return `${yyyy}${mm}${dd}`;
+    if (!m) return "99999999";
+    return `${m[3]}${m[2].padStart(2,"0")}${m[1].padStart(2,"0")}`;
 }
 
 function paivitaTaulukko() {
@@ -133,9 +138,8 @@ function paivitaTaulukko() {
         let va, vb;
 
         if (sortKey === "LISATTY") {
-            const asc = (sortDir === "asc");
-            va = pvmKey(a.LISATTY, asc);
-            vb = pvmKey(b.LISATTY, asc);
+            va = pvmKey(a.LISATTY);
+            vb = pvmKey(b.LISATTY);
         } else {
             va = (a[sortKey] || "").toUpperCase();
             vb = (b[sortKey] || "").toUpperCase();
