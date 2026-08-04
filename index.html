@@ -183,11 +183,12 @@ function valitseKirjain(kirjain) {
 }
 
 /* pp.kk.vvvv -> yyyymmdd (string), tyhjät käsitellään erikseen */
-function pvmKey(pvm, asc) {
-    if (!pvm) {
-        // tyhjät loppuun nousevassa, alkuun laskevassa
-        return asc ? "99999999" : "00000000";
-    }
+function pvmKey(pvm) {
+    if (!pvm) return "99999999";
+    const m = pvm.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+    if (!m) return "99999999";
+    return `${m[3]}${m[2].padStart(2,"0")}${m[1].padStart(2,"0")}`;
+}
     const m = pvm.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
     if (!m) {
         return asc ? "99999999" : "00000000";
@@ -226,9 +227,8 @@ function paivitaTaulukko() {
         let va, vb;
 
         if (sortKey === "LISATTY") {
-            const asc = (sortDir === "asc");
-            va = pvmKey(a.LISATTY, asc);
-            vb = pvmKey(b.LISATTY, asc);
+            va = pvmKey(a.LISATTY);
+            vb = pvmKey(b.LISATTY);
         } else {
             va = (a[sortKey] || "").toUpperCase();
             vb = (b[sortKey] || "").toUpperCase();
