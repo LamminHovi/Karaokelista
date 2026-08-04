@@ -181,7 +181,8 @@ function valitseKirjain(kirjain) {
 /* pp.kk.vvvv -> yyyymmdd */
 function pvmKey(pvm) {
     if (!pvm) return "99999999";
-    const m = pvm.match(/^\s*(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})\s*$/);
+    pvm = pvm.replace(/\s+/g, "");  // POISTAA KAIKKI VÄLILYÖNNIT
+    const m = pvm.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
     if (!m) return "99999999";
     return `${m[3]}${m[2].padStart(2,"0")}${m[1].padStart(2,"0")}`;
 }
