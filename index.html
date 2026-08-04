@@ -149,11 +149,7 @@ async function lataaCSV() {
     const res = await fetch(url);
     const txt = await res.text();
 
-    const rows = txt
-        .trim()
-        .split("\n")
-        .map(r => r.split(","))
-        .filter(r => r.length >= 5); // nyt 5 saraketta: ARTISTI,KAPPALE,KONE,KOODI,LISATTY
+    const rows = txt.trim().split("\n").map(r => r.split(","));
 
     data = rows.map((r, idx) => ({
         ARTISTI: r[0],
@@ -182,8 +178,7 @@ function valitseKirjain(kirjain) {
     paivitaTaulukko();
 }
 
-/* pp.kk.vvvv -> yyyymmdd (string), tyhjät käsitellään erikseen */
-/* pp.kk.vvvv -> yyyymmdd (string) */
+/* pp.kk.vvvv -> yyyymmdd */
 function pvmKey(pvm) {
     if (!pvm) return "99999999";
     const m = pvm.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
@@ -211,24 +206,28 @@ function paivitaTaulukko() {
                 r.lisattyUpper.includes(s)
             );
         }
-return true;
-});
-rivit.sort((a, b) => {
-    let va, vb;
 
-    if (sortKey === "LISATTY") {
-        va = pvmKey(a.LISATTY);
-        vb = pvmKey(b.LISATTY);
-    } else {
-        va = (a[sortKey] || "").toUpperCase();
-        vb = (b[sortKey] || "").toUpperCase();
-    }
+        return true;
+    });
 
-    if (va < vb) return sortDir === "asc" ? -1 : 1;
-    if (va > vb) return sortDir === "asc" ? 1 : -1;
-    return 0;
-});
-let loytyi = false;
+    /* ⭐ Täydellinen sorttaus — toimii kaikissa sarakkeissa */
+    rivit.sort((a, b) => {
+        let va, vb;
+
+        if (sortKey === "LISATTY") {
+            va = pvmKey(a.LISATTY);
+            vb = pvmKey(b.LISATTY);
+        } else {
+            va = (a[sortKey] || "").toUpperCase();
+            vb = (b[sortKey] || "").toUpperCase();
+        }
+
+        if (va < vb) return sortDir === "asc" ? -1 : 1;
+        if (va > vb) return sortDir === "asc" ? 1 : -1;
+        return 0;
+    });
+
+    let loytyi = false;
 
     rivit.forEach(r => {
         const tr = document.createElement("tr");
