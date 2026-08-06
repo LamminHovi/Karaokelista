@@ -6,35 +6,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+/* ------------------------------
+   DESIGN VARIABLES
+--------------------------------*/
 :root {
-    --bg: #f7f7f7;
+    --bg: #f5f7fa;
     --bg-alt: #ffffff;
-    --text: #222;
-    --muted: #555;
-    --accent: #0077cc;
-    --accent-hover: #005fa3;
-    --border: #d0d0d0;
-    --code-bg: #eee;
-    --note-bg: #fff8c6;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --border: #e5e7eb;
+    --card-shadow: rgba(0,0,0,0.06);
+    --code-bg: #e2e8f0;
+    --note-bg: #fff4c2;
     --note-border: #e6c200;
     --danger: #d60000;
 }
 
-/* 🌙 Dark theme variables */
+/* 🌙 DARK THEME */
 .dark {
-    --bg: #1e1e1e;
-    --bg-alt: #2b2b2b;
-    --text: #e6e6e6;
-    --muted: #bbbbbb;
-    --accent: #3399ff;
-    --accent-hover: #1a7fd1;
-    --border: #3a3a3a;
-    --code-bg: #444;
+    --bg: #0f172a;
+    --bg-alt: #1e293b;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --accent-hover: #3b82f6;
+    --border: #334155;
+    --card-shadow: rgba(255,255,255,0.06);
+    --code-bg: #334155;
     --note-bg: #4a3f00;
     --note-border: #e6c200;
     --danger: #ff6666;
 }
 
+/* ------------------------------
+   GLOBAL
+--------------------------------*/
 body {
     margin: 0;
     padding: 0;
@@ -51,20 +59,36 @@ body {
     padding: 20px 16px 60px;
 }
 
-/* Header */
+/* ------------------------------
+   HEADER
+--------------------------------*/
 header {
     background: var(--bg-alt);
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    padding: 24px;
+    border-radius: 18px;
     border: 1px solid var(--border);
-    margin-bottom: 24px;
-    transition: background 0.35s ease, box-shadow 0.35s ease;
+    box-shadow: 0 8px 20px var(--card-shadow);
+    margin-bottom: 26px;
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 140px;
+    height: 140px;
+    background: var(--accent);
+    opacity: 0.15;
+    border-radius: 50%;
 }
 
 header h1 {
     margin: 0;
-    font-size: 26px;
+    font-size: 28px;
+    font-weight: 700;
 }
 
 header p {
@@ -72,16 +96,19 @@ header p {
     color: var(--muted);
 }
 
-/* Buttons */
+/* ------------------------------
+   BUTTONS
+--------------------------------*/
 .back {
     display: inline-block;
     padding: 10px 16px;
     background: var(--accent);
     color: #fff;
-    border-radius: 6px;
+    border-radius: 8px;
     text-decoration: none;
     margin-top: 16px;
     transition: background 0.35s ease;
+    font-weight: 600;
 }
 .back:hover {
     background: var(--accent-hover);
@@ -92,23 +119,26 @@ header p {
     padding: 8px 14px;
     background: var(--accent);
     color: #fff;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     text-decoration: none;
     transition: background 0.35s ease;
+    font-weight: 600;
 }
 .theme-toggle:hover {
     background: var(--accent-hover);
 }
 
-/* Cards */
+/* ------------------------------
+   CARDS
+--------------------------------*/
 .section {
     background: var(--bg-alt);
-    padding: 18px 20px;
-    border-radius: 12px;
-    margin-top: 20px;
+    padding: 22px 24px;
+    border-radius: 16px;
+    margin-top: 22px;
     border: 1px solid var(--border);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    box-shadow: 0 6px 16px var(--card-shadow);
     transition: background 0.35s ease, box-shadow 0.35s ease;
 }
 
@@ -116,51 +146,63 @@ header p {
     margin-top: 0;
     font-size: 22px;
     border-left: 6px solid var(--accent);
-    padding-left: 10px;
+    padding-left: 12px;
+    font-weight: 700;
 }
 
 .section h3 {
     margin-top: 18px;
     font-size: 18px;
+    font-weight: 600;
 }
 
-/* Code box */
+/* ------------------------------
+   CODE BOX
+--------------------------------*/
 .code {
     background: var(--code-bg);
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: 10px 14px;
+    border-radius: 8px;
     font-family: Consolas, monospace;
-    margin: 8px 0;
+    margin: 10px 0;
+    font-size: 15px;
 }
 
-/* Notes */
+/* ------------------------------
+   NOTES
+--------------------------------*/
 .note {
     background: var(--note-bg);
-    padding: 10px 15px;
-    border-left: 5px solid var(--note-border);
-    border-radius: 6px;
-    margin-top: 10px;
+    padding: 12px 16px;
+    border-left: 6px solid var(--note-border);
+    border-radius: 10px;
+    margin-top: 12px;
+    font-size: 15px;
 }
 
-/* Ei löytynyt */
+/* ------------------------------
+   “Ei löytynyt”
+--------------------------------*/
 .ei-loytynyt {
     color: var(--danger);
     font-weight: bold;
 }
 
-/* Ylös-nappi */
+/* ------------------------------
+   FLOAT TOP BUTTON
+--------------------------------*/
 .float-top {
     position: fixed;
     bottom: 20px;
     right: 20px;
     background: var(--accent);
     color: #fff;
-    padding: 12px 16px;
+    padding: 14px 18px;
     border-radius: 50%;
     text-decoration: none;
-    font-size: 18px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    transition: background 0.35s ease, box-shadow 0.35s ease;
+    font-size: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: background 0.35s ease;
 }
 .float-top:hover {
     background: var(--accent-hover);
@@ -196,7 +238,7 @@ applySavedTheme();
 
 <a class="back" href="index.html">← Takaisin hakuun</a>
 
-<!-- ⭐ Kaikki nykyiset tekstisi säilytetty, vain ulkoasu modernisoitu ⭐ -->
+<!-- ⭐ Kaikki tekstisi säilytetty, vain ulkoasu modernisoitu ⭐ -->
 
 <div class="section">
 <h2>🔗 Sivun avaaminen</h2>
@@ -311,7 +353,6 @@ applySavedTheme();
 
 <div class="section">
 <h3>📝 Ohjetta päivitetty</h3>
-<p>Ti 06.08.2026 klo 20:30 (poy)</p>
 <p>Ti 04.08.2026 klo 05:02 (poy)</p>
 <p>Ke 29.07.2026 klo 18:15 (poy)</p>
 <p>Su 26.07.2026 klo 16:45 (poy)</p>
