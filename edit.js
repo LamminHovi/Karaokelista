@@ -16,14 +16,22 @@ async function loadCSV() {
             tr.appendChild(td);
         });
 
-        const deleteBtn = document.createElement('td');
-        deleteBtn.innerHTML = '<button onclick="deleteRow(' + rowIndex + ')">Poista</button>';
-        tr.appendChild(deleteBtn);
+        // MUUTA-nappi
+        const editBtn = document.createElement('td');
+        editBtn.innerHTML = '<button onclick="editRow(' + rowIndex + ')">Muuta</button>';
+        tr.appendChild(editBtn);
 
         table.appendChild(tr);
     });
 }
 
+// Scrollaa rivin näkyviin
+function editRow(index) {
+    const table = document.getElementById('csvTable');
+    table.rows[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// Lisää uusi rivi
 function addRow() {
     const table = document.getElementById('csvTable');
     const tr = document.createElement('tr');
@@ -36,18 +44,14 @@ function addRow() {
         tr.appendChild(td);
     }
 
-    const deleteBtn = document.createElement('td');
-    deleteBtn.innerHTML = '<button onclick="deleteRow()">Poista</button>';
-    tr.appendChild(deleteBtn);
+    const editBtn = document.createElement('td');
+    editBtn.innerHTML = '<button onclick="editRow()">Muuta</button>';
+    tr.appendChild(editBtn);
 
     table.appendChild(tr);
 }
 
-function deleteRow(index) {
-    const table = document.getElementById('csvTable');
-    table.deleteRow(index);
-}
-
+// CSV tallennus
 function downloadCSV() {
     const table = document.getElementById('csvTable');
     let csv = '';
@@ -70,6 +74,17 @@ function downloadCSV() {
     a.href = url;
     a.download = 'kappaleet.csv';
     a.click();
+}
+
+// Haku 11000 rivin joukosta
+function searchCSV() {
+    const query = document.getElementById('searchBox').value.toLowerCase();
+    const table = document.getElementById('csvTable');
+
+    for (let i = 0; i < table.rows.length; i++) {
+        const rowText = table.rows[i].innerText.toLowerCase();
+        table.rows[i].style.display = rowText.includes(query) ? '' : 'none';
+    }
 }
 
 loadCSV();
