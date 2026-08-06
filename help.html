@@ -6,76 +6,67 @@
 
 <style>
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-family: Arial, sans-serif;
     margin: 20px;
     line-height: 1.6;
-    background: #f5f7fa;
+    background: #f7f7f7;
     color: #222;
     transition: background-color 0.35s ease, color 0.35s ease;
 }
-
 h1 {
-    font-size: 30px;
+    font-size: 28px;
     margin-bottom: 10px;
-    font-weight: 700;
 }
-
 h2 {
     margin-top: 30px;
     font-size: 22px;
     border-left: 6px solid #0077cc;
     padding-left: 10px;
-    font-weight: 600;
     transition: border-left-color 0.35s ease;
 }
-
 h3 {
     margin-top: 20px;
     font-size: 18px;
-    font-weight: 600;
 }
-
 .section {
-    background: #ffffff;
-    padding: 18px 22px;
-    border-radius: 12px;
-    margin-top: 18px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    border: 1px solid #e5e7eb;
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-top: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
 }
-
 .note {
-    background: #fff4c2;
-    padding: 12px 16px;
+    background: #fff8c6;
+    padding: 10px 15px;
     border-left: 5px solid #e6c200;
-    margin-top: 12px;
-    border-radius: 8px;
-}
-
-.code {
-    background: #e2e8f0;
-    padding: 8px 12px;
+    margin-top: 10px;
     border-radius: 6px;
-    font-family: Consolas, monospace;
-    margin: 8px 0;
+    transition: background-color 0.35s ease, color 0.35s ease;
 }
-
+.code {
+    background: #eee;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: Consolas, monospace;
+    transition: background-color 0.35s ease, color 0.35s ease;
+}
+ul {
+    margin-top: 10px;
+}
 .back {
-    margin-top: 20px;
+    margin-top: 30px;
     display: inline-block;
     padding: 10px 16px;
     background: #0077cc;
     color: #fff;
-    border-radius: 8px;
+    border-radius: 6px;
     text-decoration: none;
-    font-weight: 600;
     transition: background-color 0.35s ease;
 }
 .back:hover {
     background: #005fa3;
 }
-
 .float-top {
     position: fixed;
     bottom: 20px;
@@ -86,13 +77,14 @@ h3 {
     border-radius: 50%;
     text-decoration: none;
     font-size: 18px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    transition: background-color 0.35s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: background-color 0.35s ease, box-shadow 0.35s ease;
 }
 .float-top:hover {
     background: #005fa3;
 }
 
+/* 🔴 Punainen “Ei löytynyt” */
 .ei-loytynyt {
     color: red;
     font-weight: bold;
@@ -106,7 +98,7 @@ h3 {
 .dark .section {
     background: #2b2b2b;
     color: #e6e6e6;
-    box-shadow: 0 4px 12px rgba(255,255,255,0.08);
+    box-shadow: 0 2px 6px rgba(255,255,255,0.08);
 }
 .dark .note {
     background: #4a3f00;
@@ -127,23 +119,31 @@ h3 {
 }
 .dark .float-top {
     background: #3399ff;
+    box-shadow: 0 2px 6px rgba(255,255,255,0.2);
 }
 .dark .float-top:hover {
     background: #1a7fd1;
 }
 
+/* Teeman vaihtonappi */
 .theme-toggle {
     float: right;
     padding: 8px 14px;
     background: #0077cc;
     color: #fff;
-    border-radius: 8px;
+    border-radius: 6px;
     text-decoration: none;
     cursor: pointer;
-    font-weight: 600;
+    transition: background-color 0.35s ease;
+}
+.theme-toggle:hover {
+    background: #005fa3;
 }
 .dark .theme-toggle {
     background: #3399ff;
+}
+.dark .theme-toggle:hover {
+    background: #1a7fd1;
 }
 </style>
 
@@ -154,11 +154,13 @@ function applySavedTheme() {
         document.documentElement.classList.add("dark");
     }
 }
+
 function toggleTheme() {
     document.documentElement.classList.toggle("dark");
     const isDark = document.documentElement.classList.contains("dark");
     localStorage.setItem("helpTheme", isDark ? "dark" : "light");
 }
+
 applySavedTheme();
 </script>
 
@@ -167,7 +169,9 @@ applySavedTheme();
 <body>
 <a id="top"></a>
 
+<!-- Teeman vaihto -->
 <a class="theme-toggle" onclick="toggleTheme()">Teema: Vaalea / Tumma</a>
+
 <a class="back" href="index.html">← Takaisin hakuun</a>
 
 <h1>📘 Karaoke kappale haku HOVI – Ohje</h1>
@@ -175,98 +179,121 @@ applySavedTheme();
 <div class="section">
 <h2>🔗 Sivun avaaminen</h2>
 <p>Voit avata sivun QR‑koodista tai kirjoittamalla selaimeen osoitteen:</p>
+
 <div class="code">https://lamminhovi.github.io/Karaokelista/</div>
+
 <p><b>Huom:</b> sana <b>Karaokelista</b> pitää olla isolla K‑kirjaimella.</p>
 </div>
 
 <div class="section">
 <h2>📄 Näkymän sisältö</h2>
 <p>Sivulle avautuu oletuksena <b>kaikki Hovin karaokekappaleet</b>.</p>
+<p>Yläpuolella näkyy:</p>
 <ul>
-<li>Koko lista xxxxx kpl</li>
+<li>Koko lista xxxxx kpl – rivien määrä</li>
 <li>Hakukenttä</li>
 <li>NOLLAUS -nappi</li>
 <li>Aakkosnapit A–Ö</li>
-<li>Teeman vaihto</li>
+<li>Teeman vaihto (vaalea / tumma)</li>
 <li>Help -nappi</li>
-<li>Viimeksi päivitetty -aikaleima</li>
+<li>Viimeksi päivitetty ‑aikaleima</li>
 </ul>
-<p>Alapuolella näkyy kappalelista, jota haku lyhentää.</p>
+<p>Alapuolella näkyy:</p>
+<p>Listaus karaokekappaleista, oletuksena (kaikki) haku lyhentää listaa...</p>
 </div>
 
 <div class="section">
 <h2>🔍 Haku</h2>
-<p>Kirjoita hakukenttään <b>ARTISTI</b>, <b>KAPPALE</b>, <b>KONE</b> tai <b>KOODI</b>.</p>
+<p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b></p>
 <ul>
-<li><b>ARTISTI</b> – nimi tai osa nimestä</li>
-<li><b>KAPPALE</b> – nimi tai osa nimestä</li>
-<li><b>KONE</b> – K, M, C</li>
-<li><b>KOODI</b> – FIN, MEL, POW...</li>
+<li><b>ARTISTI</b> Etsittävän artistin nimi tai osa jostain kohtaa nimeä.</li>
+<li><b>KAPPALE</b> Etsittävän kappaleen nimi tai osa kappaleen nimestä.</li>
+<li><b>KONE</b> Missä kappaleen tiedosto on: PC="K", MadBoy="M", MicroCard="C".</li>
+<li><b>KOODI</b> ns. Tuottajan koodi tai nimi esim:FinnKaraoke="FIN...", MelPlay="MEL...", Power="POW..." jne.</li>
 </ul>
 </div>
 
 <div class="section">
 <h2>🔠 Aakkosnapit</h2>
-<p>Suodattavat listaa ARTISTI-sarakkeen mukaan.</p>
+<p>Aakkosnapit A–Ö lyhentävät listaa <b>ARTISTI</b>‑sarakkeen mukaan.</p>
+<p>(Napeista ei voi kirjoittaa, se vain suodattaa listaa).</p>
 </div>
 
 <div class="section">
 <h2>🧹 Hakukentän tyhjentäminen</h2>
-<h3>Puhelimella</h3>
+
+<h3>jos selaat -puhelimella</h3>
 <ul>
-<li>NOLLAUS</li>
-<li>← näppäin</li>
-<li>Maalaus + kirjoitus</li>
+<li>NOLLAUS ‑napilla</li>
+<li>Näppäimistön "<--" ‑painikkeella</li>
+<li>Maalaamalla tekstin ja kirjoittamalla päälle</li>
 </ul>
-<h3>PC / läppäri / tabletti</h3>
+
+<h3>selaus -PC:llä, -läppärillä, -tabletilla...</h3>
 <ul>
-<li>NOLLAUS</li>
+<li>NOLLAUS‑napilla</li>
 <li>Backspace</li>
 <li>Delete</li>
 <li>Esc</li>
-<li>Maalaus + kirjoitus</li>
+<li>Maalaamalla teksti ja kirjoittamalla päälle</li>
 </ul>
+
 <div class="note">NOLLAUS nappi varmin → uusi haku.</div>
 </div>
 
 <div class="section">
 <h2>🌙 Teeman vaihto</h2>
-<p>Vaalea ↔ Tumma teema.</p>
+<p>Napauttamalla teemanappia tausta muuttuu mustaksi ja tekstit vaaleiksi.</p>
+<p>Oletuksena käytössä on <b>Vaalea -teema</b>.</p>
 </div>
 
 <div class="section">
-<h2>⏱ Viimeksi päivitetty</h2>
+<h2><b>⏱ Viimeksi päivitetty</b></h2>
+<p>Kertoo, milloin kappalelistaan on viimeksi:</p>
 <ul>
-<li>lisätty kappale</li>
-<li>muutettu kappale</li>
-<li>poistettu kappale</li>
+<li>lisätty -karaokekappale</li>
+<li>muutettu -karaokekappaletta</li>
+<li>poistettu -karaokekappale</li>
 </ul>
-<p>Selausnäytöllä ei voi muuttaa tietoja.</p>
+
+<p>(HUOM! Karaokekappaleiden selaus -näytöllä ei pysty
+poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 </div>
 
 <div class="section">
 <h2>↕ Sarakkeiden lajittelu</h2>
-<p>Kaikki sarakkeet lajittuvat A–Ö tai Ö–A.</p>
+<p>Kaikki sarakkeet voi lajitella A–Ö tai Ö–A.</p>
+<p>Napsauttamalla jotain Saraketta (ARTISTI, KAPPALE, KONE, KOODI) Sarakkeen nimen perään ilmestyy pieni kolmio:</p>
 <ul>
-<li>▲ nouseva</li>
-<li>▼ laskeva</li>
+<li>▲ = nouseva järjestys</li>
+<li>▼ = laskeva järjestys</li>
 </ul>
 </div>
 
-<div class="section">
-<h3>Perushaku ja esimerkkejä</h3>
+<h3>Perushaku ja esimerkkejä:</h3>
+<p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b>.</p>
+
+<p>Haku löytää osumat <b>kaikista sarakkeista</b>.</p>
+
 <div class="code">yöli</div>
-<p>Näyttää kaikki rivit, joissa esiintyy sana missä tahansa sarakkeessa.</p>
+
+<p>Näyttää kaikki rivit, joissa esiintyy sana "yöli" missä tahansa sarakkeessa.</p>
+
 <div class="note">Osumat korostetaan keltaisella.</div>
 
 <h3>Usean sanan haku</h3>
+<p>Voit hakea useita sanoja samaan aikaan Esim:</p>
+
 <div class="code">k tapio sinut fin</div>
+
+<p>Löytää:</p>
 <div class="code">KARI TAPIO / SINUT TULEN AINA MUISTAMAAN / M / FIN</div>
 
 <h3>Kirjainkoko</h3>
-<p>Haku ei ole kirjainkokoherkkä.</p>
+<p>Voit kirjoittaa pienillä tai ISOILLA kirjaimilla – haku ei ole kirjainkokoherkkä.</p>
 
 <h3>Ei löytynyt</h3>
+<p>Jos haku ei löydä mitään:</p>
 <ul>
 <li>Koko lista 0 kpl</li>
 <li class="ei-loytynyt">Ei löytynyt</li>
@@ -275,17 +302,18 @@ applySavedTheme();
 
 <div class="section">
 <h2>📊 Rivimäärä</h2>
-<p>Kertoo montako kappaletta listalla.</p>
+<p>“Koko lista x kpl” kertoo montako riviä = kappaletta listalla.</p>
+<p>Esim. haulla <b>Kari Tapio</b> näkyy:</p>
 <div class="code">Koko lista 157 kpl</div>
 </div>
 
 <div class="section">
 <h3>📝 Ohjetta päivitetty</h3>
-<p>Su 26.7.2026 klo 16:45 (poy)</p>
-<p>Ke 29.7.2026 klo 18:15 (poy)</p>
+<p>Su 26.7.2026 n. klo 16:45 (poy)</p>
+<p>Ke 29.7.2026 n. klo 18:15 (poy)</p>
 </div>
 
-<a href="#top" class="float-top">↑</a>
+<a href="#top" class="float-top">↑ Ylös</a>    
 <a class="back" href="index.html">← Takaisin hakuun</a>
 
 </body>
