@@ -9,10 +9,14 @@ async function loadCSV() {
     rows.forEach((row, rowIndex) => {
         const tr = document.createElement('tr');
 
-        row.forEach((cell) => {
+        row.forEach((cell, colIndex) => {
             const td = document.createElement('td');
             td.contentEditable = "true";
             td.textContent = cell;
+
+            // Päivämäärävalidointi solun muuttuessa
+            td.addEventListener('input', () => validateCell(td, colIndex));
+
             tr.appendChild(td);
         });
 
@@ -36,11 +40,13 @@ function addRow() {
     const table = document.getElementById('csvTable');
     const tr = document.createElement('tr');
 
-    // Luo 3 solua (voit muuttaa sarakemäärän)
     for (let i = 0; i < 3; i++) {
         const td = document.createElement('td');
         td.contentEditable = "true";
         td.textContent = '';
+
+        td.addEventListener('input', () => validateCell(td, i));
+
         tr.appendChild(td);
     }
 
@@ -84,6 +90,32 @@ function searchCSV() {
     for (let i = 0; i < table.rows.length; i++) {
         const rowText = table.rows[i].innerText.toLowerCase();
         table.rows[i].style.display = rowText.includes(query) ? '' : 'none';
+    }
+}
+
+// Päivämäärävalidointi
+function validateCell(td, colIndex) {
+    const value = td.textContent.trim();
+
+    // Validointi vain päivämääräsarakkeelle (viimeinen sarake)
+    if (colIndex !== 2) return;
+
+    const regex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
+    const match = value.match(regex);
+
+    if (!match) {
+        td.classList.add('invalid');
+        return;
+    }
+
+    const day = parseInt(match[1], 10);
+    const month = parseInt(match[2], 10);
+    const year = parseInt(match[3], 10);
+
+    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
+        td.classList.add('invalid');
+    } else {
+        td.classList.remove('invalid');
     }
 }
 
