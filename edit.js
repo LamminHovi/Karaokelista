@@ -1,4 +1,4 @@
-let csvData = [];  // tallennetaan data muistiin nopeaa hakua varten
+let csvData = [];  // kaikki rivit muistissa, ei DOMissa
 
 async function loadCSV() {
     const response = await fetch('kappaleet.csv');
@@ -6,41 +6,50 @@ async function loadCSV() {
 
     csvData = text.trim().split('\n').map(r => r.split(','));
 
-    renderTable(csvData);
+    // EI renderöidä mitään tässä vaiheessa → sivu ei jäädy
+    const tableBody = document.querySelector('#csvTable tbody');
+    tableBody.innerHTML = '';
 }
 
 function renderTable(data) {
-    const table = document.getElementById('csvTable');
-    table.innerHTML = '';
+    const tableBody = document.querySelector('#csvTable tbody');
+    tableBody.innerHTML = '';
 
-    data.forEach((row, rowIndex) => {
+    // rajataan max 50 riviin, ettei selain tukehdu
+    const maxRows = 50;
+    const rowsToShow = data.slice(0, maxRows);
+
+    rowsToShow.forEach((row, rowIndex) => {
         const tr = document.createElement('tr');
 
-        row.forEach((cell, colIndex) => {
+        for (let colIndex = 0; colIndex < 5; colIndex++) {
             const td = document.createElement('td');
             td.contentEditable = "true";
-            td.textContent = cell;
+            td.textContent = row[colIndex] || '';
 
             td.addEventListener('input', () => validateCell(td, colIndex));
 
             tr.appendChild(td);
-        });
+        }
 
         const editBtn = document.createElement('td');
         editBtn.innerHTML = '<button onclick="editRow(' + rowIndex + ')">Muuta</button>';
         tr.appendChild(editBtn);
 
-        table.appendChild(tr);
+        tableBody.appendChild(tr);
     });
 }
 
 function editRow(index) {
-    const table = document.getElementById('csvTable');
-    table.rows[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const tableBody = document.querySelector('#csvTable tbody');
+    const rows = tableBody.rows;
+    if (index >= 0 && index < rows.length) {
+        rows[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 }
 
 function addRow() {
-    const table = document.getElementById('csvTable');
+    const tableBody = document.querySelector('#csvTable tbody');
     const tr = document.createElement('tr');
 
     for (let i = 0; i < 5; i++) {
@@ -57,15 +66,15 @@ function addRow() {
     editBtn.innerHTML = '<button onclick="editRow()">Muuta</button>';
     tr.appendChild(editBtn);
 
-    table.appendChild(tr);
+    tableBody.appendChild(tr);
 }
 
 function downloadCSV() {
-    const table = document.getElementById('csvTable');
+    const tableBody = document.querySelector('#csvTable tbody');
     let csv = '';
 
-    for (let i = 0; i < table.rows.length; i++) {
-        const cells = table.rows[i].cells;
+    for (let i = 0; i < tableBody.rows.length; i++) {
+        const cells = tableBody.rows[i].cells;
         let row = [];
 
         for (let j = 0; j < 5; j++) {
@@ -88,7 +97,8 @@ function searchCSV() {
     const query = document.getElementById('searchBox').value.toLowerCase();
 
     if (query.length === 0) {
-        renderTable(csvData);
+        const tableBody = document.querySelector('#csvTable tbody');
+        tableBody.innerHTML = '';
         return;
     }
 
