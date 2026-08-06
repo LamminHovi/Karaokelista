@@ -1,12 +1,19 @@
+let csvData = [];  // tallennetaan data muistiin nopeaa hakua varten
+
 async function loadCSV() {
     const response = await fetch('kappaleet.csv');
     const text = await response.text();
-    const rows = text.trim().split('\n').map(r => r.split(','));
 
+    csvData = text.trim().split('\n').map(r => r.split(','));
+
+    renderTable(csvData);
+}
+
+function renderTable(data) {
     const table = document.getElementById('csvTable');
     table.innerHTML = '';
 
-    rows.forEach((row, rowIndex) => {
+    data.forEach((row, rowIndex) => {
         const tr = document.createElement('tr');
 
         row.forEach((cell, colIndex) => {
@@ -14,13 +21,11 @@ async function loadCSV() {
             td.contentEditable = "true";
             td.textContent = cell;
 
-            // Päivämäärävalidointi solun muuttuessa
             td.addEventListener('input', () => validateCell(td, colIndex));
 
             tr.appendChild(td);
         });
 
-        // MUUTA-nappi
         const editBtn = document.createElement('td');
         editBtn.innerHTML = '<button onclick="editRow(' + rowIndex + ')">Muuta</button>';
         tr.appendChild(editBtn);
@@ -29,18 +34,16 @@ async function loadCSV() {
     });
 }
 
-// Scrollaa rivin näkyviin
 function editRow(index) {
     const table = document.getElementById('csvTable');
     table.rows[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
-// Lisää uusi rivi
 function addRow() {
     const table = document.getElementById('csvTable');
     const tr = document.createElement('tr');
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
         const td = document.createElement('td');
         td.contentEditable = "true";
         td.textContent = '';
@@ -57,7 +60,6 @@ function addRow() {
     table.appendChild(tr);
 }
 
-// CSV tallennus
 function downloadCSV() {
     const table = document.getElementById('csvTable');
     let csv = '';
@@ -66,7 +68,7 @@ function downloadCSV() {
         const cells = table.rows[i].cells;
         let row = [];
 
-        for (let j = 0; j < cells.length - 1; j++) {
+        for (let j = 0; j < 5; j++) {
             row.push(cells[j].textContent.replace(/,/g, ''));
         }
 
@@ -82,23 +84,33 @@ function downloadCSV() {
     a.click();
 }
 
-// Haku 11000 rivin joukosta
 function searchCSV() {
     const query = document.getElementById('searchBox').value.toLowerCase();
-    const table = document.getElementById('csvTable');
 
-    for (let i = 0; i < table.rows.length; i++) {
-        const rowText = table.rows[i].innerText.toLowerCase();
-        table.rows[i].style.display = rowText.includes(query) ? '' : 'none';
+    if (query.length === 0) {
+        renderTable(csvData);
+        return;
     }
+
+    const filtered = csvData.filter(row =>
+        row.join(' ').toLowerCase().includes(query)
+    );
+
+    renderTable(filtered);
 }
 
-// Päivämäärävalidointi
 function validateCell(td, colIndex) {
     const value = td.textContent.trim();
 
-    // Validointi vain päivämääräsarakkeelle (viimeinen sarake)
-    if (colIndex !== 2) return;
+    if (colIndex !== 4) {
+        td.classList.remove('invalid');
+        return;
+    }
+
+    if (value === '') {
+        td.classList.remove('invalid');
+        return;
+    }
 
     const regex = /^(\d{2})\.(\d{2})\.(\d{4})$/;
     const match = value.match(regex);
