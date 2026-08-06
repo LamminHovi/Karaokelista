@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<title>CSV Editor – Karaokelista</title>
+<style>
+body { font-family: Arial; margin: 20px; }
+table { border-collapse: collapse; width: 100%; }
+td, th { border: 1px solid #ccc; padding: 6px; }
+td[contenteditable="true"] { background: #f9f9f9; }
+button { margin: 10px 0; padding: 8px 14px; }
+</style>
+</head>
+<body>
+
+<h2>CSV Editor – Karaokelista</h2>
+
+<button onclick="addRow()">Lisää rivi</button>
+<button onclick="downloadCSV()">Lataa uusi CSV</button>
+
+<table id="csvTable"></table>
+
+<script src="edit.js"></script>
+</body>
+</html>
