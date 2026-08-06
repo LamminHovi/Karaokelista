@@ -109,6 +109,12 @@ function searchCSV() {
     renderTable(filtered);
 }
 
+function clearSearch() {
+    document.getElementById('searchBox').value = '';
+    const tableBody = document.querySelector('#csvTable tbody');
+    tableBody.innerHTML = '';
+}
+
 function validateCell(td, colIndex) {
     const value = td.textContent.trim();
 
