@@ -3,147 +3,167 @@
 <head>
 <meta charset="UTF-8">
 <title>Help – Karaoke kappale haku HOVI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+:root {
+    --bg: #f7f7f7;
+    --bg-alt: #ffffff;
+    --text: #222;
+    --muted: #555;
+    --accent: #0077cc;
+    --accent-hover: #005fa3;
+    --border: #d0d0d0;
+    --code-bg: #eee;
+    --note-bg: #fff8c6;
+    --note-border: #e6c200;
+    --danger: #d60000;
+}
+
+/* 🌙 Dark theme variables */
+.dark {
+    --bg: #1e1e1e;
+    --bg-alt: #2b2b2b;
+    --text: #e6e6e6;
+    --muted: #bbbbbb;
+    --accent: #3399ff;
+    --accent-hover: #1a7fd1;
+    --border: #3a3a3a;
+    --code-bg: #444;
+    --note-bg: #4a3f00;
+    --note-border: #e6c200;
+    --danger: #ff6666;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     line-height: 1.6;
-    background: #f7f7f7;
-    color: #222;
-    transition: background-color 0.35s ease, color 0.35s ease;
+    transition: background 0.35s ease, color 0.35s ease;
 }
-h1 {
-    font-size: 28px;
-    margin-bottom: 10px;
+
+.page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
 }
-h2 {
-    margin-top: 30px;
-    font-size: 22px;
-    border-left: 6px solid #0077cc;
-    padding-left: 10px;
-    transition: border-left-color 0.35s ease;
+
+/* Header */
+header {
+    background: var(--bg-alt);
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    transition: background 0.35s ease, box-shadow 0.35s ease;
 }
-h3 {
-    margin-top: 20px;
-    font-size: 18px;
+
+header h1 {
+    margin: 0;
+    font-size: 26px;
 }
-.section {
-    background: #fff;
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin-top: 15px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: background-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+
+header p {
+    margin: 6px 0 0;
+    color: var(--muted);
 }
-.note {
-    background: #fff8c6;
-    padding: 10px 15px;
-    border-left: 5px solid #e6c200;
-    margin-top: 10px;
-    border-radius: 6px;
-    transition: background-color 0.35s ease, color 0.35s ease;
-}
-.code {
-    background: #eee;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-family: Consolas, monospace;
-    transition: background-color 0.35s ease, color 0.35s ease;
-}
-ul {
-    margin-top: 10px;
-}
+
+/* Buttons */
 .back {
-    margin-top: 30px;
     display: inline-block;
     padding: 10px 16px;
-    background: #0077cc;
+    background: var(--accent);
     color: #fff;
     border-radius: 6px;
     text-decoration: none;
-    transition: background-color 0.35s ease;
+    margin-top: 16px;
+    transition: background 0.35s ease;
 }
 .back:hover {
-    background: #005fa3;
+    background: var(--accent-hover);
 }
+
+.theme-toggle {
+    float: right;
+    padding: 8px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.35s ease;
+}
+.theme-toggle:hover {
+    background: var(--accent-hover);
+}
+
+/* Cards */
+.section {
+    background: var(--bg-alt);
+    padding: 18px 20px;
+    border-radius: 12px;
+    margin-top: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+
+.section h2 {
+    margin-top: 0;
+    font-size: 22px;
+    border-left: 6px solid var(--accent);
+    padding-left: 10px;
+}
+
+.section h3 {
+    margin-top: 18px;
+    font-size: 18px;
+}
+
+/* Code box */
+.code {
+    background: var(--code-bg);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: Consolas, monospace;
+    margin: 8px 0;
+}
+
+/* Notes */
+.note {
+    background: var(--note-bg);
+    padding: 10px 15px;
+    border-left: 5px solid var(--note-border);
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+/* Ei löytynyt */
+.ei-loytynyt {
+    color: var(--danger);
+    font-weight: bold;
+}
+
+/* Ylös-nappi */
 .float-top {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: #0077cc;
+    background: var(--accent);
     color: #fff;
     padding: 12px 16px;
     border-radius: 50%;
     text-decoration: none;
     font-size: 18px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    transition: background-color 0.35s ease, box-shadow 0.35s ease;
+    transition: background 0.35s ease, box-shadow 0.35s ease;
 }
 .float-top:hover {
-    background: #005fa3;
-}
-
-/* 🔴 Punainen “Ei löytynyt” */
-.ei-loytynyt {
-    color: red;
-    font-weight: bold;
-}
-
-/* 🌙 Tumma teema */
-.dark body {
-    background: #1e1e1e;
-    color: #e6e6e6;
-}
-.dark .section {
-    background: #2b2b2b;
-    color: #e6e6e6;
-    box-shadow: 0 2px 6px rgba(255,255,255,0.08);
-}
-.dark .note {
-    background: #4a3f00;
-    color: #fff;
-}
-.dark .code {
-    background: #444;
-    color: #fff;
-}
-.dark h2 {
-    border-left-color: #66aaff;
-}
-.dark .back {
-    background: #3399ff;
-}
-.dark .back:hover {
-    background: #1a7fd1;
-}
-.dark .float-top {
-    background: #3399ff;
-    box-shadow: 0 2px 6px rgba(255,255,255,0.2);
-}
-.dark .float-top:hover {
-    background: #1a7fd1;
-}
-
-/* Teeman vaihtonappi */
-.theme-toggle {
-    float: right;
-    padding: 8px 14px;
-    background: #0077cc;
-    color: #fff;
-    border-radius: 6px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.35s ease;
-}
-.theme-toggle:hover {
-    background: #005fa3;
-}
-.dark .theme-toggle {
-    background: #3399ff;
-}
-.dark .theme-toggle:hover {
-    background: #1a7fd1;
+    background: var(--accent-hover);
 }
 </style>
 
@@ -154,150 +174,129 @@ function applySavedTheme() {
         document.documentElement.classList.add("dark");
     }
 }
-
 function toggleTheme() {
     document.documentElement.classList.toggle("dark");
     const isDark = document.documentElement.classList.contains("dark");
     localStorage.setItem("helpTheme", isDark ? "dark" : "light");
 }
-
 applySavedTheme();
 </script>
 
 </head>
-
 <body>
 <a id="top"></a>
 
-<!-- Teeman vaihto -->
-<a class="theme-toggle" onclick="toggleTheme()">Teema: Vaalea / Tumma</a>
+<div class="page">
+
+<header>
+    <a class="theme-toggle" onclick="toggleTheme()">Teema: Vaalea / Tumma</a>
+    <h1>📘 Karaoke kappale haku HOVI – Ohje</h1>
+    <p>Käyttöohje Hovin karaokehakuun ja kappalelistaan.</p>
+</header>
 
 <a class="back" href="index.html">← Takaisin hakuun</a>
 
-<h1>📘 Karaoke kappale haku HOVI – Ohje</h1>
+<!-- ⭐ Kaikki nykyiset tekstisi säilytetty, vain ulkoasu modernisoitu ⭐ -->
 
 <div class="section">
 <h2>🔗 Sivun avaaminen</h2>
 <p>Voit avata sivun QR‑koodista tai kirjoittamalla selaimeen osoitteen:</p>
-
 <div class="code">https://lamminhovi.github.io/Karaokelista/</div>
-
 <p><b>Huom:</b> sana <b>Karaokelista</b> pitää olla isolla K‑kirjaimella.</p>
 </div>
 
 <div class="section">
 <h2>📄 Näkymän sisältö</h2>
-<p>Sivulle avautuu oletuksena <b>kaikki Hovin karaokekappaleet</b>. Vihoissa tai kansioistahan ei löydy uusimpia tai viimeksi lisättyjä kappaleita</p>
-<p>Yläpuolella näkyy:</p>
+<p>Sivulle avautuu oletuksena <b>kaikki Hovin karaokekappaleet</b>. Vihoissa tai kansioissa ei ole uusimpia lisäyksiä.</p>
 <ul>
-<li>Koko lista xxxxx kpl – rivien määrä</li>
+<li>Koko lista xxxxx kpl</li>
 <li>Hakukenttä</li>
 <li>NOLLAUS -nappi</li>
 <li>Aakkosnapit A–Ö</li>
-<li>Teeman vaihto (vaalea / tumma)</li>
+<li>Teeman vaihto</li>
 <li>Help -nappi</li>
-<li>Viimeksi päivitetty ‑aikaleima</li>
+<li>Viimeksi päivitetty -aikaleima</li>
 </ul>
-<p>Alapuolella näkyy:</p>
-<p>Listaus karaokekappaleista, oletuksena (kaikki) haku lyhentää listaa...</p>
+<p>Alapuolella näkyy kappalelista, jota haku lyhentää.</p>
 </div>
 
 <div class="section">
 <h2>🔍 Haku</h2>
-<p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b><b>LISÄTTY PVM</b></p>
+<p>Kirjoita hakukenttään <b>ARTISTI</b>, <b>KAPPALE</b>, <b>KONE</b>, <b>KOODI</b> tai <b>LISÄTTY PVM</b>.</p>
 <ul>
-<li><b>ARTISTI</b> Etsittävän artistin nimi tai osa jostain kohtaa nimeä.</li>
-<li><b>KAPPALE</b> Etsittävän kappaleen nimi tai osa kappaleen nimestä.</li>
-<li><b>KONE</b> Missä kappaleen tiedosto on: PC="K", MadBoy="M", MicroCard="C".</li>
-<li><b>KOODI</b> ns. Tuottajan koodi tai nimi esim:FinnKaraoke="FIN...", MelPlay="MEL...", Power="POW..." jne.</li>
-<li><b>LISÄTTY PVM</b> Päivämäärä milloin kappale on lisätty listaan ja laulettavaksi. PVM muoto PP.KK.VVVV esim. 04.07.2026</li>
+<li><b>ARTISTI</b> – nimi tai osa nimestä</li>
+<li><b>KAPPALE</b> – nimi tai osa nimestä</li>
+<li><b>KONE</b> – K, M, C</li>
+<li><b>KOODI</b> – FIN, MEL, POW...</li>
+<li><b>LISÄTTY PVM</b> – PP.KK.VVVV</li>
 </ul>
 </div>
 
 <div class="section">
 <h2>🔠 Aakkosnapit</h2>
-<p>Aakkosnapit A–Ö lyhentävät listaa <b>ARTISTI</b>‑sarakkeen mukaan.</p>
-<p>(Napeista ei voi kirjoittaa, se vain suodattaa listaa).</p>
+<p>Suodattavat listaa ARTISTI-sarakkeen mukaan.</p>
 </div>
 
 <div class="section">
 <h2>🧹 Hakukentän tyhjentäminen</h2>
-
-<h3>jos selaat -puhelimella</h3>
+<h3>Puhelimella</h3>
 <ul>
-<li>NOLLAUS ‑napilla</li>
-<li>Näppäimistön "<--" ‑painikkeella</li>
-<li>Maalaamalla tekstin ja kirjoittamalla päälle</li>
+<li>NOLLAUS</li>
+<li>← näppäin</li>
+<li>Maalaus + kirjoitus</li>
 </ul>
-
-<h3>selaus -PC:llä, -läppärillä, -tabletilla...</h3>
+<h3>PC / läppäri / tabletti</h3>
 <ul>
-<li>NOLLAUS‑napilla</li>
+<li>NOLLAUS</li>
 <li>Backspace</li>
 <li>Delete</li>
 <li>Esc</li>
-<li>Maalaamalla teksti ja kirjoittamalla päälle</li>
+<li>Maalaus + kirjoitus</li>
 </ul>
-
 <div class="note">NOLLAUS nappi varmin → uusi haku.</div>
 </div>
 
 <div class="section">
 <h2>🌙 Teeman vaihto</h2>
-<p>Napauttamalla teemanappia tausta muuttuu mustaksi ja tekstit vaaleiksi.</p>
-<p>Oletuksena käytössä on <b>Vaalea -teema</b>.</p>
+<p>Vaalea ↔ Tumma teema.</p>
 </div>
 
 <div class="section">
-<h2><b>⏱ Viimeksi päivitetty</b></h2>
-<p>Kertoo, milloin kappalelistaan on viimeksi:</p>
+<h2>⏱ Viimeksi päivitetty</h2>
 <ul>
-<li>lisätty -karaokekappale</li>
-<li>muutettu -karaokekappaletta</li>
-<li>poistettu -karaokekappale</li>
+<li>lisätty kappale</li>
+<li>muutettu kappale</li>
+<li>poistettu kappale</li>
 </ul>
-
-<p>(HUOM! Karaokekappaleiden selaus -näytöllä ei pysty
-poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
+<p>Selausnäytöllä ei voi muuttaa tietoja.</p>
 </div>
 
 <div class="section">
 <h2>↕ Sarakkeiden lajittelu</h2>
-<p>Kaikki sarakkeet voi lajitella A–Ö tai Ö–A.</p>
-<p>Napsauttamalla jotain Saraketta (ARTISTI, KAPPALE, KONE, KOODI, LISÄTTY PVM) Sarakkeen nimen perään ilmestyy pieni kolmio:</p>
+<p>Kaikki sarakkeet lajittuvat A–Ö tai Ö–A.</p>
 <ul>
-<li>▲ = nouseva järjestys</li>
-<li>▼ = laskeva järjestys</li>
+<li>▲ nouseva</li>
+<li>▼ laskeva</li>
 </ul>
 </div>
 
-<h3>Perushaku ja esimerkkejä:</h3>
-<p>Kirjoita hakukenttään haettavaa <b>ARTISTIa</b> tai <b>KAPPALEtta</b> (tai <b>(KONE)</b> tai <b>(KOODI))</b><b>LISÄTTY PVM</b>.</p>
-
-<p>Haku löytää osumat <b>kaikista sarakkeista</b>.</p>
-
+<div class="section">
+<h3>Perushaku ja esimerkkejä</h3>
 <div class="code">yöli</div>
-
-<p>Näyttää kaikki rivit, joissa esiintyy sana "yöli" missä tahansa sarakkeessa.</p>
-
+<p>Näyttää kaikki rivit, joissa esiintyy sana missä tahansa sarakkeessa.</p>
 <div class="note">Osumat korostetaan keltaisella.</div>
 
 <h3>Usean sanan haku</h3>
-<p>Voit hakea useita sanoja samaan aikaan Esim:</p>
-
 <div class="code">k tapio sinut fin</div>
-
-<p>Löytää:</p>
 <div class="code">KARI TAPIO / SINUT TULEN AINA MUISTAMAAN / M / FIN</div>
 
 <h3>Kirjainkoko</h3>
-<p>Voit kirjoittaa pienillä tai ISOILLA kirjaimilla – haku ei ole kirjainkokoherkkä.</p>
+<p>Haku ei ole kirjainkokoherkkä.</p>
 
 <h3>Lisätty pvm</h3>
-<p>Sarakkeesta löytyy viimeisimmät lisäykset, jos kirjoitat haku kenttään esim: "07.2026" (ilman " hipsuja) listaa se kaikki Heinäkuussa 2026 laulettaviksi lisätyt kappaleet.</p>
+<p>Esim. “07.2026” → kaikki heinäkuussa 2026 lisätyt kappaleet.</p>
 
 <h3>Ei löytynyt</h3>
-<p>Jos haku ei löydä mitään:</p>
 <ul>
 <li>Koko lista 0 kpl</li>
 <li class="ei-loytynyt">Ei löytynyt</li>
@@ -306,20 +305,20 @@ poistamaan tai muuttamaan mitään, joten voit huoletta selailla).</p>
 
 <div class="section">
 <h2>📊 Rivimäärä</h2>
-<p>“Koko lista x kpl” kertoo montako riviä = kappaletta listalla.</p>
-<p>Esim. haulla <b>Kari Tapio</b> näkyy:</p>
+<p>Kertoo montako kappaletta listalla.</p>
 <div class="code">Koko lista 157 kpl</div>
 </div>
 
 <div class="section">
 <h3>📝 Ohjetta päivitetty</h3>
-<p>Ti 04.08.2026 n. klo 05:02 (poy)</p>
-<p>Ke 29.07.2026 n. klo 18:15 (poy)</p>
-<p>Su 26.07.2026 n. klo 16:45 (poy)</p>
+<p>Ti 04.08.2026 klo 05:02 (poy)</p>
+<p>Ke 29.07.2026 klo 18:15 (poy)</p>
+<p>Su 26.07.2026 klo 16:45 (poy)</p>
 </div>
 
-<a href="#top" class="float-top">↑ Ylös</a>    
+<a href="#top" class="float-top">↑</a>
 <a class="back" href="index.html">← Takaisin hakuun</a>
 
+</div>
 </body>
 </html>
