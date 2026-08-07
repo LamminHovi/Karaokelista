@@ -1,4 +1,5 @@
-let csvData = [];  // kaikki rivit muistissa, ei DOMissa
+let csvData = [];  // koko CSV muistissa
+let currentFilteredIndexes = []; // hakutulosten indeksit csvData:ssa
 
 async function loadCSV() {
     const response = await fetch('kappaleet.csv');
@@ -6,83 +7,61 @@ async function loadCSV() {
 
     csvData = text.trim().split('\n').map(r => r.split(','));
 
-    // EI renderöidä mitään tässä vaiheessa → sivu ei jäädy
     const tableBody = document.querySelector('#csvTable tbody');
     tableBody.innerHTML = '';
 }
 
-function renderTable(data) {
+function renderTable(filteredRows) {
     const tableBody = document.querySelector('#csvTable tbody');
     tableBody.innerHTML = '';
 
-    // rajataan max 50 riviin, ettei selain tukehdu
     const maxRows = 50;
-    const rowsToShow = data.slice(0, maxRows);
+    const rowsToShow = filteredRows.slice(0, maxRows);
 
-    rowsToShow.forEach((row, rowIndex) => {
+    rowsToShow.forEach((rowIndex, displayIndex) => {
         const tr = document.createElement('tr');
 
         for (let colIndex = 0; colIndex < 5; colIndex++) {
             const td = document.createElement('td');
             td.contentEditable = "true";
-            td.textContent = row[colIndex] || '';
+            td.textContent = csvData[rowIndex][colIndex] || '';
 
-            td.addEventListener('input', () => validateCell(td, colIndex));
+            td.addEventListener('input', () => {
+                csvData[rowIndex][colIndex] = td.textContent.trim();
+                validateCell(td, colIndex);
+            });
 
             tr.appendChild(td);
         }
 
         const editBtn = document.createElement('td');
-        editBtn.innerHTML = '<button onclick="editRow(' + rowIndex + ')">Muuta</button>';
+        editBtn.innerHTML = '<button onclick="editRow(' + displayIndex + ')">Muuta</button>';
         tr.appendChild(editBtn);
 
         tableBody.appendChild(tr);
     });
 }
 
-function editRow(index) {
+function editRow(displayIndex) {
     const tableBody = document.querySelector('#csvTable tbody');
     const rows = tableBody.rows;
-    if (index >= 0 && index < rows.length) {
-        rows[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (displayIndex >= 0 && displayIndex < rows.length) {
+        rows[displayIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
 function addRow() {
-    const tableBody = document.querySelector('#csvTable tbody');
-    const tr = document.createElement('tr');
-
-    for (let i = 0; i < 5; i++) {
-        const td = document.createElement('td');
-        td.contentEditable = "true";
-        td.textContent = '';
-
-        td.addEventListener('input', () => validateCell(td, i));
-
-        tr.appendChild(td);
-    }
-
-    const editBtn = document.createElement('td');
-    editBtn.innerHTML = '<button onclick="editRow()">Muuta</button>';
-    tr.appendChild(editBtn);
-
-    tableBody.appendChild(tr);
+    csvData.push(["", "", "", "", ""]);
+    searchCSV(); // näyttää uuden rivin jos haku tyhjä
 }
 
 function downloadCSV() {
-    const tableBody = document.querySelector('#csvTable tbody');
     let csv = '';
 
-    for (let i = 0; i < tableBody.rows.length; i++) {
-        const cells = tableBody.rows[i].cells;
-        let row = [];
-
-        for (let j = 0; j < 5; j++) {
-            row.push(cells[j].textContent.replace(/,/g, ''));
-        }
-
-        csv += row.join(',') + '\n';
-    }
+    csvData.forEach(row => {
+        const cleanRow = row.map(cell => cell.replace(/,/g, ''));
+        csv += cleanRow.join(',') + '\n';
+    });
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
@@ -97,20 +76,23 @@ function searchCSV() {
     const query = document.getElementById('searchBox').value.toLowerCase();
 
     if (query.length === 0) {
+        currentFilteredIndexes = [];
         const tableBody = document.querySelector('#csvTable tbody');
         tableBody.innerHTML = '';
         return;
     }
 
-    const filtered = csvData.filter(row =>
-        row.join(' ').toLowerCase().includes(query)
-    );
+    currentFilteredIndexes = csvData
+        .map((row, index) => ({ row, index }))
+        .filter(obj => obj.row.join(' ').toLowerCase().includes(query))
+        .map(obj => obj.index);
 
-    renderTable(filtered);
+    renderTable(currentFilteredIndexes);
 }
 
 function clearSearch() {
     document.getElementById('searchBox').value = '';
+    currentFilteredIndexes = [];
     const tableBody = document.querySelector('#csvTable tbody');
     tableBody.innerHTML = '';
 }
