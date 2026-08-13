@@ -2,7 +2,8 @@
 README.md tämä tdsto 
     Päivitetty:
     # Lisätty hallinta näytölle sarake LISATTY sekä kappale selaus näytölle LISÄTTY PVM johon on tarkoituksena tulla aina pvm milloin kappale on lisätty
-        
+    # Alempna on muistio / edit.html / edit.js kuvake työpöydällä "KPL EDIT HOVI kappaleet.csv"
+## CSV Editor – Karaokelista        
 # Karaokelista
 Karaokekappale listau HOVI
 
@@ -728,3 +729,159 @@ window.onload = () => {
 
 </body>
 </html>
+______________________________________________________________________________________________________________
+**CSV Editor – Karaokelista**        poy / 13.8.2026 n. klo 00:05
+NÄYTTÖ:
+Hae kappaletta...
+ Tyhjennä
+Lisää rivi Lataa uusi CSV Päivitä GitHubi
+Artisti	Kappale	Laite	Koodi	Lisätty PVM	Muuta
+
+Muistio:
+📘 Karaokelista – Automaatiojärjestelmän dokumentaatio (README)
+🎯 Yleiskuvaus
+Karaokelista‑järjestelmä koostuu kolmesta pääosasta:
+
+CSV Editor (edit.html + edit.js)  
+– selainpohjainen työkalu kappalelistan muokkaamiseen
+– käyttäjä voi lisätä, poistaa ja muokata rivejä
+– lopuksi käyttäjä painaa Lataa uusi CSV, jolloin uusi kappaleet.csv tallentuu Windowsin Downloads‑kansioon
+
+CSVWatcher.exe (AutoHotkey‑pohjainen taustavalvoja)  
+– valvoo Downloads‑kansiota
+– kun uusi kappaleet.csv ilmestyy → käynnistää automaattisesti BAT‑tiedoston
+– näyttää ilmoituksia
+– kirjoittaa lokitiedoston
+– käynnistyy Windowsin mukana
+
+siirto_kopio.bat (BAT‑tiedosto)  
+– kopioi CSV:n neljään eri kohteeseen
+– siirtää vanhan CSV:n arkistokansioon
+– päivittää GitHub‑kloonin (git pull → add → commit → push)
+– varmistaa, että Karaokelista‑sivusto päivittyy automaattisesti
+
+Kokonaisuus muodostaa täysin automaattisen päivitysketjun, jossa käyttäjän tarvitsee vain muokata taulukkoa ja painaa Lataa uusi CSV.
+
+🧩 Komponentit ja niiden tehtävät
+1. CSV Editor (edit.html + edit.js)
+✔ Mitä se tekee?
+Näyttää kappalelistan taulukossa
+
+Antaa muokata rivejä suoraan selaimessa
+
+Tallentaa muutokset uuteen kappaleet.csv‑tiedostoon
+
+Tallennus tapahtuu käyttäjän koneelle (Downloads‑kansioon)
+
+✔ Mitä se EI tee?
+Ei voi ajaa BAT‑tiedostoja (selaimen turvarajoitus)
+
+Ei voi siirtää tiedostoja Windowsin kansioihin
+
+Ei voi puskea GitHubiin
+
+Siksi automaatio hoidetaan erillisellä EXE‑ohjelmalla.
+
+2. CSVWatcher.exe (AutoHotkey → EXE)
+✔ Mitä se tekee?
+Valvoo tiedostoa:
+
+Koodi
+C:\Users\ylita\Downloads\kappaleet.csv
+Tarkistaa tiedoston aikaleiman 2 sekunnin välein
+
+Kun aikaleima muuttuu → tulkitsee sen uudeksi CSV:ksi
+
+Käynnistää automaattisesti:
+
+Koodi
+C:\KappAppNet\siirto_kopio.bat
+Näyttää Windows‑ilmoituksia:
+
+“Päivitys käynnissä…”
+
+“GitHub päivitetty onnistuneesti!”
+
+Kirjoittaa lokitiedoston:
+
+Koodi
+C:\KappAppNet\CSVWatcher.log
+Käynnistyy automaattisesti Windowsin mukana (Startup‑kansio)
+
+✔ Miksi tämä on tärkeä?
+Koska selain ei saa käynnistää .bat/.exe/.vbs tiedostoja → EXE hoitaa automaation.
+
+3. siirto_kopio.bat
+✔ Mitä BAT tekee?
+Tarkistaa että lähdetiedosto on olemassa
+
+Kopioi CSV:n neljään paikkaan:
+
+Koodi
+C:\HoviKaraoke\
+C:\KappAppNet\
+C:\KappAppNet\app\
+C:\KappAppNet\GitHub\Karaokelista\
+Siirtää vanhan CSV:n arkistoon:
+
+Koodi
+C:\Users\ylita\Downloads\Kappaleet_old\
+Päivittää GitHub‑kloonin:
+
+Koodi
+git pull
+git add kappaleet.csv
+git commit -m "Auto-update..."
+git push
+Päivittää Karaokelista‑sivuston automaattisesti
+
+✔ Miksi tämä on tärkeä?
+Koska GitHub Pages lukee CSV:n suoraan reposta → kun BAT pushaa uuden version, verkkosivu päivittyy.
+
+🔗 Koko automaatioketju (askel askeleelta)
+Käyttäjä muokkaa kappaleita edit.html‑sivulla
+
+Käyttäjä painaa Lataa uusi CSV
+
+Uusi kappaleet.csv tallentuu Downloads‑kansioon
+
+CSVWatcher.exe huomaa uuden tiedoston
+
+CSVWatcher käynnistää siirto_kopio.bat
+
+BAT:
+
+kopioi CSV:n neljään paikkaan
+
+siirtää vanhan CSV:n arkistoon
+
+pushaa uuden CSV:n GitHubiin
+
+GitHub Pages päivittyy
+
+Karaokelista‑sivusto päivittyy
+
+Windows näyttää ilmoituksen
+
+Lokitiedosto päivittyy
+
+Käyttäjän ei tarvitse tehdä mitään muuta.
+
+🛠 Ohjelmat ja tiedostot
+Tiedosto / ohjelma	Sijainti	Tehtävä
+edit.html	GitHub Pages	CSV Editorin käyttöliittymä
+edit.js	GitHub Pages	Taulukon logiikka ja CSV‑generointi
+kappaleet.csv	Downloads	Uusi CSV Editorin luoma tiedosto
+CSVWatcher.exe	C:\KappAppNet\	Valvoo CSV:tä ja käynnistää BATin
+CSVWatcher.log	C:\KappAppNet\	Lokitiedosto
+siirto_kopio.bat	C:\KappAppNet\	Kopiointi + GitHub‑päivitys
+GitHub‑klooni	C:\KappAppNet\GitHub\Karaokelista	Paikallinen repo
+Kappaleet_old	Downloads	Vanhojen CSV‑tiedostojen arkisto
+
+
+📌 Lyhyt kuvaus koko projektista
+Karaokelista‑projekti on automaattinen järjestelmä, joka päivittää verkkosivulla näkyvän kappalelistan aina kun käyttäjä muokkaa CSV‑tiedostoa.
+
+Käyttäjä muokkaa listaa selaimessa, tallentaa uuden CSV:n, ja taustalla toimiva CSVWatcher.exe käynnistää BAT‑tiedoston, joka kopioi CSV:n oikeisiin paikkoihin ja pushaa sen GitHubiin.
+
+GitHub Pages päivittää sivuston automaattisesti, jolloin Karaokelista‑haku näyttää aina uusimman kappalelistan.
