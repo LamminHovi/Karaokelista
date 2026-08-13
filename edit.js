@@ -60,7 +60,7 @@ function downloadCSV() {
 
     csvData.forEach(row => {
         const cleanRow = row.map(cell => cell.replace(/,/g, ''));
-        csv += cleanRow.join(',') + '\n';
+        csv += cleanRow.join(',') + ',\n';
     });
 
     const blob = new Blob([csv], { type: 'text/csv' });
