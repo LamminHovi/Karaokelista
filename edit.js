@@ -4,7 +4,7 @@ let currentFilteredIndexes = []; // hakutulosten indeksit csvData:ssa
 async function loadCSV() {
     const response = await fetch('https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/kappaleet.csv');
     const text = await response.text();
-        
+    
     csvData = text.trim().split('\n').map(r => r.split(','));
 
     const tableBody = document.querySelector('#csvTable tbody');
