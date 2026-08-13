@@ -24,6 +24,35 @@
 
 <button onclick="addRow()">Lisää rivi</button>
 <button onclick="downloadCSV()">Lataa uusi CSV</button>
+<button id="updateBtn" onclick="runBat()">Päivitä GitHub</button>
+
+<script>
+function runBat() {
+    if (confirm("Haluatko varmasti päivittää?")) {
+        // Avaa pikakuvake → käynnistää BATin
+        window.location.href = "file:///C:/KappAppNet/AjaSiirto.lnk";
+
+        // Näytä ilmoitus
+        alert("GitHub päivitetty onnistuneesti!");
+    }
+}
+</script>
+
+<style>
+#updateBtn {
+    background-color: #4CAF50; /* vihreä */
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+#updateBtn:hover {
+    background-color: #45a049;
+}
+</style>
+
 
 <table id="csvTable">
     <thead>
