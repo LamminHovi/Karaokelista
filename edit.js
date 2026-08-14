@@ -59,11 +59,10 @@ function downloadCSV() {
     let csv = '';
 
     csvData.forEach(row => {
-        const cleanRow = row.map(cell => cell.replace(/,/g, ''));
-        csv += cleanRow.join(',') + ',\n';
+        csv += row.join(',') + '\n';
     });
 
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement('a');
