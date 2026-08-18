@@ -1,5 +1,5 @@
-let csvData = [];  // koko CSV muistissa
-let currentFilteredIndexes = []; // hakutulosten indeksit csvData:ssa
+let csvData = [];  
+let currentFilteredIndexes = []; 
 
 async function loadCSV() {
     const response = await fetch('https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/kappaleet.csv?cacheBust=' + Date.now());
@@ -26,9 +26,19 @@ function renderTable(filteredRows) {
             td.contentEditable = "true";
             td.textContent = csvData[rowIndex][colIndex] || '';
 
+            /* ⭐ VÄRITYS LAITE-SARAKKEESEEN (colIndex === 2) */
+            if (colIndex === 2) {
+                td.style.backgroundColor = laiteVari(csvData[rowIndex][2]);
+            }
+
             td.addEventListener('input', () => {
                 csvData[rowIndex][colIndex] = td.textContent.trim();
                 validateCell(td, colIndex);
+
+                /* ⭐ Päivitä väri heti kun Laite-kenttää muokataan */
+                if (colIndex === 2) {
+                    td.style.backgroundColor = laiteVari(td.textContent.trim());
+                }
             });
 
             tr.appendChild(td);
@@ -52,7 +62,7 @@ function editRow(displayIndex) {
 
 function addRow() {
     csvData.push(["", "", "", "", ""]);
-    searchCSV(); // näyttää uuden rivin jos haku tyhjä
+    searchCSV();
 }
 
 function downloadCSV() {
