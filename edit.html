@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>CSV Editor – Karaokelista</title>
+
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { border-collapse: collapse; width: 100%; }
@@ -11,7 +12,43 @@
         button { margin: 5px 5px 10px 0; padding: 6px 12px; }
         #searchBox { width: 300px; padding: 6px; margin-bottom: 10px; }
         .invalid { background: #ffcccc !important; }
+
+        #updateBtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #updateBtn:hover {
+            background-color: #45a049;
+        }
     </style>
+
+    <script>
+        function runBat() {
+            if (confirm("Haluatko varmasti päivittää?")) {
+                window.location.href = "file:///C:/KappAppNet/RunBat.vbs";
+                alert("GitHub päivitetty onnistuneesti!");
+            }
+        }
+
+        /* ⭐ LAITEVÄRIT – oikea paikka */
+        function laiteVari(laite) {
+            if (laite === "C") return "#40E0D0";
+            if (laite === "C_U") return "#FF0000";
+            if (laite === "C_O") return "#FFFF00";
+            if (laite === "C_O_U") return "#FFD700";
+            if (laite === "C_O_UK") return "#FF8C00";
+            if (laite === "K") return "#FF6347";
+            if (laite === "M") return "#00FF7F";
+            if (laite === "M_U") return "#6B8E23";
+            return "";
+        }
+    </script>
+
 </head>
 <body>
 
@@ -26,42 +63,6 @@
 <button onclick="downloadCSV()">Lataa uusi CSV</button>
 <button id="updateBtn" onclick="runBat()">Päivitä GitHubi</button>
 
-<script>
-function runBat() {
-    if (confirm("Haluatko varmasti päivittää?")) {
-        window.location.href = "file:///C:/KappAppNet/RunBat.vbs";
-        alert("GitHub päivitetty onnistuneesti!");
-    }
-}
-</script>
-
-<style>
-#updateBtn {
-    background-color: #4CAF50; /* vihreä */
-    color: white;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-}
-#updateBtn:hover {
-    background-color: #45a049;
-}
-</script>
-    function laiteVari(laite) {
-    if (laite === "C") return "#40E0D0";
-    if (laite === "C_U") return "#FF0000";
-    if (laite === "C_O") return "#FFFF00";
-    if (laite === "C_O_U") return "#FFD700";
-    if (laite === "C_O_UK") return "#FF8C00";
-    if (laite === "K") return "#FF6347";
-    if (laite === "M") return "#00FF7F";
-    if (laite === "MU") return "#6B8E23";
-    return "";
-}
-
-</style>
 <table id="csvTable">
     <thead>
         <tr>
@@ -77,5 +78,6 @@ function runBat() {
 </table>
 
 <script src="edit.js"></script>
+
 </body>
 </html>
