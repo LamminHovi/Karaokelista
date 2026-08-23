@@ -97,6 +97,7 @@ th.sort-desc::after { content: " ▼"; font-size: 11px; }
 
     <h3>Koko lista <span id="kokolistaMaara"></span></h3>
 
+    <!-- AAKKOSFILTTERI -->
     <div id="aznav"></div>
 </div>
 
@@ -143,16 +144,7 @@ async function lataaCSV() {
     const res = await fetch(url);
     const txt = await res.text();
 
-    // *** KORJATTU CSV-PARSINTA ***
-    const rows = txt.trim().split("\n").map(r => {
-        const parts = r.split(",");
-        return [
-            parts[0] || "",
-            parts[1] || "",
-            parts[2] || "",
-            parts[3] || ""
-        ];
-    });
+    const rows = txt.trim().split("\n").map(r => r.split(",")).filter(r => r.length >= 4);
 
     data = rows.map((r, idx) => ({
         ARTISTI: r[0],
@@ -220,7 +212,7 @@ function paivitaTaulukko() {
             let teksti = r[k];
 
             sanat.forEach(s => {
-                if (s.length < 2) return;
+                if (s.length < 2) return; // korostusbugi korjattu
                 const regex = new RegExp(s, "gi");
                 teksti = teksti.replace(regex, m => `<mark>${m}</mark>`);
             });
@@ -337,6 +329,3 @@ window.onload = () => {
     haePaivitysaika();
 };
 </script>
-
-</body>
-</html>
