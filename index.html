@@ -58,13 +58,6 @@ th, td {
     font-size: 14px;
 }
 
-/* sarakeleveyksien säätö: ARTISTI ja KAPPALE hieman kapeammiksi, tilaa LISÄTTY PVM:lle */
-thead th:nth-child(1) { width: 26%; }  /* ARTISTI */
-thead th:nth-child(2) { width: 34%; }  /* KAPPALE */
-thead th:nth-child(3) { width: 10%; }  /* KONE */
-thead th:nth-child(4) { width: 10%; }  /* KOODI */
-thead th:nth-child(5) { width: 20%; }  /* LISÄTTY PVM */
-
 tbody tr:hover { background: rgba(255,255,0,0.25); }
 
 body.vaalea thead th { background:#eee; color:#000; }
@@ -97,15 +90,13 @@ th.sort-desc::after { content: " ▼"; font-size: 11px; }
 
     <h3>Haku</h3>
     <input id="haku" oninput="paivitaTaulukko()" placeholder="Hae...">
-    <button onclick="paivitaNappi()">NOLLAUS</button>
+    <button onclick="paivitaNappi()">PÄIVITÄ</button>
     <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
-    <button onclick="window.location.href='help.html'">Help</button>
-    
+
     <div id="paivitysaika"></div>
 
     <h3>Koko lista <span id="kokolistaMaara"></span></h3>
 
-    <!-- AAKKOSFILTTERI -->
     <div id="aznav"></div>
 </div>
 
@@ -117,7 +108,6 @@ th.sort-desc::after { content: " ▼"; font-size: 11px; }
     <th onclick="jarjesta('KAPPALE')" id="th-kappale">KAPPALE</th>
     <th onclick="jarjesta('KONE')"    id="th-kone">KONE</th>
     <th onclick="jarjesta('KOODI')"   id="th-koodi">KOODI</th>
-    <th onclick="jarjesta('LISATTY')" id="th-lisatty">LISÄTTY PVM</th>
 </tr>
 </thead>
 <tbody></tbody>
@@ -135,10 +125,9 @@ function koneVari(kone) {
     if (kone === "C_O_UK") return "#FF8C00";
     if (kone === "K") return "#FF6347";
     if (kone === "M") return "#00FF7F";
-    if (kone === "M_U") return "#6B8E23";
+    if (kone === "MU") return "#6B8E23";
     return "";
 }
-
 
 let data = [];
 let currentLetter = "";
@@ -154,19 +143,26 @@ async function lataaCSV() {
     const res = await fetch(url);
     const txt = await res.text();
 
-    const rows = txt.trim().split("\n").map(r => r.split(","));
+    // *** KORJATTU CSV-PARSINTA ***
+    const rows = txt.trim().split("\n").map(r => {
+        const parts = r.split(",");
+        return [
+            parts[0] || "",
+            parts[1] || "",
+            parts[2] || "",
+            parts[3] || ""
+        ];
+    });
 
     data = rows.map((r, idx) => ({
         ARTISTI: r[0],
         KAPPALE: r[1],
         KONE:    r[2],
         KOODI:   r[3],
-        LISATTY: r[4] || "",
         artistUpper: r[0].toUpperCase(),
         kappaleUpper: r[1].toUpperCase(),
         koneUpper: (r[2] || "").toUpperCase(),
         koodiUpper: (r[3] || "").toUpperCase(),
-        lisattyUpper: (r[4] || "").toUpperCase(),
         index: idx
     }));
 
@@ -181,15 +177,6 @@ function haeTeksti() {
 function valitseKirjain(kirjain) {
     currentLetter = kirjain;
     paivitaTaulukko();
-}
-
-/* pp.kk.vvvv -> yyyymmdd */
-function pvmKey(pvm) {
-    if (!pvm) return "99999999";
-    pvm = pvm.replace(/\s+/g, "");  // POISTAA KAIKKI VÄLILYÖNNIT
-    const m = pvm.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-    if (!m) return "99999999";
-    return `${m[3]}${m[2].padStart(2,"0")}${m[1].padStart(2,"0")}`;
 }
 
 function paivitaTaulukko() {
@@ -208,26 +195,16 @@ function paivitaTaulukko() {
                 r.artistUpper.includes(s) ||
                 r.kappaleUpper.includes(s) ||
                 r.koneUpper.includes(s) ||
-                r.koodiUpper.includes(s) ||
-                r.lisattyUpper.includes(s)
+                r.koodiUpper.includes(s)
             );
         }
 
         return true;
     });
 
-    /* ⭐ Täydellinen sorttaus — toimii kaikissa sarakkeissa */
     rivit.sort((a, b) => {
-        let va, vb;
-
-        if (sortKey === "LISATTY") {
-            va = pvmKey(a.LISATTY);
-            vb = pvmKey(b.LISATTY);
-        } else {
-            va = (a[sortKey] || "").toUpperCase();
-            vb = (b[sortKey] || "").toUpperCase();
-        }
-
+        let va = (a[sortKey] || "").toUpperCase();
+        let vb = (b[sortKey] || "").toUpperCase();
         if (va < vb) return sortDir === "asc" ? -1 : 1;
         if (va > vb) return sortDir === "asc" ? 1 : -1;
         return 0;
@@ -238,7 +215,7 @@ function paivitaTaulukko() {
     rivit.forEach(r => {
         const tr = document.createElement("tr");
 
-        ["ARTISTI","KAPPALE","KONE","KOODI","LISATTY"].forEach(k => {
+        ["ARTISTI","KAPPALE","KONE","KOODI"].forEach(k => {
             const td = document.createElement("td");
             let teksti = r[k];
 
@@ -298,14 +275,13 @@ function jarjesta(uusiKey) {
 }
 
 function paivitaSortOtsikot() {
-    const keys = ["ARTISTI","KAPPALE","KONE","KOODI","LISATTY"];
+    const keys = ["ARTISTI","KAPPALE","KONE","KOODI"];
     keys.forEach(k => {
         const th = document.getElementById(
             k === "ARTISTI" ? "th-artisti" :
             k === "KAPPALE" ? "th-kappale" :
             k === "KONE"    ? "th-kone"    :
-            k === "KOODI"   ? "th-koodi"   :
-                              "th-lisatty"
+                              "th-koodi"
         );
         th.classList.remove("sort-asc","sort-desc");
         if (k === sortKey) {
