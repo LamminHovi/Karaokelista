@@ -58,12 +58,12 @@ th, td {
     font-size: 14px;
 }
 
-/* sarakeleveyksien säätö: ARTISTI ja KAPPALE hieman kapeammiksi, tilaa LISÄTTY PVM:lle */
-thead th:nth-child(1) { width: 26%; }  /* ARTISTI */
-thead th:nth-child(2) { width: 34%; }  /* KAPPALE */
-thead th:nth-child(3) { width: 10%; }  /* KONE */
-thead th:nth-child(4) { width: 10%; }  /* KOODI */
-thead th:nth-child(5) { width: 20%; }  /* LISÄTTY PVM */
+/* sarakeleveydet */
+thead th:nth-child(1) { width: 26%; }
+thead th:nth-child(2) { width: 34%; }
+thead th:nth-child(3) { width: 10%; }
+thead th:nth-child(4) { width: 10%; }
+thead th:nth-child(5) { width: 20%; }
 
 tbody tr:hover { background: rgba(255,255,0,0.25); }
 
@@ -105,7 +105,6 @@ th.sort-desc::after { content: " ▼"; font-size: 11px; }
 
     <h3>Koko lista <span id="kokolistaMaara"></span></h3>
 
-    <!-- AAKKOSFILTTERI -->
     <div id="aznav"></div>
 </div>
 
@@ -149,23 +148,24 @@ async function lataaCSV() {
     const res = await fetch(url);
     const txt = await res.text();
 
-  const rows = txt.trim().split("\n").map(r => {
-    const parts = r.split(",");
-    return [
-        parts[0]?.trim() || "",
-        parts[1]?.trim() || "",
-        parts[2]?.trim() || "",
-        parts[3]?.trim() || "",
-        parts[4]?.trim() || ""
-    ];
-});
-    
+    /* ⭐ Täysin korjattu CSV-parsinta — ei poista rivejä */
+    const rows = txt.trim().split("\n").map(r => {
+        const parts = r.split(",");
+        return [
+            parts[0]?.trim() || "",
+            parts[1]?.trim() || "",
+            parts[2]?.trim() || "",
+            parts[3]?.trim() || "",
+            parts[4]?.trim() || ""   /* LISÄTTY PVM */
+        ];
+    });
+
     data = rows.map((r, idx) => ({
         ARTISTI: r[0],
         KAPPALE: r[1],
         KONE:    r[2],
         KOODI:   r[3],
-        LISATTY: r[4] || "",
+        LISATTY: r[4],
         artistUpper: r[0].toUpperCase(),
         kappaleUpper: r[1].toUpperCase(),
         koneUpper: (r[2] || "").toUpperCase(),
@@ -190,7 +190,7 @@ function valitseKirjain(kirjain) {
 /* pp.kk.vvvv -> yyyymmdd */
 function pvmKey(pvm) {
     if (!pvm) return "99999999";
-    pvm = pvm.replace(/\s+/g, "");  // POISTAA KAIKKI VÄLILYÖNNIT
+    pvm = pvm.replace(/\s+/g, "");
     const m = pvm.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
     if (!m) return "99999999";
     return `${m[3]}${m[2].padStart(2,"0")}${m[1].padStart(2,"0")}`;
@@ -220,7 +220,6 @@ function paivitaTaulukko() {
         return true;
     });
 
-    /* ⭐ Täydellinen sorttaus — toimii kaikissa sarakkeissa */
     rivit.sort((a, b) => {
         let va, vb;
 
