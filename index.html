@@ -149,8 +149,17 @@ async function lataaCSV() {
     const res = await fetch(url);
     const txt = await res.text();
 
-    const rows = txt.trim().split("\n").map(r => r.split(","));
-
+  const rows = txt.trim().split("\n").map(r => {
+    const parts = r.split(",");
+    return [
+        parts[0]?.trim() || "",
+        parts[1]?.trim() || "",
+        parts[2]?.trim() || "",
+        parts[3]?.trim() || "",
+        parts[4]?.trim() || ""
+    ];
+});
+    
     data = rows.map((r, idx) => ({
         ARTISTI: r[0],
         KAPPALE: r[1],
