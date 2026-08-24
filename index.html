@@ -122,12 +122,16 @@ button:active {
 
 /* ===== TAULUKKO ===== */
 table {
-    border-collapse: collapse;
+    border-collapse: separate; /* collapse rikkoo sticky-toiminnan monissa selaimissa */
+    border-spacing: 0;
     width: 100%;
     min-width: 480px;
+    border-top: 1px solid #999;
+    border-left: 1px solid #999;
 }
 th, td {
-    border: 1px solid #999;
+    border-right: 1px solid #999;
+    border-bottom: 1px solid #999;
     padding: 5px 6px;
     font-size: 13px;
     white-space: nowrap;
@@ -142,8 +146,10 @@ thead th:nth-child(5) { width: 20%; }
 
 tbody tr:hover { background: rgba(255,255,0,0.25); }
 
-/* Taulukon otsikkorivin värit */
+/* Taulukon otsikkorivin värit – tausta sekä solulle että riville */
+body.vaalea thead tr { background: #eee; }
 body.vaalea thead th { background: #eee; color: #000; }
+body.tumma  thead tr { background: #1f1f1f; }
 body.tumma  thead th { background: #1f1f1f; color: #fff; }
 
 /* Otsikkorivi sticky – pysyy #content-alueen yläreunassa */
@@ -608,6 +614,7 @@ function rakennaAakkosNapit() {
 
 window.onload = () => {
     rakennaAakkosNapit();
+    paivitaLayout();        /* aseta content-area heti alkuun */
     lataaCSV();
     haePaivitysaika();
 };
