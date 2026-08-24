@@ -136,15 +136,32 @@ th.sort-desc::after { content: " ▼"; font-size: 11px; }
 <div id="eiLoytynyt">Ei löytynyt</div>
 
 <script>
+/* =========================================================================
+   KONE-VÄRIT
+   =========================================================================
+   RYHMÄT:
+     C...    = Card / MicroCard      → SINISEN sävyjä
+     C_O...  = Card + Omat karaket  → KELTAISEN sävyjä
+     K       = KonePC (oma läppäri) → VALKOINEN (ei väriä)
+     M...    = MadBoy              → VIHREÄN sävyjä
+   ========================================================================= */
 function koneVari(kone) {
-    if (kone === "C") return "#40E0D0";
-    if (kone === "C_U") return "#FF0000";
-    if (kone === "C_O") return "#FFFF00";
-    if (kone === "C_O_U") return "#FFD700";
-    if (kone === "C_O_UK") return "#FF8C00";
-    if (kone === "K") return "#FF6347";
-    if (kone === "M") return "#00FF7F";
-    if (kone === "M_U") return "#6B8E23";
+    // --- C-perhe: Card / MicroCard → SININEN ---
+    if (kone === "C")       return "#40E0D0";  // turkoosi (vaalea sinivihreä)
+    if (kone === "C_U")    return "#6495ED";  // cornflower blue (tummempi sininen, musta teksti näkyy)
+
+    // --- C_O-perhe: Card + Omat karaket → KELTAINEN ---
+    if (kone === "C_O")    return "#FFFF99";  // vaalea keltainen
+    if (kone === "C_O_U")  return "#FFD700";  // kulta (keskikeltainen)
+    if (kone === "C_O_UK") return "#FFA500";  // oranssi (tummin keltainen)
+
+    // --- K-perhe: KonePC → VALKOINEN (ei väriä) ---
+    if (kone === "K")      return "#FFFFFF";  // valkoinen = ei korostusta
+
+    // --- M-perhe: MadBoy → VIHREÄ ---
+    if (kone === "M")      return "#90EE90";  // vaalea vihreä
+    if (kone === "M_U")    return "#8FBC8F";  // dark sea green (tummempi vihreä, musta teksti näkyy)
+
     return "";
 }
 
