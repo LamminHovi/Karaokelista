@@ -2,7 +2,7 @@
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=yes">
 <title>Karaoke kappale haku HOVI</title>
 
 <style>
@@ -10,36 +10,49 @@
 * {
     box-sizing: border-box;
 }
-html {
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-}
-body {
+html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
+    overflow: hidden; /* body ei scrollaa, scrollaus tapahtuu #content-areassa */
     -webkit-text-size-adjust: 100%;
 }
 body.vaalea {
     background: #ffffff;
     color: #000;
     font-family: Arial, sans-serif;
-    padding: 12px;
 }
 body.tumma {
     background: #121212;
     color: #e0e0e0;
     font-family: Arial, sans-serif;
-    padding: 12px;
 }
 
-/* ===== YLÄPALKKI (sticky, ei liiku scrollatessa) ===== */
+/* ===== YLÄPALKKI (kiinnitetty yläreunaan) ===== */
 #ylapalkki {
-    position: sticky;
+    position: fixed;
     top: 0;
-    background: inherit;
-    padding-bottom: 6px;
+    left: 0;
+    right: 0;
     z-index: 20;
+    padding: 12px 12px 6px 12px;
+    overflow-x: hidden; /* estää yläpalkin horisontaalisen scrollauksen */
 }
+body.vaalea #ylapalkki { background: #ffffff; }
+body.tumma  #ylapalkki { background: #121212; }
+
+/* Väliaikainen taustakerros teeman vaihdon animaation poistamiseksi */
+#ylapalkki::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+}
+body.vaalea #ylapalkki::after { background: #ffffff; }
+body.tumma  #ylapalkki::after { background: #121212; }
 
 h2 { margin: 0 0 4px 0; font-size: 1.3em; }
 h3 { margin: 8px 0 4px 0; font-size: 1.05em; }
@@ -49,7 +62,7 @@ input {
     padding: 10px;
     width: 100%;
     max-width: 350px;
-    font-size: 16px; /* 16px estää iOS-zoomauksen */
+    font-size: 16px;
     border: 1px solid #999;
     border-radius: 4px;
 }
@@ -69,7 +82,7 @@ button {
     border-radius: 4px;
     background: #f0f0f0;
     color: #000;
-    touch-action: manipulation; /* poistaa 300ms viiveen mobiilissa */
+    touch-action: manipulation;
 }
 body.tumma button {
     background: #2a2a2a;
@@ -83,7 +96,7 @@ button:active {
 /* ===== AAKKOSNAVIT ===== */
 #aznav {
     margin-top: 6px;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
     display: flex;
     flex-wrap: wrap;
     gap: 3px;
@@ -96,13 +109,18 @@ button:active {
     text-align: center;
 }
 
-/* ===== TAULUKKO ===== */
-.table-wrapper {
-    margin-top: 8px;
-    overflow-x: auto;
+/* ===== SISÄLTÖALUE – tässä tapahtuu kaikki scrollaus ===== */
+#content-area {
+    position: fixed;
+    top: 0;          /* asetetaan JS:llä ylapalkin korkeuden perusteella */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;  /* sekä vaaka- että pystysuuntainen scrollaus */
     -webkit-overflow-scrolling: touch;
 }
 
+/* ===== TAULUKKO ===== */
 table {
     border-collapse: collapse;
     width: 100%;
@@ -128,16 +146,17 @@ tbody tr:hover { background: rgba(255,255,0,0.25); }
 body.vaalea thead th { background: #eee; color: #000; }
 body.tumma  thead th { background: #1f1f1f; color: #fff; }
 
-/* Otsikkorivi sticky – top-arvo asetetaan JS:llä ylapalkin korkeuden perusteella */
+/* Otsikkorivi sticky – pysyy #content-alueen yläreunassa */
 thead th {
     position: sticky;
-    top: 0; /* korvataan JS:llä */
+    top: 0;
     z-index: 10;
     cursor: pointer;
 }
 
-th.sort-asc::after  { content: " \u25B2"; font-size: 10px; }
-th.sort-desc::after { content: " \u25BC"; font-size: 10px; }
+/* Järjestysnuolet – käytetään CSS-unicode-escape syntaksia \XXXX */
+th.sort-asc::after  { content: " \25B2"; font-size: 10px; }
+th.sort-desc::after { content: " \25BC"; font-size: 10px; }
 
 /* ===== ILMOITUKSET ===== */
 #eiLoytynyt {
@@ -145,14 +164,6 @@ th.sort-desc::after { content: " \u25BC"; font-size: 10px; }
     font-size: 18px;
     font-weight: bold;
     color: red;
-    display: none;
-}
-
-#rajoitusInfo {
-    margin-top: 10px;
-    font-size: 14px;
-    font-style: italic;
-    color: gray;
     display: none;
 }
 
@@ -188,7 +199,7 @@ th.sort-desc::after { content: " \u25BC"; font-size: 10px; }
     background: rgba(0, 0, 0, 0.8);
 }
 
-/* ===== NAPPIRIVI JÄRJESTELY ===== */
+/* ===== NAPPIRIVI ===== */
 .nappirivi {
     display: flex;
     flex-wrap: wrap;
@@ -198,13 +209,10 @@ th.sort-desc::after { content: " \u25BC"; font-size: 10px; }
 
 /* ===== RESPONSIIVISET SÄÄDÖT ===== */
 @media (max-width: 600px) {
-    body.vaalea, body.tumma {
-        padding: 8px;
-    }
+    #ylapalkki { padding: 8px 8px 4px 8px; }
     h2 { font-size: 1.15em; }
     h3 { font-size: 0.95em; margin-top: 6px; }
     input {
-        font-size: 16px; /* estää iOS-selaimen automaattisen zoomauksen */
         padding: 8px 10px;
     }
     .nappirivi button {
@@ -234,6 +242,7 @@ th.sort-desc::after { content: " \u25BC"; font-size: 10px; }
 </head>
 <body class="vaalea">
 
+<!-- YLÄPALKKI – kiinnitetty näytön yläreunaan -->
 <div id="ylapalkki">
     <h2>Karaoke kappale haku HOVI</h2>
 
@@ -244,7 +253,7 @@ th.sort-desc::after { content: " \u25BC"; font-size: 10px; }
         <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
         <button onclick="window.location.href='help.html'">Help</button>
     </div>
-    
+
     <div id="paivitysaika"></div>
 
     <h3>Koko lista <span id="kokolistaMaara"></span></h3>
@@ -252,7 +261,8 @@ th.sort-desc::after { content: " \u25BC"; font-size: 10px; }
     <div id="aznav"></div>
 </div>
 
-<div class="table-wrapper">
+<!-- SISÄLTÖALUE – täällä kaikki scrollaus tapahtuu -->
+<div id="content-area">
 <table id="taulukko">
 <thead>
 <tr>
@@ -265,13 +275,11 @@ th.sort-desc::after { content: " \u25BC"; font-size: 10px; }
 </thead>
 <tbody></tbody>
 </table>
+<div id="eiLoytynyt">Ei löytynyt</div>
 </div>
 
-<div id="rajoitusInfo"></div>
-<div id="eiLoytynyt">Ei löytynyt</div>
-
 <!-- Scroll-to-top painike -->
-<button id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#9650;</button>
+<button id="scrollTopBtn" onclick="scrollContentToTop()">&#9650;</button>
 
 <script>
 /* =========================================================================
@@ -314,33 +322,48 @@ function paivitaKokoListaMaara(maara) {
 }
 
 /* =========================================================================
-   STICKY THEAD KORKEUDEN LASKENTA
-   Asettaa thead th -elementeille top-arvon niin, että ne pysyvät
-   näkyvissä #ylapalkin ALAPUOLELLA scrollatessa.
+   LAYOUT: CONTENT-AREA SIJAITSEMINEN
+   Asettaa #content-arean top-arvon yläpalkin korkeuden perusteella,
+   jotta se alkaa heti yläpalkin alta ja täyttää lopun näytöstä.
    ========================================================================= */
-function paivitaTheadTop() {
+function paivitaLayout() {
     const ylapalkki = document.getElementById("ylapalkki");
-    if (!ylapalkki) return;
+    const contentArea = document.getElementById("content-area");
+    if (!ylapalkki || !contentArea) return;
     const korkeus = ylapalkki.offsetHeight;
-    document.querySelectorAll("thead th").forEach(th => {
-        th.style.top = korkeus + "px";
-    });
+    contentArea.style.top = korkeus + "px";
 }
 
-/* Kuunnellaan resize ja päivitykset, jotta top-arvo pysyy oikeana */
-window.addEventListener("resize", paivitaTheadTop);
+/* Päivitetään layout kun ikkunan koko tai suunta muuttuu */
+window.addEventListener("resize", paivitaLayout);
+window.addEventListener("orientationchange", function() {
+    setTimeout(paivitaLayout, 100);
+});
 
 /* =========================================================================
    SCROLL-TO-TOP PAINIKKEEN NÄYTTÖ / PIILOTO
+   Kuunnellaan #content-arean scrollausta (ei window.scrollY, koska
+   body ei scrollaa).
    ========================================================================= */
-window.addEventListener("scroll", function() {
-    const btn = document.getElementById("scrollTopBtn");
-    if (window.scrollY > 300) {
-        btn.style.display = "block";
-    } else {
-        btn.style.display = "none";
+function setupScrollListener() {
+    const contentArea = document.getElementById("content-area");
+    if (!contentArea) return;
+    contentArea.addEventListener("scroll", function() {
+        const btn = document.getElementById("scrollTopBtn");
+        if (contentArea.scrollTop > 300) {
+            btn.style.display = "block";
+        } else {
+            btn.style.display = "none";
+        }
+    }, { passive: true });
+}
+
+function scrollContentToTop() {
+    const contentArea = document.getElementById("content-area");
+    if (contentArea) {
+        contentArea.scrollTo({ top: 0, behavior: "smooth" });
     }
-}, { passive: true });
+}
 
 /* =========================================================================
    CSV-LATAUS
@@ -378,9 +401,10 @@ async function lataaCSV() {
     paivitaTaulukko();
     paivitaKokoListaMaara(data.length);
 
-    /* Lasketaan thead top-arvo kun data on ladattu ja taulukko piirretty */
+    /* Lasketaan layout kun data on ladattu */
     requestAnimationFrame(() => {
-        paivitaTheadTop();
+        paivitaLayout();
+        setupScrollListener();
     });
 }
 
@@ -393,14 +417,15 @@ function viivästettyHaku() {
     clearTimeout(hakuTimer);
     hakuTimer = setTimeout(() => {
         paivitaTaulukko();
-        requestAnimationFrame(paivitaTheadTop);
     }, 200);
 }
 
 function valitseKirjain(kirjain) {
     currentLetter = kirjain;
     paivitaTaulukko();
-    requestAnimationFrame(paivitaTheadTop);
+    /* Palautetaan scroll ylös kun kirjain valitaan */
+    const contentArea = document.getElementById("content-area");
+    if (contentArea) contentArea.scrollTop = 0;
 }
 
 function pvmKey(pvm) {
@@ -483,9 +508,6 @@ function paivitaTaulukko() {
 
     document.getElementById("eiLoytynyt").style.display = loytyi ? "none" : "block";
 
-    /* Rajoitusinfo poistettu – koko lista näytetään aina */
-    document.getElementById("rajoitusInfo").style.display = "none";
-
     paivitaSortOtsikot();
     paivitaKokoListaMaara(rivit.length);
 }
@@ -494,7 +516,8 @@ function paivitaNappi() {
     document.getElementById("haku").value = "";
     currentLetter = "";
     paivitaTaulukko();
-    requestAnimationFrame(paivitaTheadTop);
+    const contentArea = document.getElementById("content-area");
+    if (contentArea) contentArea.scrollTop = 0;
 }
 
 function vaihdaTeema() {
@@ -511,8 +534,8 @@ function vaihdaTeema() {
         nappi.textContent = "Vaalea teema";
     }
 
-    /* Päivitetään thead top teeman vaihdon jälkeen */
-    requestAnimationFrame(paivitaTheadTop);
+    /* Päivitetään layout teeman vaihdon jälkeen */
+    requestAnimationFrame(paivitaLayout);
 }
 
 function jarjesta(uusiKey) {
@@ -523,7 +546,6 @@ function jarjesta(uusiKey) {
         sortDir = "asc";
     }
     paivitaTaulukko();
-    requestAnimationFrame(paivitaTheadTop);
 }
 
 function paivitaSortOtsikot() {
