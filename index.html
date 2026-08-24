@@ -2,7 +2,6 @@
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="initial-scale=1.0, user-scalable=yes">
 <title>Karaoke kappale haku HOVI</title>
 
 <style>
@@ -14,7 +13,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden; /* body ei scrollaa, scrollaus tapahtuu #content-areassa */
+    overflow: hidden;
     -webkit-text-size-adjust: 100%;
 }
 body.vaalea {
@@ -28,7 +27,7 @@ body.tumma {
     font-family: Arial, sans-serif;
 }
 
-/* ===== YLÄPALKKI (kiinnitetty yläreunaan) ===== */
+/* ===== YLÄPALKKI (kiinnitetty näytön yläreunaan) ===== */
 #ylapalkki {
     position: fixed;
     top: 0;
@@ -36,23 +35,9 @@ body.tumma {
     right: 0;
     z-index: 20;
     padding: 12px 12px 6px 12px;
-    overflow-x: hidden; /* estää yläpalkin horisontaalisen scrollauksen */
 }
 body.vaalea #ylapalkki { background: #ffffff; }
 body.tumma  #ylapalkki { background: #121212; }
-
-/* Väliaikainen taustakerros teeman vaihdon animaation poistamiseksi */
-#ylapalkki::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: -1;
-}
-body.vaalea #ylapalkki::after { background: #ffffff; }
-body.tumma  #ylapalkki::after { background: #121212; }
 
 h2 { margin: 0 0 4px 0; font-size: 1.3em; }
 h3 { margin: 8px 0 4px 0; font-size: 1.05em; }
@@ -116,53 +101,68 @@ button:active {
     left: 0;
     right: 0;
     bottom: 0;
-    overflow: auto;  /* sekä vaaka- että pystysuuntainen scrollaus */
+    overflow: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-/* ===== TAULUKKO ===== */
-table {
-    border-collapse: separate; /* collapse rikkoo sticky-toiminnan monissa selaimissa */
-    border-spacing: 0;
-    width: 100%;
+/* ===== VÄÄRENNETTY TAULUKON OTSIKKO (ei osa taulukkoa) ===== */
+/* Tämä div on erillinen taulukosta, jolloin sticky toimii aina luotettavasti */
+#table-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
     min-width: 480px;
-    border-top: 1px solid #999;
-    border-left: 1px solid #999;
+    width: max-content;
+    max-width: 100%;
 }
-th, td {
+body.vaalea #table-header { background: #eee; }
+body.tumma  #table-header { background: #1f1f1f; }
+
+.th-cell {
     border-right: 1px solid #999;
     border-bottom: 1px solid #999;
     padding: 5px 6px;
     font-size: 13px;
     white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
 }
+body.vaalea .th-cell { background: #eee; color: #000; }
+body.tumma  .th-cell { background: #1f1f1f; color: #fff; }
 
-/* Sarakeleveydet */
-thead th:nth-child(1) { width: 26%; }
-thead th:nth-child(2) { width: 34%; }
-thead th:nth-child(3) { width: 10%; }
-thead th:nth-child(4) { width: 10%; }
-thead th:nth-child(5) { width: 20%; }
+/* Sarakeleveydet samat kuin taulukossa */
+.th-cell:nth-child(1) { width: 150px; min-width: 150px; }
+.th-cell:nth-child(2) { width: 200px; min-width: 200px; }
+.th-cell:nth-child(3) { width: 60px;  min-width: 60px; }
+.th-cell:nth-child(4) { width: 60px;  min-width: 60px; }
+.th-cell:nth-child(5) { width: 110px; min-width: 110px; }
+
+/* Järjestysnuolet */
+.th-cell.sort-asc::after  { content: " \25B2"; font-size: 10px; }
+.th-cell.sort-desc::after { content: " \25BC"; font-size: 10px; }
+
+/* ===== TAULUKKO (vain tbody-rivit) ===== */
+#taulukko {
+    border-collapse: collapse;
+    width: max-content;
+    min-width: 480px;
+    max-width: 100%;
+}
+#taulukko td {
+    border: 1px solid #999;
+    padding: 5px 6px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+/* Sarakeleveydet – samat kuin headerissa */
+#taulukko td:nth-child(1) { width: 150px; min-width: 150px; }
+#taulukko td:nth-child(2) { width: 200px; min-width: 200px; }
+#taulukko td:nth-child(3) { width: 60px;  min-width: 60px; }
+#taulukko td:nth-child(4) { width: 60px;  min-width: 60px; }
+#taulukko td:nth-child(5) { width: 110px; min-width: 110px; }
 
 tbody tr:hover { background: rgba(255,255,0,0.25); }
-
-/* Taulukon otsikkorivin värit – tausta sekä solulle että riville */
-body.vaalea thead tr { background: #eee; }
-body.vaalea thead th { background: #eee; color: #000; }
-body.tumma  thead tr { background: #1f1f1f; }
-body.tumma  thead th { background: #1f1f1f; color: #fff; }
-
-/* Otsikkorivi sticky – pysyy #content-alueen yläreunassa */
-thead th {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    cursor: pointer;
-}
-
-/* Järjestysnuolet – käytetään CSS-unicode-escape syntaksia \XXXX */
-th.sort-asc::after  { content: " \25B2"; font-size: 10px; }
-th.sort-desc::after { content: " \25BC"; font-size: 10px; }
 
 /* ===== ILMOITUKSET ===== */
 #eiLoytynyt {
@@ -218,29 +218,14 @@ th.sort-desc::after { content: " \25BC"; font-size: 10px; }
     #ylapalkki { padding: 8px 8px 4px 8px; }
     h2 { font-size: 1.15em; }
     h3 { font-size: 0.95em; margin-top: 6px; }
-    input {
-        padding: 8px 10px;
-    }
-    .nappirivi button {
-        font-size: 12px;
-        padding: 5px 8px;
-    }
-    #aznav button {
-        font-size: 11px;
-        padding: 3px 5px;
-        min-width: 24px;
-    }
-    th, td {
-        font-size: 12px;
-        padding: 4px 5px;
-    }
+    input { padding: 8px 10px; }
+    .nappirivi button { font-size: 12px; padding: 5px 8px; }
+    #aznav button { font-size: 11px; padding: 3px 5px; min-width: 24px; }
+    .th-cell, #taulukko td { font-size: 12px; padding: 4px 5px; }
     #scrollTopBtn {
-        bottom: 16px;
-        right: 16px;
-        width: 42px;
-        height: 42px;
-        font-size: 20px;
-        line-height: 38px;
+        bottom: 16px; right: 16px;
+        width: 42px; height: 42px;
+        font-size: 20px; line-height: 38px;
     }
 }
 </style>
@@ -251,7 +236,6 @@ th.sort-desc::after { content: " \25BC"; font-size: 10px; }
 <!-- YLÄPALKKI – kiinnitetty näytön yläreunaan -->
 <div id="ylapalkki">
     <h2>Karaoke kappale haku HOVI</h2>
-
     <h3>Haku</h3>
     <input id="haku" oninput="viivästettyHaku()" placeholder="Hae...">
     <div class="nappirivi">
@@ -259,29 +243,29 @@ th.sort-desc::after { content: " \25BC"; font-size: 10px; }
         <button onclick="vaihdaTeema()" id="teemanappi">Tumma teema</button>
         <button onclick="window.location.href='help.html'">Help</button>
     </div>
-
     <div id="paivitysaika"></div>
-
     <h3>Koko lista <span id="kokolistaMaara"></span></h3>
-
     <div id="aznav"></div>
 </div>
 
-<!-- SISÄLTÖALUE – täällä kaikki scrollaus tapahtuu -->
+<!-- SISÄLTÖALUE – kaikki scrollaus tapahtuu täällä -->
 <div id="content-area">
-<table id="taulukko">
-<thead>
-<tr>
-    <th onclick="jarjesta('ARTISTI')" id="th-artisti">ARTISTI</th>
-    <th onclick="jarjesta('KAPPALE')" id="th-kappale">KAPPALE</th>
-    <th onclick="jarjesta('KONE')"    id="th-kone">KONE</th>
-    <th onclick="jarjesta('KOODI')"   id="th-koodi">KOODI</th>
-    <th onclick="jarjesta('LISATTY')" id="th-lisatty">LISÄTTY PVM</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-<div id="eiLoytynyt">Ei löytynyt</div>
+
+    <!-- Sarakeotsikot erillisenä divinä (sticky toimii luotettavasti) -->
+    <div id="table-header">
+        <div class="th-cell" onclick="jarjesta('ARTISTI')" id="th-artisti">ARTISTI</div>
+        <div class="th-cell" onclick="jarjesta('KAPPALE')" id="th-kappale">KAPPALE</div>
+        <div class="th-cell" onclick="jarjesta('KONE')"    id="th-kone">KONE</div>
+        <div class="th-cell" onclick="jarjesta('KOODI')"   id="th-koodi">KOODI</div>
+        <div class="th-cell" onclick="jarjesta('LISATTY')" id="th-lisatty">LISÄTTY PVM</div>
+    </div>
+
+    <!-- Taulukko (vain data-rivit) -->
+    <table id="taulukko">
+        <tbody></tbody>
+    </table>
+
+    <div id="eiLoytynyt">Ei löytynyt</div>
 </div>
 
 <!-- Scroll-to-top painike -->
@@ -290,30 +274,16 @@ th.sort-desc::after { content: " \25BC"; font-size: 10px; }
 <script>
 /* =========================================================================
    KONE-VÄRIT
-   =========================================================================
-   RYHMÄT:
-     C...    = Card / MicroCard      → SINISEN sävyjä
-     C_O...  = Card + Omat karaket  → KELTAISEN sävyjä
-     K       = KonePC (oma läppäri) → VALKOINEN (ei väriä)
-     M...    = MadBoy              → VIHREÄN sävyjä
    ========================================================================= */
 function koneVari(kone) {
-    // --- C-perhe: Card / MicroCard → SININEN ---
     if (kone === "C")       return "#40E0D0";
     if (kone === "C_U")    return "#6495ED";
-
-    // --- C_O-perhe: Card + Omat karaket → KELTAINEN ---
     if (kone === "C_O")    return "#FFFF99";
     if (kone === "C_O_U")  return "#FFD700";
     if (kone === "C_O_UK") return "#FFA500";
-
-    // --- K-perhe: KonePC → VALKOINEN (ei väriä) ---
     if (kone === "K")      return "#FFFFFF";
-
-    // --- M-perhe: MadBoy → VIHREÄ ---
     if (kone === "M")      return "#90EE90";
     if (kone === "M_U")    return "#8FBC8F";
-
     return "";
 }
 
@@ -328,9 +298,7 @@ function paivitaKokoListaMaara(maara) {
 }
 
 /* =========================================================================
-   LAYOUT: CONTENT-AREA SIJAITSEMINEN
-   Asettaa #content-arean top-arvon yläpalkin korkeuden perusteella,
-   jotta se alkaa heti yläpalkin alta ja täyttää lopun näytöstä.
+   LAYOUT
    ========================================================================= */
 function paivitaLayout() {
     const ylapalkki = document.getElementById("ylapalkki");
@@ -340,35 +308,26 @@ function paivitaLayout() {
     contentArea.style.top = korkeus + "px";
 }
 
-/* Päivitetään layout kun ikkunan koko tai suunta muuttuu */
 window.addEventListener("resize", paivitaLayout);
 window.addEventListener("orientationchange", function() {
     setTimeout(paivitaLayout, 100);
 });
 
 /* =========================================================================
-   SCROLL-TO-TOP PAINIKKEEN NÄYTTÖ / PIILOTO
-   Kuunnellaan #content-arean scrollausta (ei window.scrollY, koska
-   body ei scrollaa).
+   SCROLL-TO-TOP
    ========================================================================= */
 function setupScrollListener() {
-    const contentArea = document.getElementById("content-area");
-    if (!contentArea) return;
-    contentArea.addEventListener("scroll", function() {
+    const ca = document.getElementById("content-area");
+    if (!ca) return;
+    ca.addEventListener("scroll", function() {
         const btn = document.getElementById("scrollTopBtn");
-        if (contentArea.scrollTop > 300) {
-            btn.style.display = "block";
-        } else {
-            btn.style.display = "none";
-        }
+        btn.style.display = ca.scrollTop > 300 ? "block" : "none";
     }, { passive: true });
 }
 
 function scrollContentToTop() {
-    const contentArea = document.getElementById("content-area");
-    if (contentArea) {
-        contentArea.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    const ca = document.getElementById("content-area");
+    if (ca) ca.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 /* =========================================================================
@@ -407,7 +366,6 @@ async function lataaCSV() {
     paivitaTaulukko();
     paivitaKokoListaMaara(data.length);
 
-    /* Lasketaan layout kun data on ladattu */
     requestAnimationFrame(() => {
         paivitaLayout();
         setupScrollListener();
@@ -418,20 +376,16 @@ function haeTeksti() {
     return document.getElementById("haku").value.toUpperCase().trim();
 }
 
-/* Estää hakua juoksemasta jokaisella kirjaimella, odottaa 200ms */
 function viivästettyHaku() {
     clearTimeout(hakuTimer);
-    hakuTimer = setTimeout(() => {
-        paivitaTaulukko();
-    }, 200);
+    hakuTimer = setTimeout(paivitaTaulukko, 200);
 }
 
 function valitseKirjain(kirjain) {
     currentLetter = kirjain;
     paivitaTaulukko();
-    /* Palautetaan scroll ylös kun kirjain valitaan */
-    const contentArea = document.getElementById("content-area");
-    if (contentArea) contentArea.scrollTop = 0;
+    const ca = document.getElementById("content-area");
+    if (ca) ca.scrollTop = 0;
 }
 
 function pvmKey(pvm) {
@@ -443,7 +397,7 @@ function pvmKey(pvm) {
 }
 
 /* =========================================================================
-   TAULUKON PÄIVITYS – EI RAJOITUSTA, KOKO LISTA RENDERÖIDÄÄN
+   TAULUKON PÄIVITYS – EI RAJOITUSTA
    ========================================================================= */
 function paivitaTaulukko() {
     const haku = haeTeksti();
@@ -451,7 +405,6 @@ function paivitaTaulukko() {
 
     let rivit = data.filter(r => {
         if (currentLetter && !r.artistUpper.startsWith(currentLetter)) return false;
-
         if (sanat.length > 0) {
             return sanat.every(s =>
                 r.artistUpper.includes(s) ||
@@ -473,13 +426,11 @@ function paivitaTaulukko() {
             va = a[sortKey] || "";
             vb = b[sortKey] || "";
         }
-
         if (va < vb) return sortDir === "asc" ? -1 : 1;
         if (va > vb) return sortDir === "asc" ? 1 : -1;
         return 0;
     });
 
-    /* Rakennetaan taulukko muistiin merkkijonoon */
     let htmlParts = [];
     let loytyi = false;
 
@@ -494,7 +445,6 @@ function paivitaTaulukko() {
 
         ["ARTISTI","KAPPALE","KONE","KOODI","LISATTY"].forEach(k => {
             let teksti = r[k];
-
             sanat.forEach(s => {
                 if (s.length < 2) return;
                 try {
@@ -502,7 +452,6 @@ function paivitaTaulukko() {
                     teksti = teksti.replace(regex, m => `<mark>${m}</mark>`);
                 } catch(e) {}
             });
-
             let styleAttr = (k === "KONE" && r.KONE) ? ` style="background-color:${koneVari(r.KONE)}"` : "";
             cells.push(`<td${styleAttr}>${teksti}</td>`);
         });
@@ -511,9 +460,7 @@ function paivitaTaulukko() {
     }
 
     document.querySelector("#taulukko tbody").innerHTML = htmlParts.join('');
-
     document.getElementById("eiLoytynyt").style.display = loytyi ? "none" : "block";
-
     paivitaSortOtsikot();
     paivitaKokoListaMaara(rivit.length);
 }
@@ -522,14 +469,13 @@ function paivitaNappi() {
     document.getElementById("haku").value = "";
     currentLetter = "";
     paivitaTaulukko();
-    const contentArea = document.getElementById("content-area");
-    if (contentArea) contentArea.scrollTop = 0;
+    const ca = document.getElementById("content-area");
+    if (ca) ca.scrollTop = 0;
 }
 
 function vaihdaTeema() {
     const body = document.body;
     const nappi = document.getElementById("teemanappi");
-
     if (body.classList.contains("tumma")) {
         body.classList.remove("tumma");
         body.classList.add("vaalea");
@@ -539,9 +485,6 @@ function vaihdaTeema() {
         body.classList.add("tumma");
         nappi.textContent = "Vaalea teema";
     }
-
-    /* Päivitetään layout teeman vaihdon jälkeen */
-    requestAnimationFrame(paivitaLayout);
 }
 
 function jarjesta(uusiKey) {
@@ -557,38 +500,33 @@ function jarjesta(uusiKey) {
 function paivitaSortOtsikot() {
     const keys = ["ARTISTI","KAPPALE","KONE","KOODI","LISATTY"];
     keys.forEach(k => {
-        const th = document.getElementById(
+        const el = document.getElementById(
             k === "ARTISTI" ? "th-artisti" :
             k === "KAPPALE" ? "th-kappale" :
             k === "KONE"    ? "th-kone"    :
             k === "KOODI"   ? "th-koodi"   :
                               "th-lisatty"
         );
-        th.classList.remove("sort-asc","sort-desc");
+        el.classList.remove("sort-asc","sort-desc");
         if (k === sortKey) {
-            th.classList.add(sortDir === "asc" ? "sort-asc" : "sort-desc");
+            el.classList.add(sortDir === "asc" ? "sort-asc" : "sort-desc");
         }
     });
 }
 
 async function haePaivitysaika() {
     const apiUrl = "https://api.github.com/repos/LamminHovi/Karaokelista/commits?path=kappaleet.csv";
-
     try {
         const res = await fetch(apiUrl);
         const data = await res.json();
-
         const pvm = new Date(data[0].commit.author.date);
-
         const paiva = pvm.getDate();
         const kk = pvm.getMonth() + 1;
         const vuosi = pvm.getFullYear();
         const tunnit = pvm.getHours().toString().padStart(2, "0");
         const minuutit = pvm.getMinutes().toString().padStart(2, "0");
-
         document.getElementById("paivitysaika").innerText =
             `Viimeksi päivitetty -> pvm: ${paiva}.${kk}.${vuosi} klo ${tunnit}:${minuutit}`;
-
     } catch (e) {
         document.getElementById("paivitysaika").innerText = "Virhe päivitysajan haussa";
     }
@@ -600,10 +538,8 @@ function rakennaAakkosNapit() {
         "N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
         "\u00C5","\u00C4","\u00D6","ALL"
     ];
-
     const div = document.getElementById("aznav");
     div.innerHTML = "";
-
     kirjaimet.forEach(k => {
         const btn = document.createElement("button");
         btn.textContent = k;
@@ -614,7 +550,7 @@ function rakennaAakkosNapit() {
 
 window.onload = () => {
     rakennaAakkosNapit();
-    paivitaLayout();        /* aseta content-area heti alkuun */
+    paivitaLayout();
     lataaCSV();
     haePaivitysaika();
 };
