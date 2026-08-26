@@ -3,27 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <title>CSV Editor – Karaokelista</title>
-
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { border-collapse: collapse; width: 100%; }
         td, th { border: 1px solid #ccc; padding: 6px; }
         td[contenteditable="true"] { background: #f9f9f9; }
-        button { margin: 5px 5px 10px 0; padding: 6px 12px; }
         #searchBox { width: 300px; padding: 6px; margin-bottom: 10px; }
         .invalid { background: #ffcccc !important; }
 
-        #updateBtn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 8px 14px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
+        #counter {
+            font-weight: bold;
+            margin-left: 10px;
+            font-size: 1.1em;
+            color: #333;
         }
-        #updateBtn:hover {
-            background-color: #45a049;
+
+        th {
+            cursor: pointer;
+            user-select: none;
+            background: #f0f0f0;
+        }
+        th:hover { background: #e0e0e0; }
+
+        .sort-icon {
+            margin-left: 6px;
+            font-size: 0.8em;
+            color: #ccc;
+        }
+        th.sorted-asc .sort-icon,
+        th.sorted-desc .sort-icon {
+            color: #333;
+        }
+
+        #unsavedBanner {
+            display: none;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        #unsavedBanner button {
+            margin: 0 5px;
+            padding: 4px 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+            color: white;
+        }
+        #unsavedBanner .restore { background: #28a745; }
+        #unsavedBanner .discard { background: #dc3545; }
+
+        #autoSaveStatus {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #4CAF50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9em;
         }
     </style>
 
@@ -39,38 +80,41 @@
         if (laite === "M_U") return "#6B8E23";
         return "";
     }
-
-    /* ⭐ TÄMÄ RIVI ON PAKOLLINEN */
     window.laiteVari = laiteVari;
-</script>
-
+    </script>
 </head>
 <body>
 
 <h2>CSV Editor – Karaokelista</h2>
 
+<div id="unsavedBanner">
+    ⚠️ Sinulla on tallentamattomia muutoksia edellisestä istunnosta.
+    <button class="restore" onclick="restoreUnsaved()">Palauta</button>
+    <button class="discard" onclick="discardUnsaved()">Hylkää</button>
+</div>
+
 <input type="text" id="searchBox" placeholder="Hae kappaletta..." onkeyup="searchCSV()">
 <button onclick="clearSearch()">Tyhjennä</button>
+<span id="counter"></span>
 
-<br>
+<br><br>
 
-<button onclick="addRow()">Lisää rivi</button>
 <button onclick="downloadCSV()">Lataa uusi CSV</button>
-<button id="updateBtn" onclick="runBat()">Päivitä GitHubi</button>
 
 <table id="csvTable">
     <thead>
         <tr>
-            <th>Artisti</th>
-            <th>Kappale</th>
-            <th>Laite</th>
-            <th>Koodi</th>
-            <th>Lisätty PVM</th>
-            <th>Muuta</th>
+            <th onclick="sortColumn(0)">ARTISTI <span class="sort-icon"></span></th>
+            <th onclick="sortColumn(1)">KAPPALE <span class="sort-icon"></span></th>
+            <th onclick="sortColumn(2)">KONE <span class="sort-icon"></span></th>
+            <th onclick="sortColumn(3)">KOODI <span class="sort-icon"></span></th>
+            <th onclick="sortColumn(4)">LISÄTTY PVM <span class="sort-icon"></span></th>
         </tr>
     </thead>
     <tbody></tbody>
 </table>
+
+<div id="autoSaveStatus">Tallennettu ✓</div>
 
 <script src="edit.js"></script>
 
