@@ -70,16 +70,15 @@
 
     <script>
     function laiteVari(laite) {
-        if (kone === "C")       return "#40E0D0";
-        if (kone === "C_U")    return "#6495ED";
-        if (kone === "C_O")    return "#FFFF99";
-        if (kone === "C_O_U")  return "#FFD700";
-        if (kone === "C_O_UK") return "#FFA500";
-        if (kone === "C_O_UU") return "#ff4d4d";
-        if (kone === "K")      return "#FFFFFF";
-        if (kone === "M")      return "#90EE90";
-        if (kone === "M_U")    return "#8FBC8F";
-    return "";
+        if (laite === "C") return "#40E0D0";
+        if (laite === "C_U") return "#FF0000";
+        if (laite === "C_O") return "#FFFF00";
+        if (laite === "C_O_U") return "#FFD700";
+        if (laite === "C_O_UK") return "#FF8C00";
+        if (laite === "K") return "#FF6347";
+        if (laite === "M") return "#00FF7F";
+        if (laite === "M_U") return "#6B8E23";
+        return "";
     }
     window.laiteVari = laiteVari;
     </script>
