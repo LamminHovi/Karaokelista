@@ -86,6 +86,10 @@ function renderTable(filteredRows) {
                             sel.removeAllRanges();
                             sel.addRange(range);
                         }
+                    } else {
+                        /* Viimeisellä rivillä → siirry hakuun */
+                        document.getElementById('searchBox').focus();
+                        document.getElementById('searchBox').select();
                     }
                 }
             });
@@ -184,11 +188,13 @@ function searchCSV() {
 }
 
 function clearSearch() {
-    document.getElementById('searchBox').value = '';
+    const sb = document.getElementById('searchBox');
+    sb.value = '';
     currentFilteredIndexes = [];
     const tableBody = document.querySelector('#csvTable tbody');
     tableBody.innerHTML = '';
     document.getElementById('counter').textContent = '';
+    sb.focus();
 }
 
 /* ===== CSV:n lataus tiedostoon ===== */
