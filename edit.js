@@ -68,6 +68,28 @@ function renderTable(filteredRows) {
                 autoSave();
             });
 
+            /* Enter → siirry saman sarakkeen seuraavalle riville */
+            td.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+
+                    const currentRow = td.parentElement;
+                    const nextRow = currentRow.nextElementSibling;
+                    if (nextRow) {
+                        const nextTd = nextRow.children[colIndex];
+                        if (nextTd) {
+                            nextTd.focus();
+                            /* Valitse koko teksti helpottamaan korjausta */
+                            const range = document.createRange();
+                            range.selectNodeContents(nextTd);
+                            const sel = window.getSelection();
+                            sel.removeAllRanges();
+                            sel.addRange(range);
+                        }
+                    }
+                }
+            });
+
             tr.appendChild(td);
         }
 
