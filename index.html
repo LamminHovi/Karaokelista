@@ -154,8 +154,8 @@ body.tumma  .th-cell { background: #1f1f1f; color: #fff; }
     white-space: nowrap;
 }
 /* Sarakeleveydet – samat kuin headerissa */
-#taulukko td:nth-child(1) { width: 150px; min-width: 150px; }
-#taulukko td:nth-child(2) { width: 200px; min-width: 200px; }
+#taulukko td:nth-child(1) { width: 150px; min-width: 150px; font-weight: bold; }
+#taulukko td:nth-child(2) { width: 200px; min-width: 200px; font-weight: bold; }
 #taulukko td:nth-child(3) { width: 60px;  min-width: 60px; }
 #taulukko td:nth-child(4) { width: 60px;  min-width: 60px; }
 #taulukko td:nth-child(5) { width: 110px; min-width: 110px; }
@@ -452,7 +452,7 @@ function paivitaTaulukko() {
                     teksti = teksti.replace(regex, m => `<mark>${m}</mark>`);
                 } catch(e) {}
             });
-            let styleAttr = (k === "KONE" && r.KONE) ? ` style="background-color:${koneVari(r.KONE)}"` : "";
+            let styleAttr = (k === "KONE" && r.KONE) ? ` style="background-color:${koneVari(r.KONE)};color:#000;font-weight:bold"` : "";
             cells.push(`<td${styleAttr}>${teksti}</td>`);
         });
 
