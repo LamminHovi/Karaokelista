@@ -440,6 +440,21 @@ function paivitaTaulukko() {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
+    /* Korostus tehdään YHDELLÄ yhdistetyllä regexillä yhdessä vaiheessa.
+       Aiemmin jokainen sana korvattiin erikseen, ja myöhempi sana saattoi
+       osua jo lisättyjen <mark>-tagien sisään (esim. "mar" sanassa
+       "<mark>"), mikä rikkoisi solujen HTML:n. */
+    const korostusSanat = sanat
+        .filter(s => s.length >= 2)
+        .sort((a, b) => b.length - a.length);
+    const korostusKaava = korostusSanat.map(escapeRegExp).join("|");
+    let korostusRegex = null;
+    if (korostusKaava) {
+        try {
+            korostusRegex = new RegExp(korostusKaava, "gi");
+        } catch (e) {}
+    }
+
     for (let i = 0; i < rivit.length; i++) {
         loytyi = true;
         const r = rivit[i];
@@ -447,13 +462,9 @@ function paivitaTaulukko() {
 
         ["ARTISTI","KAPPALE","KONE","KOODI","LISATTY"].forEach(k => {
             let teksti = r[k];
-            sanat.forEach(s => {
-                if (s.length < 2) return;
-                try {
-                    const regex = new RegExp(escapeRegExp(s), "gi");
-                    teksti = teksti.replace(regex, m => `<mark>${m}</mark>`);
-                } catch(e) {}
-            });
+            if (korostusRegex) {
+                teksti = teksti.replace(korostusRegex, m => `<mark>${m}</mark>`);
+            }
             let styleAttr = "";
             if (k === "KONE" && r.KONE) {
                 const vari = koneVari(r.KONE);
