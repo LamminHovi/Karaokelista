@@ -105,60 +105,44 @@ button:active {
     -webkit-overflow-scrolling: touch;
 }
 
-/* ===== VÄÄRENNETTY TAULUKON OTSIKKO (ei osa taulukkoa) ===== */
-/* Tämä div on erillinen taulukosta, jolloin sticky toimii aina luotettavasti */
-#table-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    min-width: 580px;
-    width: max-content;
-}
-body.vaalea #table-header { background: #eee; }
-body.tumma  #table-header { background: #1f1f1f; }
-
-.th-cell {
-    border-right: 1px solid #999;
-    border-bottom: 1px solid #999;
-    padding: 5px 6px;
-    font-size: 13px;
-    white-space: nowrap;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-body.vaalea .th-cell { background: #eee; color: #000; }
-body.tumma  .th-cell { background: #1f1f1f; color: #fff; }
-
-/* Sarakeleveydet samat kuin taulukossa */
-.th-cell:nth-child(1) { width: 150px; min-width: 150px; }
-.th-cell:nth-child(2) { width: 200px; min-width: 200px; }
-.th-cell:nth-child(3) { width: 60px;  min-width: 60px; }
-.th-cell:nth-child(4) { width: 60px;  min-width: 60px; }
-.th-cell:nth-child(5) { width: 110px; min-width: 110px; }
-
-/* Järjestysnuolet */
-.th-cell.sort-asc::after  { content: " \25B2"; font-size: 10px; }
-.th-cell.sort-desc::after { content: " \25BC"; font-size: 10px; }
-
-/* ===== TAULUKKO (vain tbody-rivit) ===== */
+/* ===== TAULUKKO ===== */
+/* Sarakeotsikot (thead) ovat tavallisena osana taulukkoa, joten ne
+   rullaavat sisällön mukana pois näkyvistä alaspäin vieritettäessä.
+   Sama toiminta kuin Tavernassa – ei sticky-kiinnitystä. */
 #taulukko {
     border-collapse: collapse;
     width: max-content;
     min-width: 580px;
 }
+#taulukko th,
 #taulukko td {
     border: 1px solid #999;
     padding: 5px 6px;
     font-size: 13px;
     white-space: nowrap;
+    text-align: left;
 }
-/* Sarakeleveydet – samat kuin headerissa */
-#taulukko td:nth-child(1) { width: 150px; min-width: 150px; font-weight: bold; }
-#taulukko td:nth-child(2) { width: 200px; min-width: 200px; font-weight: bold; }
-#taulukko td:nth-child(3) { width: 60px;  min-width: 60px; }
-#taulukko td:nth-child(4) { width: 60px;  min-width: 60px; }
-#taulukko td:nth-child(5) { width: 110px; min-width: 110px; }
+#taulukko th {
+    cursor: pointer;
+    font-weight: bold;
+}
+body.vaalea #taulukko th { background: #eee; color: #000; }
+body.tumma  #taulukko th { background: #1f1f1f; color: #fff; }
+
+/* Sarakeleveydet – samat otsikossa ja datariveillä */
+#taulukko th:nth-child(1), #taulukko td:nth-child(1) { width: 150px; min-width: 150px; }
+#taulukko th:nth-child(2), #taulukko td:nth-child(2) { width: 200px; min-width: 200px; }
+#taulukko th:nth-child(3), #taulukko td:nth-child(3) { width: 60px;  min-width: 60px; }
+#taulukko th:nth-child(4), #taulukko td:nth-child(4) { width: 60px;  min-width: 60px; }
+#taulukko th:nth-child(5), #taulukko td:nth-child(5) { width: 110px; min-width: 110px; }
+
+/* Artisti- ja kappalesarakkeet lihavoituna */
+#taulukko td:nth-child(1),
+#taulukko td:nth-child(2) { font-weight: bold; }
+
+/* Järjestysnuolet */
+#taulukko th.sort-asc::after  { content: " \25B2"; font-size: 10px; }
+#taulukko th.sort-desc::after { content: " \25BC"; font-size: 10px; }
 
 tbody tr:hover { background: rgba(255,255,0,0.25); }
 
@@ -219,7 +203,7 @@ tbody tr:hover { background: rgba(255,255,0,0.25); }
     input { padding: 8px 10px; }
     .nappirivi button { font-size: 12px; padding: 5px 8px; }
     #aznav button { font-size: 11px; padding: 3px 5px; min-width: 24px; }
-    .th-cell, #taulukko td { font-size: 12px; padding: 4px 5px; }
+    #taulukko th, #taulukko td { font-size: 12px; padding: 4px 5px; }
     #scrollTopBtn {
         bottom: 16px; right: 16px;
         width: 42px; height: 42px;
@@ -249,17 +233,18 @@ tbody tr:hover { background: rgba(255,255,0,0.25); }
 <!-- SISÄLTÖALUE – kaikki scrollaus tapahtuu täällä -->
 <div id="content-area">
 
-    <!-- Sarakeotsikot erillisenä divinä (sticky toimii luotettavasti) -->
-    <div id="table-header">
-        <div class="th-cell" onclick="jarjesta('ARTISTI')" id="th-artisti">ARTISTI</div>
-        <div class="th-cell" onclick="jarjesta('KAPPALE')" id="th-kappale">KAPPALE</div>
-        <div class="th-cell" onclick="jarjesta('KONE')"    id="th-kone">KONE</div>
-        <div class="th-cell" onclick="jarjesta('KOODI')"   id="th-koodi">KOODI</div>
-        <div class="th-cell" onclick="jarjesta('LISATTY')" id="th-lisatty">LISÄTTY PVM</div>
-    </div>
-
-    <!-- Taulukko (vain data-rivit) -->
+    <!-- Taulukko: sarakeotsikot ovat tavallisena thead-osuutena, joten ne
+         rullaavat pois näkyvistä alaspäin vieritettäessä (kuten Tavernassa) -->
     <table id="taulukko">
+        <thead>
+            <tr>
+                <th id="th-artisti" onclick="jarjesta('ARTISTI')">ARTISTI</th>
+                <th id="th-kappale" onclick="jarjesta('KAPPALE')">KAPPALE</th>
+                <th id="th-kone"    onclick="jarjesta('KONE')">KONE</th>
+                <th id="th-koodi"   onclick="jarjesta('KOODI')">KOODI</th>
+                <th id="th-lisatty" onclick="jarjesta('LISATTY')">LISÄTTY PVM</th>
+            </tr>
+        </thead>
         <tbody></tbody>
     </table>
 
@@ -285,6 +270,17 @@ function koneVari(kone) {
     if (kone === "MF")     return "#8FBC8F";
     if (kone === "M_U")    return "#0c4c0c";
     return "";
+}
+
+/* Tekstiväri KONE-soluihin: tummilla taustaväreillä (esim. M_U, C_O_UU)
+   käytetään valkoista tekstiä, jotta solu on luettavissa */
+function koneTekstivari(hex) {
+    const c = hex.replace("#", "");
+    const r = parseInt(c.slice(0, 2), 16);
+    const g = parseInt(c.slice(2, 4), 16);
+    const b = parseInt(c.slice(4, 6), 16);
+    const luminanssi = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminanssi < 0.55 ? "#fff" : "#000";
 }
 
 let data = [];
@@ -335,41 +331,47 @@ function scrollContentToTop() {
    ========================================================================= */
 async function lataaCSV() {
     const url = "https://raw.githubusercontent.com/LamminHovi/Karaokelista/main/kappaleet.csv";
-    const res = await fetch(url);
-    const txt = await res.text();
+    try {
+        const res = await fetch(url);
+        const txt = await res.text();
 
-    const rows = txt.trim().split("\n").map(r => {
-        const parts = r.split(",");
-        return [
-            parts[0]?.trim() || "",
-            parts[1]?.trim() || "",
-            parts[2]?.trim() || "",
-            parts[3]?.trim() || "",
-            parts[4]?.trim() || ""
-        ];
-    });
+        const rows = txt.trim().split("\n").map(r => {
+            const parts = r.split(",");
+            return [
+                parts[0]?.trim() || "",
+                parts[1]?.trim() || "",
+                parts[2]?.trim() || "",
+                parts[3]?.trim() || "",
+                parts[4]?.trim() || ""
+            ];
+        });
 
-    data = rows.map((r, idx) => ({
-        ARTISTI: r[0],
-        KAPPALE: r[1],
-        KONE:    r[2],
-        KOODI:   r[3],
-        LISATTY: r[4],
-        artistUpper: r[0].toUpperCase(),
-        kappaleUpper: r[1].toUpperCase(),
-        koneUpper: (r[2] || "").toUpperCase(),
-        koodiUpper: (r[3] || "").toUpperCase(),
-        lisattyUpper: (r[4] || "").toUpperCase(),
-        index: idx
-    }));
+        data = rows.map((r, idx) => ({
+            ARTISTI: r[0],
+            KAPPALE: r[1],
+            KONE:    r[2],
+            KOODI:   r[3],
+            LISATTY: r[4],
+            artistUpper: r[0].toUpperCase(),
+            kappaleUpper: r[1].toUpperCase(),
+            koneUpper: (r[2] || "").toUpperCase(),
+            koodiUpper: (r[3] || "").toUpperCase(),
+            lisattyUpper: (r[4] || "").toUpperCase(),
+            index: idx
+        }));
 
-    paivitaTaulukko();
-    paivitaKokoListaMaara(data.length);
+        paivitaTaulukko();
+        paivitaKokoListaMaara(data.length);
 
-    requestAnimationFrame(() => {
-        paivitaLayout();
-        setupScrollListener();
-    });
+        requestAnimationFrame(() => {
+            paivitaLayout();
+            setupScrollListener();
+        });
+    } catch (e) {
+        const ilmoitus = document.getElementById("eiLoytynyt");
+        ilmoitus.innerText = "Virhe listan lataamisessa – tarkista verkkoyhteys ja lataa sivu uudelleen";
+        ilmoitus.style.display = "block";
+    }
 }
 
 function haeTeksti() {
@@ -452,7 +454,13 @@ function paivitaTaulukko() {
                     teksti = teksti.replace(regex, m => `<mark>${m}</mark>`);
                 } catch(e) {}
             });
-            let styleAttr = (k === "KONE" && r.KONE) ? ` style="background-color:${koneVari(r.KONE)};color:#000;font-weight:bold"` : "";
+            let styleAttr = "";
+            if (k === "KONE" && r.KONE) {
+                const vari = koneVari(r.KONE);
+                if (vari) {
+                    styleAttr = ` style="background-color:${vari};color:${koneTekstivari(vari)};font-weight:bold"`;
+                }
+            }
             cells.push(`<td${styleAttr}>${teksti}</td>`);
         });
 
