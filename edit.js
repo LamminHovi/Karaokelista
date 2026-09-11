@@ -1,4 +1,4 @@
-let csvData = [];  
+let csvData = [];
 let currentFilteredIndexes = [];
 let sortState = { col: -1, dir: 'asc' };
 let autoSaveTimer = null;
@@ -79,7 +79,6 @@ function renderTable(filteredRows) {
                         const nextTd = nextRow.children[colIndex];
                         if (nextTd) {
                             nextTd.focus();
-                            /* Valitse koko teksti helpottamaan korjausta */
                             const range = document.createRange();
                             range.selectNodeContents(nextTd);
                             const sel = window.getSelection();
@@ -87,7 +86,6 @@ function renderTable(filteredRows) {
                             sel.addRange(range);
                         }
                     } else {
-                        /* Viimeisellä rivillä → siirry hakuun */
                         document.getElementById('searchBox').focus();
                         document.getElementById('searchBox').select();
                     }
@@ -97,8 +95,70 @@ function renderTable(filteredRows) {
             tr.appendChild(td);
         }
 
+        /* Poista-nappi rivin loppuun */
+        const deleteTd = document.createElement('td');
+        deleteTd.style.textAlign = 'center';
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'deleteBtn';
+        deleteBtn.textContent = '\u00D7';
+        deleteBtn.title = 'Poista tämä kappale';
+        deleteBtn.onclick = function() {
+            deleteRow(rowIndex);
+        };
+        deleteTd.appendChild(deleteBtn);
+        tr.appendChild(deleteTd);
+
         tableBody.appendChild(tr);
     });
+}
+
+/* ===== Uuden kappaleen lisäys ===== */
+function addNewSong() {
+    /* Automaattinen päivämäärä */
+    const nyt = new Date();
+    const pp = String(nyt.getDate()).padStart(2, '0');
+    const kk = String(nyt.getMonth() + 1).padStart(2, '0');
+    const vv = nyt.getFullYear();
+    const lisatty = pp + '.' + kk + '.' + vv;
+
+    /* Lisää tyhjä rivi (päivämäärä valmiina) */
+    csvData.push(["", "", "", "", lisatty]);
+    const newIndex = csvData.length - 1;
+
+    /* Lisää näkyviin taulukkoon */
+    currentFilteredIndexes.push(newIndex);
+
+    renderTable(currentFilteredIndexes);
+
+    /* Aseta kursori ARTISTI-sarakkeeseen uudella rivillä */
+    setTimeout(() => {
+        const tableBody = document.querySelector('#csvTable tbody');
+        const lastRow = tableBody.lastElementChild;
+        if (lastRow && lastRow.children[0]) {
+            lastRow.children[0].focus();
+        }
+    }, 50);
+}
+
+/* ===== Kappaleen poisto ===== */
+function deleteRow(rowIndex) {
+    const artisti = csvData[rowIndex][0] || '';
+    const kappale = csvData[rowIndex][1] || '';
+    const nimi = (artisti && kappale) ? artisti + ' - ' + kappale : 'tämän rivin';
+
+    if (!confirm('Haluatko varmasti poistaa: ' + nimi + '?')) return;
+
+    /* Poista csvData-taulukosta */
+    csvData.splice(rowIndex, 1);
+
+    /* Päivitä currentFilteredIndexes: poista kyseinen indeksi
+       ja pienennä kaikkia sen jälkeisiä indeksejä yhdellä */
+    currentFilteredIndexes = currentFilteredIndexes
+        .filter(idx => idx !== rowIndex)
+        .map(idx => idx > rowIndex ? idx - 1 : idx);
+
+    renderTable(currentFilteredIndexes);
+    autoSave();
 }
 
 /* ===== Lajittelu ===== */
@@ -153,11 +213,12 @@ function updateSortUI() {
     document.querySelectorAll('#csvTable thead th').forEach((th, i) => {
         th.classList.remove('sorted-asc', 'sorted-desc');
         const icon = th.querySelector('.sort-icon');
-        icon.textContent = '';
-
-        if (i === sortState.col) {
-            th.classList.add(sortState.dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
-            icon.textContent = sortState.dir === 'asc' ? ' \u25B2' : ' \u25BC';
+        if (icon) {
+            icon.textContent = '';
+            if (i === sortState.col) {
+                th.classList.add(sortState.dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+                icon.textContent = sortState.dir === 'asc' ? ' \u25B2' : ' \u25BC';
+            }
         }
     });
 }
