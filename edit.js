@@ -3,10 +3,8 @@ let currentFilteredIndexes = [];
 let sortState = { col: -1, dir: 'asc' };
 let autoSaveTimer = null;
 
-/* ===== localStorage-avain ===== */
 const STORAGE_KEY = 'hoviKaraokeUnsaved';
 
-/* ===== CSV:n lataus GitHubista ===== */
 async function loadCSV() {
     try {
         const response = await fetch(
@@ -15,11 +13,10 @@ async function loadCSV() {
         const text = await response.text();
         csvData = text.trim().split('\n').map(r => r.split(','));
     } catch (e) {
-        console.error('CSV:n lataus epäonnistui:', e);
+        console.error('CSV:n lataus epaonnistui:', e);
         csvData = [];
     }
 
-    /* Tarkista tallentamattomat muutokset localStoragesta */
     const unsaved = localStorage.getItem(STORAGE_KEY);
     if (unsaved) {
         try {
@@ -32,13 +29,11 @@ async function loadCSV() {
         }
     }
 
-    /* Tyhjennä taulukko alussa */
     const tableBody = document.querySelector('#csvTable tbody');
     tableBody.innerHTML = '';
     document.getElementById('counter').textContent = '';
 }
 
-/* ===== Taulukon renderöinti (ei rajarajoitusta) ===== */
 function renderTable(filteredRows) {
     const tableBody = document.querySelector('#csvTable tbody');
     tableBody.innerHTML = '';
@@ -52,7 +47,6 @@ function renderTable(filteredRows) {
             td.contentEditable = 'true';
             td.textContent = csvData[rowIndex][colIndex] || '';
 
-            /* Väritä KONE-sarake */
             if (colIndex === 2) {
                 td.style.backgroundColor = laiteVari(csvData[rowIndex][2]);
             }
@@ -68,11 +62,9 @@ function renderTable(filteredRows) {
                 autoSave();
             });
 
-            /* Enter → siirry saman sarakkeen seuraavalle riville */
             td.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-
                     const currentRow = td.parentElement;
                     const nextRow = currentRow.nextElementSibling;
                     if (nextRow) {
@@ -95,13 +87,12 @@ function renderTable(filteredRows) {
             tr.appendChild(td);
         }
 
-        /* Poista-nappi rivin loppuun */
         const deleteTd = document.createElement('td');
         deleteTd.style.textAlign = 'center';
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'deleteBtn';
         deleteBtn.textContent = '\u00D7';
-        deleteBtn.title = 'Poista tämä kappale';
+        deleteBtn.title = 'Poista tama kappale';
         deleteBtn.onclick = function() {
             deleteRow(rowIndex);
         };
@@ -112,25 +103,18 @@ function renderTable(filteredRows) {
     });
 }
 
-/* ===== Uuden kappaleen lisäys ===== */
 function addNewSong() {
-    /* Automaattinen päivämäärä */
     const nyt = new Date();
     const pp = String(nyt.getDate()).padStart(2, '0');
     const kk = String(nyt.getMonth() + 1).padStart(2, '0');
     const vv = nyt.getFullYear();
     const lisatty = pp + '.' + kk + '.' + vv;
 
-    /* Lisää tyhjä rivi (päivämäärä valmiina) */
     csvData.push(["", "", "", "", lisatty]);
     const newIndex = csvData.length - 1;
-
-    /* Lisää näkyviin taulukkoon */
     currentFilteredIndexes.push(newIndex);
-
     renderTable(currentFilteredIndexes);
 
-    /* Aseta kursori ARTISTI-sarakkeeseen uudella rivillä */
     setTimeout(() => {
         const tableBody = document.querySelector('#csvTable tbody');
         const lastRow = tableBody.lastElementChild;
@@ -140,19 +124,14 @@ function addNewSong() {
     }, 50);
 }
 
-/* ===== Kappaleen poisto ===== */
 function deleteRow(rowIndex) {
     const artisti = csvData[rowIndex][0] || '';
     const kappale = csvData[rowIndex][1] || '';
-    const nimi = (artisti && kappale) ? artisti + ' - ' + kappale : 'tämän rivin';
+    const nimi = (artisti && kappale) ? artisti + ' - ' + kappale : 'taman rivin';
 
     if (!confirm('Haluatko varmasti poistaa: ' + nimi + '?')) return;
 
-    /* Poista csvData-taulukosta */
     csvData.splice(rowIndex, 1);
-
-    /* Päivitä currentFilteredIndexes: poista kyseinen indeksi
-       ja pienennä kaikkia sen jälkeisiä indeksejä yhdellä */
     currentFilteredIndexes = currentFilteredIndexes
         .filter(idx => idx !== rowIndex)
         .map(idx => idx > rowIndex ? idx - 1 : idx);
@@ -161,7 +140,6 @@ function deleteRow(rowIndex) {
     autoSave();
 }
 
-/* ===== Lajittelu ===== */
 function sortColumn(colIndex) {
     if (sortState.col === colIndex) {
         sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
@@ -169,9 +147,7 @@ function sortColumn(colIndex) {
         sortState.col = colIndex;
         sortState.dir = 'asc';
     }
-
     updateSortUI();
-
     if (currentFilteredIndexes.length > 0) {
         applySort();
         renderTable(currentFilteredIndexes);
@@ -181,24 +157,19 @@ function sortColumn(colIndex) {
 function applySort() {
     const col = sortState.col;
     const dir = sortState.dir;
-
     currentFilteredIndexes.sort((a, b) => {
         let valA = (csvData[a][col] || '').trim();
         let valB = (csvData[b][col] || '').trim();
-
         if (col === 4) {
-            /* Päivämäärälajittelu: dd.mm.yyyy → yyyymmdd */
             valA = parseDate(valA);
             valB = parseDate(valB);
         } else {
             valA = valA.toLowerCase();
             valB = valB.toLowerCase();
         }
-
         let cmp = 0;
         if (valA < valB) cmp = -1;
         else if (valA > valB) cmp = 1;
-
         return dir === 'asc' ? cmp : -cmp;
     });
 }
@@ -206,7 +177,7 @@ function applySort() {
 function parseDate(str) {
     const m = str.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
     if (!m) return '';
-    return m[3] + m[2] + m[1]; /* yyyymmdd */
+    return m[3] + m[2] + m[1];
 }
 
 function updateSortUI() {
@@ -223,10 +194,8 @@ function updateSortUI() {
     });
 }
 
-/* ===== Haku ===== */
 function searchCSV() {
     const query = document.getElementById('searchBox').value.toLowerCase();
-
     if (query.length === 0) {
         currentFilteredIndexes = [];
         const tableBody = document.querySelector('#csvTable tbody');
@@ -234,17 +203,13 @@ function searchCSV() {
         document.getElementById('counter').textContent = '';
         return;
     }
-
     currentFilteredIndexes = csvData
         .map((row, index) => ({ row, index }))
         .filter(obj => obj.row.join(' ').toLowerCase().includes(query))
         .map(obj => obj.index);
-
-    /* Säilytä nykyinen lajittelu jos aktiivinen */
     if (sortState.col >= 0) {
         applySort();
     }
-
     renderTable(currentFilteredIndexes);
 }
 
@@ -258,33 +223,26 @@ function clearSearch() {
     sb.focus();
 }
 
-/* ===== CSV:n lataus tiedostoon ===== */
 function downloadCSV() {
     let csv = '';
     csvData.forEach(row => {
         csv += row.join(',') + '\n';
     });
-
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = 'kappaleet.csv';
     a.click();
-
-    /* Muutokset on nyt tallennettu → tyhjennä localStorage */
     localStorage.removeItem(STORAGE_KEY);
 }
 
-/* ===== Automaattinen tallennus localStorageen ===== */
 function autoSave() {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(csvData));
     } catch (e) {
-        console.error('Automaattinen tallennus epäonnistui:', e);
+        console.error('Automaattinen tallennus epaonnistui:', e);
     }
-
-    /* Näytä "Tallennettu"-ilmaisu (korkeintaan kerran 2 sekunnissa) */
     if (!autoSaveTimer) {
         const el = document.getElementById('autoSaveStatus');
         el.style.opacity = '1';
@@ -295,14 +253,13 @@ function autoSave() {
     }
 }
 
-/* ===== Tallentamattomien muutosten palautus / hylkääminen ===== */
 function restoreUnsaved() {
     const unsaved = localStorage.getItem(STORAGE_KEY);
     if (unsaved) {
         try {
             csvData = JSON.parse(unsaved);
         } catch (e) {
-            console.error('Palautus epäonnistui:', e);
+            console.error('Palautus epaonnistui:', e);
         }
     }
     localStorage.removeItem(STORAGE_KEY);
@@ -315,7 +272,6 @@ function discardUnsaved() {
     document.getElementById('unsavedBanner').style.display = 'none';
 }
 
-/* ===== Päivämäärän validointi ===== */
 function validateCell(td, colIndex) {
     const value = td.textContent.trim();
 
@@ -343,10 +299,20 @@ function validateCell(td, colIndex) {
 
     if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900 || year > 2100) {
         td.classList.add('invalid');
-    } else {
-        td.classList.remove('invalid');
+        return;
     }
+
+    /* Ei tulevaisuuden paivamaaria */
+    const nyt = new Date();
+    const tanaan = new Date(nyt.getFullYear(), nyt.getMonth(), nyt.getDate());
+    const syotetty = new Date(year, month - 1, day);
+
+    if (syotetty > tanaan) {
+        td.classList.add('invalid');
+        return;
+    }
+
+    td.classList.remove('invalid');
 }
 
-/* ===== Käynnistys ===== */
 loadCSV();
