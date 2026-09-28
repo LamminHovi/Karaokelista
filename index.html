@@ -310,6 +310,26 @@ window.addEventListener("orientationchange", function() {
 });
 
 /* =========================================================================
+   RESIZE OBSERVER – korjaa sarakeotsikoiden piiloutumisen
+   -------------------------------------------------------------------------
+   Kun #paivitysaika, #kokolistaMaara tai #aznav saa sisältöä asynkronisesti
+   (esim. CSV:n tai GitHub API:n latauduttua), #ylapalkki kasvaa. Jos
+   paivitaLayout() ei silloin ajoitu, #content-area jää liian ylös ja
+   sarakeotsikot menevät aakkosnappien alle piiloon.
+   ResizeObserver tarkkailee yläpalkin kokoa ja kutsuu paivitaLayout()
+   automaattisesti aina kun korkeus muuttuu. Tämä korjaa ongelman sekä
+   läppärillä että puhelimella.
+   ========================================================================= */
+function setupResizeObserver() {
+    const ylapalkki = document.getElementById("ylapalkki");
+    if (!ylapalkki || !window.ResizeObserver) return;
+    const ro = new ResizeObserver(function() {
+        paivitaLayout();
+    });
+    ro.observe(ylapalkki);
+}
+
+/* =========================================================================
    SCROLL-TO-TOP
    ========================================================================= */
 function setupScrollListener() {
@@ -378,7 +398,7 @@ function haeTeksti() {
     return document.getElementById("haku").value.toUpperCase().trim();
 }
 
-function viivästettyHaku() {
+function viivastettyHaku() {
     clearTimeout(hakuTimer);
     hakuTimer = setTimeout(paivitaTaulukko, 200);
 }
@@ -546,8 +566,13 @@ async function haePaivitysaika() {
         const minuutit = pvm.getMinutes().toString().padStart(2, "0");
         document.getElementById("paivitysaika").innerText =
             `Viimeksi päivitetty -> pvm: ${paiva}.${kk}.${vuosi} klo ${tunnit}:${minuutit}`;
+        /* FIX: kun #paivitysaika saa sisältöä, #ylapalkki kasvaa.
+           Pitää päivittää layout, muuten sarakeotsikot jäävät aakkosnavin alle.
+           (ResizeObserver hoitaa tämän yleensä, mutta tämä on varmuuden vuoksi.) */
+        paivitaLayout();
     } catch (e) {
         document.getElementById("paivitysaika").innerText = "Virhe päivitysajan haussa";
+        paivitaLayout();
     }
 }
 
@@ -570,6 +595,7 @@ function rakennaAakkosNapit() {
 window.onload = () => {
     rakennaAakkosNapit();
     paivitaLayout();
+    setupResizeObserver();  /* FIX: automaattinen layout-päivitys yläpalkin korkeusmuutoksille */
     lataaCSV();
     haePaivitysaika();
 };
